@@ -1,0 +1,257 @@
+package JFlexNCup;
+
+import java_cup.runtime.Symbol;
+import java.util.ArrayList;
+import APIServices.Node;
+
+parser code 
+{:
+
+    public Node root;
+
+    public void syntax_error(Symbol s)
+    {   
+        System.out.println("LLegue a un error");
+        System.out.println(String.valueOf(s));
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception
+    {    
+        System.out.println("El error es " + s.value.toString());
+        /*if (s == null) 
+        {
+            errores.add(new ErrorC("Error Sintactico", "null", 0, 0, "ultimo token de finalizacion perdido"));
+            System.out.println("Gramatica irreducible");
+            return;
+        } 
+        
+        String lexema = s.value.toString();
+        int fila = s.right + 1;
+        int columna = s.left + 1;
+       
+        errores.add(new ErrorC("Error Sintactico", lexema, fila, columna, "Error No Recuperable"));*/
+    }
+
+:}
+
+
+action code 
+{: 
+    public void transferChildren(Node losing, Node gaining) {
+        int size = losing.getChildrenCount();
+        for (int i = 0; i < size; i++) {
+            gaining.addChildren(losing.getChildAt(i));
+        }
+    }
+:}
+
+terminal mod, equals, notEquals, greaterEquals, lesserEquals, arrowFunction, valAsignment, openingPar, closingPar;
+terminal openingBracket, closingBracket, openingCurly, closingCurly, comma, semicolon, plus, minus, times, div, power;
+terminal greater, lesser, not, and, or, ternary, colon, ifKeyword, elseKeyword, switchKeyword, caseKeyword, breakKeyword;
+terminal whileKeyword, doKeyword, forKeyword, inKeyword, continueKeyword, returnKeyword, functionKeyword, defaultKeyword;
+terminal nullValue, stringValue, numberValue, falseValue, trueValue, id;
+
+non terminal Node ROOT, ASIGNMENT, TERNARY_EXPRESSION, LOGICAL_EXPRESSION, COMPARATIVE_EXPRESSION, BASIC_EXPRESSION;
+non terminal Node BASIC_VALUE, SENTENCES_BLOCK, SENTENCES_LIST, SENTENCE, IF_SENTENCE, ELSE_SENTENCE, SWITCH_SENTENCE, SWITCH_BODY;
+non terminal Node CASES_LIST, DEFAULT_CASE, SINGLE_CASE, WHILE_SENTENCE, DOWHILE_SENTENCE, FOR_SENTENCE, BREAK_SENTENCE;
+non terminal Node CONTINUE_SENTENCE, RETURN_SENTENCE, FUNCTION_DECL, VECTOR_ACCESS, ADDRESSES, ADDRESS, PARAMETERS_DECL, PARAMETER;
+non terminal Node FUNCTION_CALL, EXPRESSIONS_LIST, ASIGNMENT_OPTIONS, MATRIX_ACCESS, MATRIX_ADDRESS, PARAMS;
+
+non terminal BASIC_OPERATOR, RELATIONAL_OPERATOR; 
+
+precedence right valAsignment;
+precedence right ternary, colon;
+precedence left or;
+precedence left and;
+precedence left equals, notEquals;
+precedence nonassoc lesser, lesserEquals, greater, greaterEquals;
+precedence left plus, minus;
+precedence left times, div, mod;
+precedence left power;
+precedence right minus, not;
+precedence left openingBracket, closingBracket;
+
+start with ROOT
+;
+
+ROOT ::= SENTENCES_LIST:root    {: Node rut = new Node("root"); 
+                                   rut.addChildren(root);
+                                   parser.root = rut;
+                                   System.out.println("Si estoy llegando a la raiz");
+                                   RESULT = rut;
+                                :}
+;
+
+SENTENCES_LIST ::= SENTENCES_LIST:sent SENTENCE:sent2           {: Node sentences = new Node("sentences"); 
+                                                                   transferChildren(sent, sentences); 
+                                                                   sentences.addChildren(sent2);
+                                                                   RESULT = sentences; 
+                                                                :}
+
+    | SENTENCE:sent                                             {: Node sentences = new Node("sentences"); 
+                                                                   sentences.addChildren(sent);
+                                                                   RESULT = sentences;
+                                                                :}
+;
+
+SENTENCE ::= ASIGNMENT:sent                         {: RESULT = sent; :}
+
+    | FUNCTION_CALL:sent                            {: RESULT = sent; :}
+
+    | IF_SENTENCE:sent                              {: RESULT = sent; :}
+
+    | SWITCH_SENTENCE:sent                          {: RESULT = sent; :}
+
+    | WHILE_SENTENCE:sent                           {: RESULT = sent; :}
+
+    | DOWHILE_SENTENCE:sent                         {: RESULT = sent; :}
+
+    | FOR_SENTENCE:sent                             {: RESULT = sent; :}
+
+    | RETURN_SENTENCE:sent                          {: RESULT = sent; :}
+
+    | FUNCTION_DECL:sent                            {: RESULT = sent; :}
+
+    | BREAK_SENTENCE:sent                           {: RESULT = sent; :}
+
+    | CONTINUE_SENTENCE:sent                        {: RESULT = sent; :}
+;
+
+SENTENCES_BLOCK ::= openingCurly SENTENCES_LIST:sent closingCurly         {: RESULT = sent; :}
+;
+
+ASIGNMENT ::= ASIGNMENT_OPTIONS:opt valAsignment:v TERNARY_EXPRESSION:value semicolon         {: Node asig = new Node("asignment");
+                                                                                                 asig.addChildren(opt);
+                                                                                                 asig.addChildren(new Node("=", vright, vleft, null));
+                                                                                                 asig.addChildren(value);
+                                                                                                 RESULT = asig;
+                                                                                              :}
+
+    | ASIGNMENT_OPTIONS:opt valAsignment:v TERNARY_EXPRESSION:value                           {: Node asig = new Node("asignment", optright, optleft, null);
+                                                                                                 asig.addChildren(opt);
+                                                                                                 asig.addChildren(new Node("=", vright, vleft, null));
+                                                                                                 asig.addChildren(value);
+                                                                                                 RESULT = asig; 
+                                                                                              :}
+;
+
+ASIGNMENT_OPTIONS ::= id:id                                     {: Node opt = new Node("asignment option", idright, idleft, null);
+                                                                   Node ident = new Node("identifier", idright, idleft, String.valueOf(id));
+                                                                   opt.addChildren(ident);
+                                                                   RESULT = opt;    
+                                                                :}
+;
+
+TERNARY_EXPRESSION ::= TERNARY_EXPRESSION:exp1 ternary:ter TERNARY_EXPRESSION:exp2 colon:col TERNARY_EXPRESSION:exp3  {: Node res = new Node("ternary expression");
+                                                                                                                         Node tern = new Node("?", terright, terleft, null);
+                                                                                                                         tern.addChildren(exp1);
+                                                                                                                         Node colon = new Node(":", colright, colleft, null);
+                                                                                                                         colon.addChildren(exp2); 
+                                                                                                                         colon.addChildren(exp3);
+                                                                                                                         res.addChildren(tern);
+                                                                                                                         res.addChildren(colon);
+                                                                                                                         RESULT = res; 
+                                                                                                                       :}
+
+    | LOGICAL_EXPRESSION:log                                                                                      {: RESULT = log; :}                                                                                        
+;
+
+LOGICAL_EXPRESSION ::= LOGICAL_EXPRESSION:log1 and:con LOGICAL_EXPRESSION:log2        {: Node res = new Node("logical expression"); 
+                                                                                         Node andy = new Node("&", conright, conleft, null);
+                                                                                         andy.addChildren(log1); 
+                                                                                         andy.addChildren(log2);
+                                                                                         res.addChildren(andy);
+                                                                                         RESULT = res; 
+                                                                                      :}
+
+    | LOGICAL_EXPRESSION:log1 or:dis LOGICAL_EXPRESSION:log2                          {: Node res = new Node("logical expression"); 
+                                                                                         Node oro = new Node("|", disright, disleft, null);
+                                                                                         oro.addChildren(log1); 
+                                                                                         oro.addChildren(log2);
+                                                                                         res.addChildren(oro);
+                                                                                         RESULT = res; 
+                                                                                      :}
+                                                                                            
+    | not:neg LOGICAL_EXPRESSION:log                                                  {: Node res = new Node("logical expression");
+                                                                                         Node no = new Node("!", negright, negleft, null);
+                                                                                         no.addChildren(log);
+                                                                                         res.addChildren(no);
+                                                                                         RESULT = res; 
+                                                                                      :}
+                                                                                            
+    | COMPARATIVE_EXPRESSION:comp                                                     {: RESULT = comp; :}
+;
+
+COMPARATIVE_EXPRESSION ::= COMPARATIVE_EXPRESSION:exp1 RELATIONAL_OPERATOR:op COMPARATIVE_EXPRESSION:exp2     {: Node res = new Node("relational expression");
+                                                                                                                 Node exp = new Node(String.valueOf(op), opright, opleft, null);
+                                                                                                                 exp.addChildren(exp1); 
+                                                                                                                 exp.addChildren(exp2);
+                                                                                                                 res.addChildren(exp);
+                                                                                                                 RESULT = res; 
+                                                                                                              :}
+
+    | BASIC_EXPRESSION:basic                                                                                  {: RESULT = basic; :}
+;
+
+RELATIONAL_OPERATOR ::= equals  {: RESULT = "=="; :}
+
+    | notEquals                 {: RESULT = "!="; :}
+
+    | greater                   {: RESULT = ">"; :}
+
+    | greaterEquals             {: RESULT = ">="; :}
+
+    | lesser                    {: RESULT = "<"; :}
+
+    | lesserEquals              {: RESULT = "<="; :}
+;
+
+BASIC_EXPRESSION ::= BASIC_EXPRESSION:exp1 BASIC_OPERATOR:op BASIC_EXPRESSION:exp2        {: Node res = new Node("basic expression");
+                                                                                             Node exp = new Node(String.valueOf(op), opright, opleft, null);
+                                                                                             exp.addChildren(exp1); 
+                                                                                             exp.addChildren(exp2);
+                                                                                             res.addChildren(exp);
+                                                                                             RESULT = res; 
+                                                                                          :}
+
+    | minus:min TERNARY_EXPRESSION:exp                                                    {: Node res = new Node("basic expression");
+                                                                                             Node minus = new Node("-", minright, minleft, null);
+                                                                                             minus.addChildren(exp);
+                                                                                             res.addChildren(minus);
+                                                                                             RESULT = res; 
+                                                                                          :}
+
+    | openingPar TERNARY_EXPRESSION:exp closingPar                                        {: RESULT = exp; :}
+
+    | BASIC_VALUE:basic                                                                   {: RESULT = basic; :}
+
+    | id:fier                                                                             {: RESULT = new Node("identifier", fierright, fierleft, String.valueOf(fier)); :}
+;
+
+BASIC_OPERATOR ::= plus {: RESULT = "+"; :}
+
+    | minus             {: RESULT = "-"; :}
+
+    | times             {: RESULT = "*"; :}
+
+    | div               {: RESULT = "/"; :}
+
+    | mod               {: RESULT = "%"; :}
+
+    | power             {: RESULT = "^"; :}
+
+    | valAsignment      {: RESULT = "="; :}
+;
+
+BASIC_VALUE ::= nullValue:nuv   {: RESULT = new Node("basic value", nuvright, nuvleft, null); :}
+
+    | stringValue:sv            {: RESULT = new Node("basic value", svright, svleft, String.valueOf(sv)); :}
+
+    | numberValue:nv            {: RESULT = new Node("basic value", nvright, nvleft, Integer.parseInt(String.valueOf(nv))); :}
+
+    | falseValue:fv             {: RESULT = new Node("basic value", fvright, fvleft, false); :}
+
+    | trueValue:tv              {: RESULT = new Node("basic value", tvright, tvleft, true); :}
+;
+
+
