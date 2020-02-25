@@ -6,6 +6,7 @@
 package APIServices;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 
 /**
@@ -33,7 +34,10 @@ public class TreePrinter {
         for (Node child : node.getChildren()) {
             String childsName = "node" + String.valueOf(counter);
             graph.append(childsName);
-            graph.append("[label=\"" + Scape(child.getNodeType()) + "\"];\n");
+            if (child.getNodeType().equals("basic value") || child.getNodeType().equals("identifier"))
+                graph.append("[label=\"" + Scape(child.getNodeType() + ": " + String.valueOf(child.getContent())) + "\"];\n");
+            else
+                graph.append("[label=\"" + Scape(child.getNodeType()) + "\"];\n");
             graph.append(father);
             graph.append("->");
             graph.append(childsName);
@@ -56,6 +60,12 @@ public class TreePrinter {
             BufferedWriter writer = new BufferedWriter(new FileWriter("cupTree.dot"));
             writer.write(dot);
             writer.close();
+            
+            String directory = new File("").getAbsolutePath();
+            System.out.println(directory);
+            Runtime rt = Runtime.getRuntime();
+            //rt.exec("cd " + "\""+directory+"\"");
+            rt.exec(new String[] {"dot", "-Tpng", "cupTree.dot", "-o", "cupTree.png"});
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
