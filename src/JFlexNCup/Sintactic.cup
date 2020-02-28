@@ -243,7 +243,9 @@ ASIGNMENT ::= id:id valAsignment LONE_EXPRESSION:exp                {: Node as =
                                                                     :}
 
     | MATRIX_ACCESS valAsignment LONE_EXPRESSION
+
     | VECTOR_ACCESS valAsignment LONE_EXPRESSION 
+
     | id:id valAsignment ARROW_FUNCTION:f                           {: Node as = new Node("arrow function"); 
                                                                        Node ident = new Node("identifier", idright, idleft, String.valueOf(id));
                                                                        as.addChildren(ident); 
@@ -290,6 +292,27 @@ ARROW_FUNCTION ::= openingPar closingPar arrowFunction SENTENCES_BLOCK:list     
                                                                                                                                       res.addChildren(list);
                                                                                                                                       RESULT = res;
                                                                                                                                     :}
+;
+
+PARAMETERS_DECL ::= PARAMETERS_DECL:ters comma PARAMETER:par                    {: Node params = new Node("paratemers"); 
+                                                                                   transferChildren(ters, params); 
+                                                                                   params.addChildren(par); 
+                                                                                   RESULT = params; 
+                                                                                :}
+
+    | PARAMETER:par                                                             {: Node params = new Node("parameters");
+                                                                                   params.addChildren(par);
+                                                                                   RESULT = params; :}                      
+;
+
+PARAMETER ::= id:id                                         {: RESULT = new Node("identifier", idright, idleft, String.valueOf(id)); :}
+
+    | id:id valAsignment LONE_EXPRESSION:exp                {: Node param = new Node("asignment");
+                                                               Node ident = new Node("identifier", idright, idleft, String.valueOf(id));
+                                                               param.addChildren(ident); 
+                                                               param.addChildren(exp);
+                                                               RESULT = param;
+                                                            :}
 ;
 
 FUNCTION_CALL ::= id:id openingPar closingPar                                   {: Node call = new Node("call"); 
@@ -439,22 +462,6 @@ BREAK_SENTENCE ::=  breakKeyword                    {: RESULT = new Node("break 
 CONTINUE_SENTENCE ::= continueKeyword               {: RESULT = new Node("continue sentence"); :}
 
     | continueKeyword semicolon                     {: RESULT = new Node("continue sentence"); :}
-;
-
-PARAMETERS_DECL ::= PARAMETERS_DECL:ters comma PARAMETER:par                    {: Node params = new Node("paratemers"); 
-                                                                                   transferChildren(ters, params); 
-                                                                                   params.addChildren(par); 
-                                                                                   RESULT = params; 
-                                                                                :}
-
-    | PARAMETER:par                                                             {: Node params = new Node("parameters");
-                                                                                   params.addChildren(par);
-                                                                                   RESULT = params; :}                      
-;
-
-PARAMETER ::= id:id                 {: RESULT = new Node("identifier", idright, idleft, String.valueOf(id)); :}
-
-    | ASIGNMENT:asig                {: RESULT = asig; :}
 ;
 
 ADDRESSES ::= ADDRESSES:addresses ADDRESS:single                {: Node adds = new Node("addresses"); 

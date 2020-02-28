@@ -1,0 +1,271 @@
+options {
+    IGNORE_CASE = true;
+    STATIC = false;
+}
+
+PARSER_BEGIN(Grammar)
+package JavaCC; 
+import APIServices.Node;
+
+public class Grammar {}
+
+PARSER_END(Grammar)
+
+/* Scanner */
+
+/* characters that i need to avoid */
+
+SKIP : {
+        " "
+    |   "\t"
+    |   "\r"
+    |   "\f"
+    |   "\n"
+    |   < "#" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+    |   "#*": MULTILINE_COMMENT
+}
+
+/* comments that take more than one line */
+
+<MULTILINE_COMMENT> SKIP:
+{
+    "*#" : DEFAULT
+}
+
+<MULTILINE_COMMENT> MORE:
+{
+    < ~[] >
+}
+
+/* Reserved words and symbols */
+
+TOKEN: {
+        <MOD: "%%" >
+    |   <EQUALS: "==" >
+    |   <NOT_EQUALS: "!=" >
+    |   <GREATER_EQUALS: ">=" >
+    |   <LESSER_EQUALS: "<=" >
+    |   <ARROW: "=>" >
+    |   <VALUE_ASIGNMENT: "=" >
+    |   <OPENING_P: "(" >
+    |   <CLOSING_P: ")" >
+    |   <OPENING_B: "[" >
+    |   <CLOSING_B: "]" >
+    |   <OPENING_C: "{" >
+    |   <CLOSING_C: "}" >
+    |   <COMMA: "," >
+    |   <SEMICOLON: ";" >
+    |   <PLUS: "+" >
+    |   <MINUS: "-" >
+    |   <TIMES: "*" >
+    |   <DIV: "/" >
+    |   <POWER: "^" >
+    |   <GREATER: ">" >
+    |   <LESSER: "<" >
+    |   <NOT: "!" >
+    |   <AND: "&" >
+    |   <OR: "|" >
+    |   <TERNARY: "?" >
+    |   <COLON: ":" >
+    |   <IF_KEYWORD: "if" >
+    |   <ELSE_KEYWORD: "else" >
+    |   <SWITCH_KEYWORD: "switch" >
+    |   <CASE_KEYWORD: "case" >
+    |   <BREAK_KEYWORD: "break" >
+    |   <WHILE_KEYWORD: "while" >
+    |   <DO_KEYWORD: "do" >
+    |   <FOR_KEYWORD: "for" >
+    |   <IN_KEYWORD: "in" >
+    |   <CONTINUE_KEYWORD: "continue" >
+    |   <RETURN_KEYWORD: "return" >
+    |   <FUNCTION_KEYWORD: "function" >
+    |   <DEFAULT_KEYWORD: "default" >
+    |   <NULL_VALUE: "null" >
+    |   <FALSE_VALUE: "false" >
+    |   <TRUE_VALUE: "true" >
+}
+
+/* tokens that need a regular expression */
+
+TOKEN: {
+        <#DIGIT: ["0"-"9"] >
+    |   <FRACTIONAL_DIGITS: "." ( <DIGIT> )+ >
+    |   <NUMBER_VALUE: ( <DIGIT> )+ | ( <DIGIT> )+ <FRACTIONAL_DIGITS> >
+    |   <STRING_VALUE: "\"" (~["\""])* "\"" >
+    |   <#LETTER: ["a" - "z", "A" - "Z", "ñ", "Ñ"] >
+    |   <IDENTIFIER: <LETTER> ( <LETTER> | <DIGIT> | "." | "_")* | "." (( <LETTER> | "." | "_" ) ( <LETTER> | "." | "_" | <DIGIT> )*)? >
+}
+
+/* Scanner End */
+
+Node Root() :
+{ Node root = new Node("root"); Node aux; }
+{
+        ( aux = Sentence() { root.addChildren(aux); } )+ <EOF> { return root; }
+}
+
+
+Node Sentences_Block() : 
+{ Node instruction; Node sentences = new Node("sentences"); }
+{
+    <OPENING_C> ( instruction = Sentence() { sentences.addChildren(instruction); } )* <CLOSING_C> { return sentences; }
+}
+
+
+Node Sentence() :
+{ Node instruction; }
+{
+    instruction = Asignment() ( <SEMICOLON> )? { return instruction; }
+}
+
+Node First_Expression() : 
+{ Node exp1; Node exp2; Node op; Node res; Token rep; }
+{
+    exp1 = Third_Expression()
+    (
+        rep = <VALUE_ASIGNMENT> exp2 = Third_Expression()       { 
+                                                                    res = new Node("binary expression");
+                                                                    op = new Node("=", rep.beginLine, rep.beginColumn, null);
+                                                                    op.addChildren(exp1);
+                                                                    op.addChildren(exp2);
+                                                                    res.addChildren(op);
+                                                                    exp1 = res;
+                                                                }
+    )*
+    { return exp1; }
+}
+
+void Third_Expression() :
+{}
+{
+    Fourth_Expression() 
+    (
+        <OR> Fourth_Expression()
+    )*
+}
+
+void Fourth_Expression() :
+{}
+{
+    Fifth_Expression()
+    (
+        <AND> Fifth_Expression()
+    )*
+}
+
+void Fifth_Expression() :
+{}
+{
+    Sixth_Expression()
+    (
+            <EQUALS> Sixth_Expression()
+        |
+            <NOT_EQUALS> Sixth_Expression()
+    )*
+}
+
+void Sixth_Expression() :
+{}
+{
+    Seventh_Expression()
+    (
+            <LESSER> Seventh_Expression()
+        |
+            <GREATER> Seventh_Expression()
+        |
+            <LESSER_EQUALS> Seventh_Expression()
+        |
+            <GREATER_EQUALS> Seventh_Expression()
+    )*
+}
+
+void Seventh_Expression(): 
+{}
+{
+    Eigth_Expression()
+    (
+            <PLUS> Eigth_Expression()
+        |
+            <MINUS> Eigth_Expression()
+    )*
+}
+
+void Eigth_Expression() :
+{}
+{
+    Nineth_Expression()
+    (
+            <TIMES> Nineth_Expression()
+        |
+            <DIV> Nineth_Expression()
+        |
+            <MOD> Nineth_Expression()
+    )*
+}
+
+void Nineth_Expression() :
+{}
+{
+        <MINUS> Nineth_Expression()
+    |
+        <NOT> Nineth_Expression()
+    |
+        Value()
+}
+
+Node Value() :
+{ Node aux; Token tok; }
+{
+        tok = <NULL_VALUE>                                          { return new Node("null value", tok.beginLine, tok.beginColumn, null); }
+    |
+        tok = <FALSE_VALUE>                                         { return new Node("bool value", tok.beginLine, tok.beginColumn, false); }
+    | 
+        tok = <TRUE_VALUE>                                          { return new Node("bool value", tok.beginLine, tok.beginColumn, true); }
+    |
+        tok = <NUMBER_VALUE>                                        { return new Node("number value", tok.beginLine, tok.beginColumn, Double.parseDouble(tok.image)); }
+    |
+        tok = <STRING_VALUE>                                        { return new Node("string value", tok.beginLine, tok.beginColumn, tok.image); }
+    |
+        tok = <IDENTIFIER>                                          { return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image); }
+    |
+        <OPENING_P> aux = First_Expression() <CLOSING_P>            { return aux; }
+}
+
+Node Asignment() :
+{ Token id;  Node exp; Node param; Node params = new Node("parameters"); Node ident; Node res; Node sent; }
+{
+        id = <IDENTIFIER> <VALUE_ASIGNMENT> exp = First_Expression()            { 
+                                                                                    res = new Node("asignment");
+                                                                                    ident = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                                                    res.addChildren(ident);
+                                                                                    res.addChildren(exp);
+                                                                                    return res;
+                                                                                }
+    |
+        LOOKAHEAD(3)
+        id = <IDENTIFIER> <VALUE_ASIGNMENT> <FUNCTION_KEYWORD>
+         <OPENING_P> ( param = Parameter() { params.addChildren(param); } )* 
+         <CLOSING_P> sent = Sentences_Block()                                   {
+                                                                                    res = new Node("function");
+                                                                                    ident = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                                                    res.addChildren(ident);
+                                                                                    res.addChildren(params);
+                                                                                    res.addChildren(sent);
+                                                                                    return res;
+                                                                                }
+}
+
+Node Parameter() : 
+{ Token tok; Node res; Node id; Node exp; }
+{
+        tok = <IDENTIFIER>                                                      { return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image); }
+    |
+        LOOKAHEAD(2)
+        tok = <IDENTIFIER> <VALUE_ASIGNMENT> exp = First_Expression()           { 
+                                                                                    res = new Node("asignment"); 
+                                                                                    id = new Node("identifier", tok.beginLine, tok.beginColumn, tok.image);
+                                                                                    res.addChildren(id);
+                                                                                    res.addChildren(exp);
+                                                                                    return res;
+                                                                                }
+}

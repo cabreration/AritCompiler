@@ -26,9 +26,8 @@ public class AritCompiler {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        cupTry();
     }
-    
+   
     public static void cupTry() {
         BufferedReader bufferedReader;
         String name = "C:\\Users\\jacab\\Documents\\Compi 2\\R-it\\Pruebas\\tree.arit";
