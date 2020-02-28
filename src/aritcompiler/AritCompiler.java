@@ -9,6 +9,7 @@ import APIServices.Node;
 import APIServices.TreePrinter;
 import JFlexNCup.Parser;
 import JFlexNCup.Scanner;
+import JavaCC.Grammar;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.Reader;
@@ -26,6 +27,7 @@ public class AritCompiler {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        javaccTry();
     }
    
     public static void cupTry() {
@@ -66,6 +68,17 @@ public class AritCompiler {
     }
     
     
-    public static void javaccTry() {}
+    public static void javaccTry() {
+        
+        try {
+            String name = "C:\\Users\\jacab\\Documents\\Compi 2\\R-it\\Pruebas\\tree.arit";
+            Grammar parser = new Grammar(new BufferedReader(new FileReader(name)));
+            Node root = parser.Root();
+            TreePrinter.printTree(root);
+        }
+        catch (Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
     
 }

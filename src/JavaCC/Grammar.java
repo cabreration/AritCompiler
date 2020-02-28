@@ -6,11 +6,9 @@ public class Grammar implements GrammarConstants {
 
 /* Scanner End */
   final public Node Root() throws ParseException {
-  Node root = new Node("root"); Node aux;
+  Node root = new Node("root"); Node sentences = new Node("sentences"); Node aux;
     label_1:
     while (true) {
-      aux = Sentence();
-                             root.addChildren(aux);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case IDENTIFIER:
         ;
@@ -19,9 +17,11 @@ public class Grammar implements GrammarConstants {
         jj_la1[0] = jj_gen;
         break label_1;
       }
+      aux = Sentence();
+                             sentences.addChildren(aux);
     }
     jj_consume_token(0);
-                                                                 {if (true) return root;}
+                                                                      root.addChildren(sentences); {if (true) return root;}
     throw new Error("Missing return statement in function");
   }
 
@@ -62,200 +62,277 @@ public class Grammar implements GrammarConstants {
   }
 
   final public Node First_Expression() throws ParseException {
-    Third_Expression();
-    label_3:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case VALUE_ASIGNMENT:
-        ;
-        break;
-      default:
-        jj_la1[3] = jj_gen;
-        break label_3;
-      }
-      jj_consume_token(VALUE_ASIGNMENT);
-      Third_Expression();
-    }
+  Node exp1; Node exp;
+    exp1 = Third_Expression();
+    exp = PFirst_Expression(exp1);
+      {if (true) return exp;}
+    throw new Error("Missing return statement in function");
   }
 
-  final public void Third_Expression() throws ParseException {
-    Fourth_Expression();
-    label_4:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case OR:
-        ;
-        break;
-      default:
-        jj_la1[4] = jj_gen;
-        break label_4;
-      }
-      jj_consume_token(OR);
-      Fourth_Expression();
+  final public Node PFirst_Expression(Node inherited) throws ParseException {
+  Node exp1; Node op; Token v; Node res; Node bin;
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case VALUE_ASIGNMENT:
+      v = jj_consume_token(VALUE_ASIGNMENT);
+      exp1 = Third_Expression();
+                                                        bin = new Node("binary expression");
+                                                        op = new Node("=", v.beginLine, v.beginColumn, null);
+                                                        op.addChildren(inherited);
+      res = PFirst_Expression(exp1);
+                                                                                        op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
+      break;
+    default:
+      jj_la1[3] = jj_gen;
+          {if (true) return inherited;}
     }
+    throw new Error("Missing return statement in function");
   }
 
-  final public void Fourth_Expression() throws ParseException {
-    Fifth_Expression();
-    label_5:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case AND:
-        ;
-        break;
-      default:
-        jj_la1[5] = jj_gen;
-        break label_5;
-      }
-      jj_consume_token(AND);
-      Fifth_Expression();
-    }
+  final public Node Third_Expression() throws ParseException {
+  Node exp1; Node exp;
+    exp1 = Fourth_Expression();
+    exp = PThird_Expression(exp1);
+      {if (true) return exp;}
+    throw new Error("Missing return statement in function");
   }
 
-  final public void Fifth_Expression() throws ParseException {
-    Sixth_Expression();
-    label_6:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case EQUALS:
-      case NOT_EQUALS:
-        ;
-        break;
-      default:
-        jj_la1[6] = jj_gen;
-        break label_6;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case EQUALS:
-        jj_consume_token(EQUALS);
-        Sixth_Expression();
-        break;
-      case NOT_EQUALS:
-        jj_consume_token(NOT_EQUALS);
-        Sixth_Expression();
-        break;
-      default:
-        jj_la1[7] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
+  final public Node PThird_Expression(Node inherited) throws ParseException {
+  Node exp1; Node op; Token v; Node res; Node bin;
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case OR:
+      v = jj_consume_token(OR);
+      exp1 = Fourth_Expression();
+                                                bin = new Node("binary expression");
+                                                op = new Node("|", v.beginLine, v.beginColumn, null);
+                                                op.addChildren(inherited);
+      res = PThird_Expression(exp1);
+                                                                                op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
+      break;
+    default:
+      jj_la1[4] = jj_gen;
+          {if (true) return inherited;}
     }
+    throw new Error("Missing return statement in function");
   }
 
-  final public void Sixth_Expression() throws ParseException {
-    Seventh_Expression();
-    label_7:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case GREATER_EQUALS:
-      case LESSER_EQUALS:
-      case GREATER:
-      case LESSER:
-        ;
-        break;
-      default:
-        jj_la1[8] = jj_gen;
-        break label_7;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case LESSER:
-        jj_consume_token(LESSER);
-        Seventh_Expression();
-        break;
-      case GREATER:
-        jj_consume_token(GREATER);
-        Seventh_Expression();
-        break;
-      case LESSER_EQUALS:
-        jj_consume_token(LESSER_EQUALS);
-        Seventh_Expression();
-        break;
-      case GREATER_EQUALS:
-        jj_consume_token(GREATER_EQUALS);
-        Seventh_Expression();
-        break;
-      default:
-        jj_la1[9] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
-    }
+  final public Node Fourth_Expression() throws ParseException {
+  Node exp1; Node exp;
+    exp1 = Fifth_Expression();
+    exp = PFourth_Expression(exp1);
+      {if (true) return exp;}
+    throw new Error("Missing return statement in function");
   }
 
-  final public void Seventh_Expression() throws ParseException {
-    Eigth_Expression();
-    label_8:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case PLUS:
-      case MINUS:
-        ;
-        break;
-      default:
-        jj_la1[10] = jj_gen;
-        break label_8;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case PLUS:
-        jj_consume_token(PLUS);
-        Eigth_Expression();
-        break;
-      case MINUS:
-        jj_consume_token(MINUS);
-        Eigth_Expression();
-        break;
-      default:
-        jj_la1[11] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
+  final public Node PFourth_Expression(Node inherited) throws ParseException {
+  Node exp1; Node op; Token v; Node res; Node bin;
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case AND:
+      v = jj_consume_token(AND);
+      exp1 = Fifth_Expression();
+                                            bin = new Node("binary expression");
+                                            op = new Node("&", v.beginLine, v.beginColumn, null);
+                                            op.addChildren(inherited);
+      res = PFourth_Expression(exp1);
+                                                                             op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
+      break;
+    default:
+      jj_la1[5] = jj_gen;
+          {if (true) return inherited;}
     }
+    throw new Error("Missing return statement in function");
   }
 
-  final public void Eigth_Expression() throws ParseException {
-    Nineth_Expression();
-    label_9:
-    while (true) {
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case MOD:
-      case TIMES:
-      case DIV:
-        ;
-        break;
-      default:
-        jj_la1[12] = jj_gen;
-        break label_9;
-      }
-      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-      case TIMES:
-        jj_consume_token(TIMES);
-        Nineth_Expression();
-        break;
-      case DIV:
-        jj_consume_token(DIV);
-        Nineth_Expression();
-        break;
-      case MOD:
-        jj_consume_token(MOD);
-        Nineth_Expression();
-        break;
-      default:
-        jj_la1[13] = jj_gen;
-        jj_consume_token(-1);
-        throw new ParseException();
-      }
-    }
+  final public Node Fifth_Expression() throws ParseException {
+  Node exp1; Node exp;
+    exp1 = Sixth_Expression();
+    exp = PFifth_Expression(exp1);
+      {if (true) return exp;}
+    throw new Error("Missing return statement in function");
   }
 
-  final public void Nineth_Expression() throws ParseException {
+  final public Node PFifth_Expression(Node inherited) throws ParseException {
+  Node exp1; Node op; Token v; Node res; Node bin;
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case EQUALS:
+      v = jj_consume_token(EQUALS);
+      exp1 = Sixth_Expression();
+                                                    bin = new Node("binary expression");
+                                                    op = new Node("==", v.beginLine, v.beginColumn, null);
+                                                    op.addChildren(inherited);
+      res = PFifth_Expression(exp1);
+                                                                                    op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
+      break;
+    case NOT_EQUALS:
+      v = jj_consume_token(NOT_EQUALS);
+      exp1 = Sixth_Expression();
+                                                        bin = new Node("binary expression");
+                                                        op = new Node("!=", v.beginLine, v.beginColumn, null);
+                                                        op.addChildren(inherited);
+      res = PFifth_Expression(exp1);
+                                                                                        op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
+      break;
+    default:
+      jj_la1[6] = jj_gen;
+          {if (true) return inherited;}
+    }
+    throw new Error("Missing return statement in function");
+  }
+
+  final public Node Sixth_Expression() throws ParseException {
+  Node exp1; Node exp;
+    exp1 = Seventh_Expression();
+    exp = PSixth_Expression(exp1);
+      {if (true) return exp;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public Node PSixth_Expression(Node inherited) throws ParseException {
+  Node exp1; Node op; Token v; Node res; Node bin;
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case LESSER:
+      v = jj_consume_token(LESSER);
+      exp1 = Seventh_Expression();
+                                                        bin = new Node("binary expression");
+                                                        op = new Node("<", v.beginLine, v.beginColumn, null);
+                                                        op.addChildren(inherited);
+      res = PSixth_Expression(exp1);
+                                                                                        op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
+      break;
+    case GREATER:
+      v = jj_consume_token(GREATER);
+      exp1 = Seventh_Expression();
+                                                        bin = new Node("binary expression");
+                                                        op = new Node(">", v.beginLine, v.beginColumn, null);
+                                                        op.addChildren(inherited);
+      res = PSixth_Expression(exp1);
+                                                                                        op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
+      break;
+    case LESSER_EQUALS:
+      v = jj_consume_token(LESSER_EQUALS);
+      exp1 = Seventh_Expression();
+                                                                bin = new Node("binary expression");
+                                                                op = new Node("<=", v.beginLine, v.beginColumn, null);
+                                                                op.addChildren(inherited);
+      res = PSixth_Expression(exp1);
+                                                                                                op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
+      break;
+    case GREATER_EQUALS:
+      v = jj_consume_token(GREATER_EQUALS);
+      exp1 = Seventh_Expression();
+                                                                bin = new Node("binary expression");
+                                                                op = new Node(">=", v.beginLine, v.beginColumn, null);
+                                                                op.addChildren(inherited);
+      res = PSixth_Expression(exp1);
+                                                                                                op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
+      break;
+    default:
+      jj_la1[7] = jj_gen;
+          {if (true) return inherited;}
+    }
+    throw new Error("Missing return statement in function");
+  }
+
+  final public Node Seventh_Expression() throws ParseException {
+  Node exp1; Node exp;
+    exp1 = Eigth_Expression();
+    exp = PSeventh_Expression(exp1);
+      {if (true) return exp;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public Node PSeventh_Expression(Node inherited) throws ParseException {
+  Node exp1; Node op; Token v; Node res; Node bin;
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case PLUS:
+      v = jj_consume_token(PLUS);
+      exp1 = Eigth_Expression();
+                                                    bin = new Node("binary expression");
+                                                    op = new Node("+", v.beginLine, v.beginColumn, null);
+                                                    op.addChildren(inherited);
+      res = PSeventh_Expression(exp1);
+                                                                                      op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
+      break;
+    case MINUS:
+      v = jj_consume_token(MINUS);
+      exp1 = Eigth_Expression();
+                                                        bin = new Node("binary expression");
+                                                        op = new Node("-", v.beginLine, v.beginColumn, null);
+                                                        op.addChildren(inherited);
+      res = PSeventh_Expression(exp1);
+                                                                                          op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
+      break;
+    default:
+      jj_la1[8] = jj_gen;
+          {if (true) return inherited;}
+    }
+    throw new Error("Missing return statement in function");
+  }
+
+  final public Node Eigth_Expression() throws ParseException {
+  Node exp1; Node exp;
+    exp1 = Nineth_Expression();
+    exp = PEigth_Expression(exp1);
+      {if (true) return exp;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public Node PEigth_Expression(Node inherited) throws ParseException {
+  Node exp1; Node op; Token v; Node res; Node bin;
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case TIMES:
+      v = jj_consume_token(TIMES);
+      exp1 = Nineth_Expression();
+                                                    bin = new Node("binary expression");
+                                                    op = new Node("*", v.beginLine, v.beginColumn, null);
+                                                    op.addChildren(inherited);
+      res = PEigth_Expression(exp1);
+                                                                                    op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
+      break;
+    case DIV:
+      v = jj_consume_token(DIV);
+      exp1 = Nineth_Expression();
+                                                    bin = new Node("binary expression");
+                                                    op = new Node("/", v.beginLine, v.beginColumn, null);
+                                                    op.addChildren(inherited);
+      res = PEigth_Expression(exp1);
+                                                                                    op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
+      break;
+    case MOD:
+      v = jj_consume_token(MOD);
+      exp1 = Nineth_Expression();
+                                                    bin = new Node("binary expression");
+                                                    op = new Node("%%", v.beginLine, v.beginColumn, null);
+                                                    op.addChildren(inherited);
+      res = PEigth_Expression(exp1);
+                                                                                    op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
+      break;
+    default:
+      jj_la1[9] = jj_gen;
+          {if (true) return inherited;}
+    }
+    throw new Error("Missing return statement in function");
+  }
+
+  final public Node Nineth_Expression() throws ParseException {
+  Node res; Node min; Token t; Node exp;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case MINUS:
-      jj_consume_token(MINUS);
-      Nineth_Expression();
+      t = jj_consume_token(MINUS);
+      exp = Nineth_Expression();
+                                                    res = new Node("unary expression");
+                                                    min = new Node("-", t.beginLine, t.beginColumn, null);
+                                                    min.addChildren(exp);
+                                                    res.addChildren(min);
+                                                    {if (true) return res;}
       break;
     case NOT:
-      jj_consume_token(NOT);
-      Nineth_Expression();
+      t = jj_consume_token(NOT);
+      exp = Nineth_Expression();
+                                                    res = new Node("unary expression");
+                                                    min = new Node("!", t.beginLine, t.beginColumn, null);
+                                                    min.addChildren(exp);
+                                                    res.addChildren(min);
+                                                    {if (true) return res;}
       break;
     case OPENING_P:
     case NULL_VALUE:
@@ -264,13 +341,15 @@ public class Grammar implements GrammarConstants {
     case NUMBER_VALUE:
     case STRING_VALUE:
     case IDENTIFIER:
-      Value();
+      res = Value();
+                        {if (true) return res;}
       break;
     default:
-      jj_la1[14] = jj_gen;
+      jj_la1[10] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
+    throw new Error("Missing return statement in function");
   }
 
   final public Node Value() throws ParseException {
@@ -307,7 +386,7 @@ public class Grammar implements GrammarConstants {
                                                                       {if (true) return aux;}
       break;
     default:
-      jj_la1[15] = jj_gen;
+      jj_la1[11] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -328,21 +407,21 @@ public class Grammar implements GrammarConstants {
                                                                                     {if (true) return res;}
       break;
     default:
-      jj_la1[17] = jj_gen;
+      jj_la1[13] = jj_gen;
       if (jj_2_1(3)) {
         id = jj_consume_token(IDENTIFIER);
         jj_consume_token(VALUE_ASIGNMENT);
         jj_consume_token(FUNCTION_KEYWORD);
         jj_consume_token(OPENING_P);
-        label_10:
+        label_3:
         while (true) {
           switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
           case IDENTIFIER:
             ;
             break;
           default:
-            jj_la1[16] = jj_gen;
-            break label_10;
+            jj_la1[12] = jj_gen;
+            break label_3;
           }
           param = Parameter();
                                              params.addChildren(param);
@@ -371,7 +450,7 @@ public class Grammar implements GrammarConstants {
                                                                                   {if (true) return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image);}
       break;
     default:
-      jj_la1[18] = jj_gen;
+      jj_la1[14] = jj_gen;
       if (jj_2_2(2)) {
         tok = jj_consume_token(IDENTIFIER);
         jj_consume_token(VALUE_ASIGNMENT);
@@ -430,7 +509,7 @@ public class Grammar implements GrammarConstants {
   private boolean jj_lookingAhead = false;
   private boolean jj_semLA;
   private int jj_gen;
-  final private int[] jj_la1 = new int[19];
+  final private int[] jj_la1 = new int[15];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -438,10 +517,10 @@ public class Grammar implements GrammarConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0x1000000,0x10000,0x0,0x0,0x1800,0x1800,0xc0006000,0xc0006000,0x6000000,0x6000000,0x18000400,0x18000400,0x4020000,0x20000,0x0,0x0,0x0,};
+      jj_la1_0 = new int[] {0x0,0x0,0x1000000,0x10000,0x0,0x0,0x1800,0xc0006000,0x6000000,0x18000400,0x4020000,0x20000,0x0,0x0,0x0,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x4000000,0x4000000,0x0,0x0,0x4,0x2,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x59c0001,0x59c0000,0x4000000,0x4000000,0x4000000,};
+      jj_la1_1 = new int[] {0x4000000,0x4000000,0x0,0x0,0x4,0x2,0x0,0x0,0x0,0x0,0x59c0001,0x59c0000,0x4000000,0x4000000,0x4000000,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[2];
   private boolean jj_rescan = false;
@@ -458,7 +537,7 @@ public class Grammar implements GrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -473,7 +552,7 @@ public class Grammar implements GrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -484,7 +563,7 @@ public class Grammar implements GrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -495,7 +574,7 @@ public class Grammar implements GrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -505,7 +584,7 @@ public class Grammar implements GrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -515,7 +594,7 @@ public class Grammar implements GrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 19; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 15; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -635,7 +714,7 @@ public class Grammar implements GrammarConstants {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 19; i++) {
+    for (int i = 0; i < 15; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {
