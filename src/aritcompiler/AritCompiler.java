@@ -26,6 +26,7 @@ public class AritCompiler {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        cupTry();
     }
     
     public static void cupTry() {
