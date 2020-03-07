@@ -5,6 +5,7 @@
  */
 package Symbols;
 
+import Expressions.Value;
 import java.util.Hashtable;
 
 /**
@@ -19,13 +20,13 @@ public class SymbolsTable {
         symbols = new Hashtable<String, Symbol>();
     }
     
-    public void updateSymbol(Symbol symbol) {
+    public void updateSymbol(String name, Symbol symbol) {
         
-        boolean exists = symbols.containsKey(symbol.getName());
+        boolean exists = symbols.containsKey(name);
         if (exists)
-            symbols.remove(symbol.getName());
+            symbols.remove(name);
         
-        symbols.put(symbol.getName(), symbol);
+        symbols.put(name, symbol);
     }
     
     public Symbol getSymbol(String name) {
@@ -34,5 +35,14 @@ public class SymbolsTable {
             return null;
         
         return symbols.get(name);
+    }
+    
+    public Value getValue(String name) {
+        boolean exists = symbols.containsKey(name);
+        
+        if (!exists)
+            return null;
+        
+        return (Value)(symbols.get(name));
     }
 }

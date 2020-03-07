@@ -3,15 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Symbols;
+package Expressions;
+
+import Symbols.Enviroment;
 
 /**
  *
  * @author jacab
  */
-public interface Symbol {
-    
-    public Object getValue();
-    
-    public int getSize();
+public interface Expression {
+    public Object process(Enviroment env);
 }

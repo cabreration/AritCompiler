@@ -3,15 +3,17 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Symbols;
+package Expressions;
+
+import Symbols.Enviroment;
 
 /**
  *
  * @author jacab
  */
-public interface Symbol {
+public interface Value {
     
-    public Object getValue();
+    public Object booleanNegation(Enviroment env);
     
-    public int getSize();
+    public Object aritmeticNegation(Enviroment env);
 }

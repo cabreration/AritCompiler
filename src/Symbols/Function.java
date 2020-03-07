@@ -9,9 +9,14 @@ package Symbols;
  *
  * @author jacab
  */
-public interface Symbol {
+public class Function {
+    private String name;
     
-    public Object getValue();
+    public Function(String name) {
+        this.name = name;
+    }
     
-    public int getSize();
+    public String getName() {
+        return this.name;
+    }
 }
