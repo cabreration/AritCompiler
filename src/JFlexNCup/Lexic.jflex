@@ -26,7 +26,8 @@ LineTerminator = \r|\n|\r\n
 InputCharacter = [^\r\n]
 WhiteSpace     = {LineTerminator} | [ \t\f]
 Digit          = [0-9]
-Number         = {Digit}+("." {Digit}+)?
+Number         = {Digit}+"." {Digit}+
+Inter          = {Digit}+
 //CharString     = "\"" ~"\""
 Letter         = [a-zA-ZñÑ]
 Id             = {Letter}("."|"_"|{Digit}|{Letter})*|"."(({Letter}|"_"|".")({Letter}|"."|"_"|{Digit})*)?
@@ -86,7 +87,8 @@ multiLineComment   = "#*" [^*] ~"*#" | "#*" "*"+ "#"
 // -----> Values
 
 <YYINITIAL> "null"                    { return new Symbol(Sym.nullValue, yycolumn, yyline, "null"); }
-<YYINITIAL> {Number}                  { return new Symbol(Sym.numberValue, yycolumn, yyline, yytext()); }
+<YYINITIAL> {Number}                  { return new Symbol(Sym.numericValue, yycolumn, yyline, yytext()); }
+<YYINITIAL> {Inter}                   { return new Symbol(Sym.integerValue, yycolumn, yyline, yytext()); }
 <YYINITIAL> "false"                   { return new Symbol(Sym.falseValue, yycolumn, yyline, "false"); }
 <YYINITIAL> "true"                    { return new Symbol(Sym.trueValue, yycolumn, yyline, "true"); }
 <YYINITIAL> {Id}                      { return new Symbol(Sym.id, yycolumn, yyline, yytext()); }

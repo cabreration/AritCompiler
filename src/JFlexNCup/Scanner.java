@@ -69,13 +69,13 @@ public class Scanner implements java_cup.runtime.Scanner {
     "\1\33\1\34\1\35\1\36\1\0\4\5\1\37\1\40"+
     "\1\41\1\42\1\43\1\44\1\45\1\46\1\45\1\46"+
     "\4\4\1\0\10\4\1\47\1\4\1\50\1\51\1\52"+
-    "\1\53\1\3\3\5\1\4\1\54\1\4\1\0\1\4"+
+    "\1\53\1\54\3\5\1\4\1\55\1\4\1\0\1\4"+
     "\1\0\1\4\1\0\2\4\1\0\6\4\1\5\3\0"+
-    "\2\4\2\55\1\0\1\4\1\0\1\4\1\56\2\57"+
-    "\4\4\1\60\1\61\2\62\1\4\1\0\1\4\2\63"+
-    "\1\0\1\4\2\64\2\4\1\0\1\4\2\65\1\0"+
-    "\1\4\1\66\1\4\1\0\1\4\1\0\1\4\1\67"+
-    "\2\70\2\71";
+    "\2\4\2\56\1\0\1\4\1\0\1\4\1\57\2\60"+
+    "\4\4\1\61\1\62\2\63\1\4\1\0\1\4\2\64"+
+    "\1\0\1\4\2\65\2\4\1\0\1\4\2\66\1\0"+
+    "\1\4\1\67\1\4\1\0\1\4\1\0\1\4\1\70"+
+    "\2\71\2\72";
 
   private static int [] zzUnpackAction() {
     int [] result = new int[154];
@@ -740,289 +740,294 @@ public class Scanner implements java_cup.runtime.Scanner {
             { errors.add(new CompileError("Lexico", yytext() + " no pertenece al lenguaje Arit", yyline, yycolumn));
             } 
             // fall through
-          case 58: break;
+          case 59: break;
           case 2: 
             { 
             } 
             // fall through
-          case 59: break;
+          case 60: break;
           case 3: 
-            { return new Symbol(Sym.numberValue, yycolumn, yyline, yytext());
+            { return new Symbol(Sym.integerValue, yycolumn, yyline, yytext());
             } 
             // fall through
-          case 60: break;
+          case 61: break;
           case 4: 
             { return new Symbol(Sym.id, yycolumn, yyline, yytext());
             } 
             // fall through
-          case 61: break;
+          case 62: break;
           case 5: 
             { System.out.println("encontre un comentario simple");
             } 
             // fall through
-          case 62: break;
+          case 63: break;
           case 6: 
             { return new Symbol(Sym.times, yycolumn, yyline, "*");
             } 
             // fall through
-          case 63: break;
+          case 64: break;
           case 7: 
             { return new Symbol(Sym.valAsignment, yycolumn, yyline, "=");
             } 
             // fall through
-          case 64: break;
+          case 65: break;
           case 8: 
             { return new Symbol(Sym.not, yycolumn, yyline, "!");
             } 
             // fall through
-          case 65: break;
+          case 66: break;
           case 9: 
             { return new Symbol(Sym.greater, yycolumn, yyline, ">");
             } 
             // fall through
-          case 66: break;
+          case 67: break;
           case 10: 
             { return new Symbol(Sym.lesser, yycolumn, yyline, "<");
             } 
             // fall through
-          case 67: break;
+          case 68: break;
           case 11: 
             { return new Symbol(Sym.openingPar, yycolumn, yyline, "(");
             } 
             // fall through
-          case 68: break;
+          case 69: break;
           case 12: 
             { return new Symbol(Sym.closingPar, yycolumn, yyline, ")");
             } 
             // fall through
-          case 69: break;
+          case 70: break;
           case 13: 
             { return new Symbol(Sym.openingBracket, yycolumn, yyline, "[");
             } 
             // fall through
-          case 70: break;
+          case 71: break;
           case 14: 
             { return new Symbol(Sym.closingBracket, yycolumn, yyline, "]");
             } 
             // fall through
-          case 71: break;
+          case 72: break;
           case 15: 
             { return new Symbol(Sym.openingCurly, yycolumn, yyline, "{");
             } 
             // fall through
-          case 72: break;
+          case 73: break;
           case 16: 
             { return new Symbol(Sym.closingCurly, yycolumn, yyline, "}");
             } 
             // fall through
-          case 73: break;
+          case 74: break;
           case 17: 
             { return new Symbol(Sym.comma, yycolumn, yyline, ",");
             } 
             // fall through
-          case 74: break;
+          case 75: break;
           case 18: 
             { return new Symbol(Sym.semicolon, yycolumn, yyline, ";");
             } 
             // fall through
-          case 75: break;
+          case 76: break;
           case 19: 
             { return new Symbol(Sym.plus, yycolumn, yyline, "+");
             } 
             // fall through
-          case 76: break;
+          case 77: break;
           case 20: 
             { return new Symbol(Sym.minus, yycolumn, yyline, "-");
             } 
             // fall through
-          case 77: break;
+          case 78: break;
           case 21: 
             { return new Symbol(Sym.div, yycolumn, yyline, "/");
             } 
             // fall through
-          case 78: break;
+          case 79: break;
           case 22: 
             { return new Symbol(Sym.power, yycolumn, yyline, "^");
             } 
             // fall through
-          case 79: break;
+          case 80: break;
           case 23: 
             { return new Symbol(Sym.and, yycolumn, yyline, "&");
             } 
             // fall through
-          case 80: break;
+          case 81: break;
           case 24: 
             { return new Symbol(Sym.or, yycolumn, yyline, "|");
             } 
             // fall through
-          case 81: break;
+          case 82: break;
           case 25: 
             { return new Symbol(Sym.ternary, yycolumn, yyline, "?");
             } 
             // fall through
-          case 82: break;
+          case 83: break;
           case 26: 
             { return new Symbol(Sym.colon, yycolumn, yyline, ":");
             } 
             // fall through
-          case 83: break;
+          case 84: break;
           case 27: 
             { string.setLength(0); yybegin(STRING);
             } 
             // fall through
-          case 84: break;
+          case 85: break;
           case 28: 
             { string.append( yytext() );
             } 
             // fall through
-          case 85: break;
+          case 86: break;
           case 29: 
             { yybegin(YYINITIAL); 
                                         return new Symbol(Sym.stringValue, 
                                         string.toString());
             } 
             // fall through
-          case 86: break;
+          case 87: break;
           case 30: 
             { string.append('\\');
             } 
             // fall through
-          case 87: break;
+          case 88: break;
           case 31: 
             { return new Symbol(Sym.mod, yycolumn, yyline, "%%");
             } 
             // fall through
-          case 88: break;
+          case 89: break;
           case 32: 
             { return new Symbol(Sym.equals, yycolumn, yyline, "==");
             } 
             // fall through
-          case 89: break;
+          case 90: break;
           case 33: 
             { return new Symbol(Sym.arrowFunction, yycolumn, yyline, "=>");
             } 
             // fall through
-          case 90: break;
+          case 91: break;
           case 34: 
             { return new Symbol(Sym.notEquals, yycolumn, yyline, "!=");
             } 
             // fall through
-          case 91: break;
+          case 92: break;
           case 35: 
             { return new Symbol(Sym.greaterEquals, yycolumn, yyline, ">=");
             } 
             // fall through
-          case 92: break;
+          case 93: break;
           case 36: 
             { return new Symbol(Sym.lesserEquals, yycolumn, yyline, "<=");
             } 
             // fall through
-          case 93: break;
+          case 94: break;
           case 37: 
             { return new Symbol(Sym.ifKeyword, yycolumn, yyline, "if");
             } 
             // fall through
-          case 94: break;
+          case 95: break;
           case 38: 
             { return new Symbol(Sym.inKeyword, yycolumn, yyline, "in");
             } 
             // fall through
-          case 95: break;
+          case 96: break;
           case 39: 
             { return new Symbol(Sym.doKeyword, yycolumn, yyline, "do");
             } 
             // fall through
-          case 96: break;
+          case 97: break;
           case 40: 
             { string.append('\t');
             } 
             // fall through
-          case 97: break;
+          case 98: break;
           case 41: 
             { string.append('\r');
             } 
             // fall through
-          case 98: break;
+          case 99: break;
           case 42: 
             { string.append('\n');
             } 
             // fall through
-          case 99: break;
+          case 100: break;
           case 43: 
             { string.append('\"');
             } 
             // fall through
-          case 100: break;
-          case 44: 
-            { return new Symbol(Sym.forKeyword, yycolumn, yyline, "for");
-            } 
-            // fall through
           case 101: break;
-          case 45: 
-            { return new Symbol(Sym.elseKeyword, yycolumn, yyline, "else");
+          case 44: 
+            { return new Symbol(Sym.numericValue, yycolumn, yyline, yytext());
             } 
             // fall through
           case 102: break;
-          case 46: 
-            { return new Symbol(Sym.trueValue, yycolumn, yyline, "true");
+          case 45: 
+            { return new Symbol(Sym.forKeyword, yycolumn, yyline, "for");
             } 
             // fall through
           case 103: break;
-          case 47: 
-            { return new Symbol(Sym.caseKeyword, yycolumn, yyline, "case");
+          case 46: 
+            { return new Symbol(Sym.elseKeyword, yycolumn, yyline, "else");
             } 
             // fall through
           case 104: break;
-          case 48: 
-            { return new Symbol(Sym.nullValue, yycolumn, yyline, "null");
+          case 47: 
+            { return new Symbol(Sym.trueValue, yycolumn, yyline, "true");
             } 
             // fall through
           case 105: break;
-          case 49: 
-            { System.out.println("encontre un comentario multilinea");
+          case 48: 
+            { return new Symbol(Sym.caseKeyword, yycolumn, yyline, "case");
             } 
             // fall through
           case 106: break;
-          case 50: 
-            { return new Symbol(Sym.falseValue, yycolumn, yyline, "false");
+          case 49: 
+            { return new Symbol(Sym.nullValue, yycolumn, yyline, "null");
             } 
             // fall through
           case 107: break;
-          case 51: 
-            { return new Symbol(Sym.whileKeyword, yycolumn, yyline, "while");
+          case 50: 
+            { System.out.println("encontre un comentario multilinea");
             } 
             // fall through
           case 108: break;
-          case 52: 
-            { return new Symbol(Sym.breakKeyword, yycolumn, yyline, "break");
+          case 51: 
+            { return new Symbol(Sym.falseValue, yycolumn, yyline, "false");
             } 
             // fall through
           case 109: break;
-          case 53: 
-            { return new Symbol(Sym.switchKeyword, yycolumn, yyline, "switch");
+          case 52: 
+            { return new Symbol(Sym.whileKeyword, yycolumn, yyline, "while");
             } 
             // fall through
           case 110: break;
-          case 54: 
-            { return new Symbol(Sym.returnKeyword, yycolumn, yyline, "return");
+          case 53: 
+            { return new Symbol(Sym.breakKeyword, yycolumn, yyline, "break");
             } 
             // fall through
           case 111: break;
-          case 55: 
-            { return new Symbol(Sym.defaultKeyword, yycolumn, yyline, "default");
+          case 54: 
+            { return new Symbol(Sym.switchKeyword, yycolumn, yyline, "switch");
             } 
             // fall through
           case 112: break;
-          case 56: 
-            { return new Symbol(Sym.functionKeyword, yycolumn, yyline, "else");
+          case 55: 
+            { return new Symbol(Sym.returnKeyword, yycolumn, yyline, "return");
             } 
             // fall through
           case 113: break;
-          case 57: 
-            { return new Symbol(Sym.continueKeyword, yycolumn, yyline, "continue");
+          case 56: 
+            { return new Symbol(Sym.defaultKeyword, yycolumn, yyline, "default");
             } 
             // fall through
           case 114: break;
+          case 57: 
+            { return new Symbol(Sym.functionKeyword, yycolumn, yyline, "else");
+            } 
+            // fall through
+          case 115: break;
+          case 58: 
+            { return new Symbol(Sym.continueKeyword, yycolumn, yyline, "continue");
+            } 
+            // fall through
+          case 116: break;
           default:
             zzScanError(ZZ_NO_MATCH);
         }

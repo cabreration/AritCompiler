@@ -35,7 +35,8 @@ public class TreePrinter {
             String childsName = "node" + String.valueOf(counter);
             graph.append(childsName);
             if (child.getNodeType().equals("string value") || child.getNodeType().equals("identifier")
-                    || child.getNodeType().equals("number value") || child.getNodeType().equals("bool value"))
+                    || child.getNodeType().equals("numeric value") || child.getNodeType().equals("bool value")
+                    || child.getNodeType().equals("integer value"))
                 graph.append("[label=\"" + Scape(child.getNodeType() + ": " + String.valueOf(child.getContent())) + "\"];\n");
             else
                 graph.append("[label=\"" + Scape(child.getNodeType()) + "\"];\n");
