@@ -94,7 +94,54 @@ public class Atomic implements Expression, Value {
 
     @Override
     public Object aritmeticNegation(Enviroment env) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        if (type == Type.INTEGER) {
+            Integer ent = -(((Integer)value).intValue());
+            return new Atomic(Type.INTEGER, ent);
+        }
+        
+        if (type == Type.NUMERIC) {
+            Double doub = -(((Double)value).doubleValue());
+            return new Atomic(Type.NUMERIC, doub);
+        }
+        
+        if (type == Type.IDENTIFIER) {
+            Value compound = env.getValue(String.valueOf(this.value));
+            return compound.aritmeticNegation(env);
+        }
+        
+        return new CompileError("Semantico", "Tipo de operando invalido, incompatible con el operador '-'", this.line, this.column);
+        
     }
+    
+    @Override
+    public Object minus(Enviroment env, Value op) {
+        return null;
+    }
+    
+    @Override
+    public Object plus(Enviroment env, Value op) {
+        return null;
+    } 
+    
+    @Override
+    public Object times(Enviroment env, Value op) {
+        return null;
+    }
+    
+    @Override
+    public Object div(Enviroment env, Value op) {
+        return null;
+    }
+    
+    @Override
+    public Object mod(Enviroment env, Value op) {
+        return null;
+    } 
+    
+    @Override
+    public Object power(Enviroment env, Value op) {
+        return null;
+    } 
     
 }

@@ -16,4 +16,16 @@ public interface Value {
     public Object booleanNegation(Enviroment env);
     
     public Object aritmeticNegation(Enviroment env);
+    
+    public Object minus(Enviroment env, Value op);
+    
+    public Object plus(Enviroment env, Value op);
+    
+    public Object times(Enviroment env, Value op);
+    
+    public Object div(Enviroment env, Value op);
+    
+    public Object power(Enviroment env, Value op);
+    
+    public Object mod(Enviroment env, Value op);
 }

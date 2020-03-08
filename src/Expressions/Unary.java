@@ -24,6 +24,13 @@ public class Unary implements Expression {
         this.operator = operator;
         this.exp = exp;
     }
+
+    public Unary(Expression exp, Operator operator, int line, int column) {
+        this.exp = exp;
+        this.operator = operator;
+        this.line = line;
+        this.column = column;
+    }
     
     @Override
     public Object process(Enviroment env) {
