@@ -95,7 +95,13 @@ public class Vector implements Symbol, Value {
         /* Valid cases */
         if (op instanceof Atomic) {
             if (((Atomic)op).getType() == Atomic.Type.IDENTIFIER) {
+                String name = String.valueOf(((Atomic)op).getValue());
+                int l = ((Atomic)op).getLine();
+                int c = ((Atomic)op).getColumn();
                 op = env.getValue(String.valueOf(((Atomic)op).getValue()));
+                
+                if (op == null)
+                    return new CompileError("Semantico", "La variable '" + name + "' no ha sido declarada", l, c);
             }
         }
         
@@ -115,14 +121,16 @@ public class Vector implements Symbol, Value {
                     if (vec.type == 2) 
                         return baldorVectors(this.content, (ArrayList<Object>)vec.getValue(), 2, operator);
                     
-                    return new CompileError("Semantico", "Tipo de operando invalido, no se puede aplicar al operador '" + operator + "'", 0, 0);
+                    if (!operator.equals("+"))
+                        return new CompileError("Semantico", "Tipo de operando invalido, no se puede aplicar al operador '" + operator + "'", 0, 0);
                 }
                 
                 if (this.type == 2) {
                     if (vec.type == 1 || vec.type == 2) 
                         return baldorVectors(this.content, (ArrayList<Object>)vec.getValue(), 2, operator);
                     
-                    return new CompileError("Semantico", "Tipo de operando invalido, no se puede aplicar al operador '" + operator + "'", 0, 0);
+                    if (!operator.equals("+"))
+                        return new CompileError("Semantico", "Tipo de operando invalido, no se puede aplicar al operador '" + operator + "'", 0, 0);
                 }
                 
                 if (operator.equals("+")) {
@@ -158,7 +166,8 @@ public class Vector implements Symbol, Value {
                     return baldorVector(this.content, val, operator);
                 }
                 
-                return new CompileError("Semantico", "Tipo de operando invalido, incompatible con el operador '" + operator + "'", 0, 0);
+                if (!operator.equals("+"))
+                    return new CompileError("Semantico", "Tipo de operando invalido, incompatible con el operador '" + operator + "'", 0, 0);
             }
             
             if (this.type == 1) {
@@ -172,7 +181,8 @@ public class Vector implements Symbol, Value {
                     return baldorVector(this.content, val, operator);
                 }
                 
-                return new CompileError("Semantico", "Tipo de operando invalido, incompatible con el operador '" + operator + "'", 0, 0);
+                if (!operator.equals("+"))
+                    return new CompileError("Semantico", "Tipo de operando invalido, incompatible con el operador '" + operator + "'", 0, 0);
             }
             
             if (operator.equals("+")) {
@@ -238,7 +248,11 @@ public class Vector implements Symbol, Value {
             }
             else {
                 String one = String.valueOf(v1.get(i));
+                if (one ==  null)
+                    one = "";
                 String two = String.valueOf(v2.get(i));
+                if (two == null)
+                    two = "";
                 
                 res.add(one + two);
             }
@@ -300,10 +314,14 @@ public class Vector implements Symbol, Value {
     
     private Vector stringAdding(ArrayList<Object> v1, String val) {
         ArrayList<Object> res = new ArrayList<Object>();
+        if (val == null)
+            val = "";
         
         for (Object ob: v1) {
             String one = String.valueOf(ob);
- 
+            if (one == null)
+                one = "";
+            
             res.add(one + val);
         }
         

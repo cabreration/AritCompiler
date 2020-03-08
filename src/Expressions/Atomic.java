@@ -8,6 +8,7 @@ package Expressions;
 import APIServices.CompileError;
 import Symbols.Enviroment;
 import Symbols.Symbol;
+import Symbols.Vector;
 
 /**
  *
@@ -40,6 +41,8 @@ public class Atomic implements Expression, Value {
     public Atomic(Type type, Object value) {
         this.type = type;
         this.value = value;
+        this.line = 0;
+        this.column = 0;
     }
     
     /**
@@ -111,6 +114,149 @@ public class Atomic implements Expression, Value {
         }
         
         return new CompileError("Semantico", "Tipo de operando invalido, incompatible con el operador '-'", this.line, this.column);
+        
+    }
+    
+    private Object validateBaldor(Enviroment env, Value op, String operator) {
+        
+        if (this.type == Type.IDENTIFIER) {
+            Value v = env.getValue(String.valueOf(this.value));
+            
+            if (v == null)
+                return new CompileError("Semantico", "La variable '" + String.valueOf(this.value) + "' no ha sido declarada", this.line, this.column);
+            
+            if (operator.equals("-")) // en esta el orden si importa, tengo que arreglarlo
+                return v.minus(env, this); 
+            else if (operator.equals("+"))
+                return v.plus(env, this);
+            else if (operator.equals("*"))
+                return v.times(env, this); 
+            else if (operator.equals("/")) // en esta el orden si importa, tengo que arreglarlo
+                return v.div(env, this);
+            else if (operator.equals("%")) // en esta el orden si importa, tengo que arreglarlo
+                return v.mod(env, this);
+            else 
+                return v.power(env, this); // en esta el orden si importa, tengo que arreglarlo
+        }
+        
+        if (op instanceof Atomic) {
+            if (((Atomic)op).getType() == Atomic.Type.IDENTIFIER) {
+                op = env.getValue(String.valueOf(((Atomic)op).getValue()));
+            }
+        }
+        
+        if (op instanceof Vector) {
+            if (operator.equals("-"))
+                return op.minus(env, this);
+            else if (operator.equals("+"))
+                return op.plus(env, this);
+            else if (operator.equals("*"))
+                return op.times(env, this);
+            else if (operator.equals("/"))
+                return op.div(env, this);
+            else if (operator.equals("%"))
+                return op.mod(env, this);
+            else 
+                return op.power(env, this);
+        }
+        
+        if (op instanceof Atomic) {
+            if (this.type == Type.INTEGER) {
+                if (((Atomic)op).type == Type.INTEGER) {
+                    if (operator.equals("^"))
+                        return baldorOperate(this, (Atomic)op, Type.NUMERIC, operator);
+                    
+                    return baldorOperate(this, (Atomic)op, Type.INTEGER, operator);
+                }
+                
+                if (((Atomic)op).type == Type.NUMERIC)
+                    return baldorOperate(this, (Atomic)op, Type.NUMERIC, operator);
+                
+                if (!operator.equals("+"))
+                    return new CompileError("Semantico", "Tipo de operando invalido, no valido para '" + operator + "'", this.line, this.column);
+            }
+            if (this.type == Type.NUMERIC) {
+                if (((Atomic)op).type == Type.INTEGER || ((Atomic)op).type == Type.NUMERIC)
+                    return baldorOperate(this, (Atomic)op, Type.NUMERIC, operator);
+                
+                if (!operator.equals("+"))
+                    return new CompileError("Semantico", "Tipo de operando invalido, no valido para '" + operator + "'", this.line, this.column);
+            }
+            
+            if (operator.equals("+")) {
+                if (this.type == Type.BOOLEAN) {
+                    if (((Atomic)op).type == Type.STRING)
+                        return baldorOperate(this, (Atomic)op, Type.STRING, operator);
+                    
+                    return new CompileError("Semantico", "Tipo de operando invalido, no valido para '" + operator + "'", this.line, this.column);
+                }
+                if (this.type == Type.STRING)
+                    return baldorOperate(this, (Atomic)op, Type.NUMERIC, operator);
+            }
+        }
+        
+        //if (op instanceof Matrix) {}
+        
+        return new CompileError("Semantico", "Tipo de operando invalido, la operacion no esta definida para este tipo de dato", this.line, this.column);
+    }
+    
+    private Atomic baldorOperate(Atomic one, Atomic two, Type type, String operator) {
+        
+        if (type == Type.INTEGER) {
+            int o = ((Integer)one.getValue()).intValue();
+            int t = ((Integer)two.getValue()).intValue();
+            int r = 0;
+            
+            switch (operator) {
+                case "-":
+                    r  = o - t;
+                case "+":
+                    r = o + t;
+                case "*":
+                    r = o * t;
+                case "/":
+                    r = o / t;
+                case "%":
+                    r = o % t;
+            }
+            
+            return new Atomic(Type.INTEGER, Integer.valueOf(r));
+        }
+        else if (type == Type.NUMERIC) {
+            String o = String.valueOf(one.getValue());
+            String t = String.valueOf(two.getValue());
+            double first = Double.parseDouble(o);
+            double second = Double.parseDouble(t);
+            
+            double r = 0;
+            
+            switch (operator) {
+                case "-":
+                    r  = first - second;
+                case "+":
+                    r = first + second;
+                case "*":
+                    r = first * second;
+                case "/":
+                    r = first / second;
+                case "%":
+                    r = first % second;
+                case "^":
+                    r = Math.pow(first, second);
+            }
+            
+            return new Atomic(Type.NUMERIC, Double.valueOf(r));
+        }
+        else {
+            String first = String.valueOf(one.getValue());
+            if (first == null)
+                first = "";
+            String second = String.valueOf(two.getValue());
+            if (second == null)
+                second = "";
+            
+            return new Atomic(Type.STRING, first + second);
+        }
         
     }
     

@@ -52,8 +52,10 @@ public class Unary implements Expression {
         }
         
         if (res instanceof CompileError) {
-            ((CompileError)res).setRow(this.line);
-            ((CompileError)res).setColumn(this.column);
+            if (((CompileError)res).getRow() == 0 && ((CompileError)res).getColumn() == 0) {
+                ((CompileError)res).setRow(this.line);
+                ((CompileError)res).setColumn(this.column);
+            }
         }
         
         return res;

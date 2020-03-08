@@ -69,8 +69,10 @@ public class Binary implements Expression {
         
         Object res = operations(env, (Value)atom1, (Value)atom2);
         if (res instanceof CompileError) {
-            ((CompileError)res).setRow(this.line);
-            ((CompileError)res).setColumn(this.column);
+            if (((CompileError)res).getRow() == 0 && ((CompileError)res).getColumn() == 0) {
+                ((CompileError)res).setRow(this.line);
+                ((CompileError)res).setColumn(this.column);
+            }
         }
         
         return res;
