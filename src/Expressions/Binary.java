@@ -63,7 +63,7 @@ public class Binary implements Expression {
         if (atom2 instanceof CompileError)
             return atom2;
         
-        if (!(atom1 instanceof Value) && !(atom2 instanceof Value)) {
+        if (!(atom1 instanceof Value) || !(atom2 instanceof Value)) {
             throw new Error("Esto no deberia estar pasando Binario");
         }
         
