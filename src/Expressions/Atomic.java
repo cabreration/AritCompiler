@@ -126,17 +126,17 @@ public class Atomic implements Expression, Value {
                 return new CompileError("Semantico", "La variable '" + String.valueOf(this.value) + "' no ha sido declarada", this.line, this.column);
             
             if (operator.equals("-")) // en esta el orden si importa, tengo que arreglarlo
-                return v.minus(env, this); 
+                return v.minus(env, this, 1); 
             else if (operator.equals("+"))
-                return v.plus(env, this);
+                return v.plus(env, this, 1);
             else if (operator.equals("*"))
-                return v.times(env, this); 
+                return v.times(env, this, 1); 
             else if (operator.equals("/")) // en esta el orden si importa, tengo que arreglarlo
-                return v.div(env, this);
+                return v.div(env, this, 1);
             else if (operator.equals("%")) // en esta el orden si importa, tengo que arreglarlo
-                return v.mod(env, this);
+                return v.mod(env, this, 1);
             else 
-                return v.power(env, this); // en esta el orden si importa, tengo que arreglarlo
+                return v.power(env, this, 1); // en esta el orden si importa, tengo que arreglarlo
         }
         
         if (op instanceof Atomic) {
@@ -147,17 +147,17 @@ public class Atomic implements Expression, Value {
         
         if (op instanceof Vector) {
             if (operator.equals("-"))
-                return op.minus(env, this);
+                return op.minus(env, this, 2);
             else if (operator.equals("+"))
-                return op.plus(env, this);
+                return op.plus(env, this, 2);
             else if (operator.equals("*"))
-                return op.times(env, this);
+                return op.times(env, this, 2);
             else if (operator.equals("/"))
-                return op.div(env, this);
+                return op.div(env, this, 2);
             else if (operator.equals("%"))
-                return op.mod(env, this);
+                return op.mod(env, this, 2);
             else 
-                return op.power(env, this);
+                return op.power(env, this, 2);
         }
         
         if (op instanceof Atomic) {
@@ -197,6 +197,7 @@ public class Atomic implements Expression, Value {
         
         //if (op instanceof Matrix) {}
         
+        // if it is an array or a list
         return new CompileError("Semantico", "Tipo de operando invalido, la operacion no esta definida para este tipo de dato", this.line, this.column);
     }
     
@@ -261,33 +262,63 @@ public class Atomic implements Expression, Value {
     }
     
     @Override
-    public Object minus(Enviroment env, Value op) {
+    public Object minus(Enviroment env, Value op, int order) {
+        return validateBaldor(env, op, "-");
+    }
+    
+    @Override
+    public Object plus(Enviroment env, Value op, int order) {
+        return validateBaldor(env, op, "+");
+    } 
+    
+    @Override
+    public Object times(Enviroment env, Value op, int order) {
+        return validateBaldor(env, op, "*");
+    }
+    
+    @Override
+    public Object div(Enviroment env, Value op, int order) {
+        return validateBaldor(env, op, "/");
+    }
+    
+    @Override
+    public Object mod(Enviroment env, Value op, int order) {
+        return validateBaldor(env, op, "%");
+    } 
+    
+    @Override
+    public Object power(Enviroment env, Value op, int order) {
+        return validateBaldor(env, op, "^");
+    } 
+    
+    @Override
+    public Object lesser(Enviroment env, Value op, int order) {
         return null;
     }
     
     @Override
-    public Object plus(Enviroment env, Value op) {
-        return null;
-    } 
-    
-    @Override
-    public Object times(Enviroment env, Value op) {
+    public Object greater(Enviroment env, Value op, int order) {
         return null;
     }
     
     @Override
-    public Object div(Enviroment env, Value op) {
+    public Object lesserEquals(Enviroment env, Value op, int order) {
         return null;
     }
     
     @Override
-    public Object mod(Enviroment env, Value op) {
+    public Object greaterEquals(Enviroment env, Value op, int order) {
         return null;
-    } 
+    }
     
     @Override
-    public Object power(Enviroment env, Value op) {
+    public Object equals(Enviroment env, Value op, int order) {
         return null;
-    } 
+    }
+    
+    @Override
+    public Object notEquals(Enviroment env, Value op, int order) {
+        return null;
+    }
     
 }

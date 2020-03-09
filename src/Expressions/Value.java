@@ -17,15 +17,27 @@ public interface Value {
     
     public Object aritmeticNegation(Enviroment env);
     
-    public Object minus(Enviroment env, Value op);
+    public Object minus(Enviroment env, Value op, int order);
     
-    public Object plus(Enviroment env, Value op);
+    public Object plus(Enviroment env, Value op, int order);
     
-    public Object times(Enviroment env, Value op);
+    public Object times(Enviroment env, Value op, int order);
     
-    public Object div(Enviroment env, Value op);
+    public Object div(Enviroment env, Value op, int order);
     
-    public Object power(Enviroment env, Value op);
+    public Object power(Enviroment env, Value op, int order);
     
-    public Object mod(Enviroment env, Value op);
+    public Object mod(Enviroment env, Value op, int order);
+    
+    public Object lesser(Enviroment env, Value op, int order);
+    
+    public Object greater(Enviroment env, Value op, int order);
+    
+    public Object lesserEquals(Enviroment env, Value op, int order);
+    
+    public Object greaterEquals(Enviroment env, Value op, int order);
+    
+    public Object equals(Enviroment env, Value op, int order);
+    
+    public Object notEquals(Enviroment env, Value op, int order);
 }

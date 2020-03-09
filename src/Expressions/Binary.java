@@ -84,22 +84,27 @@ public class Binary implements Expression {
         switch (this.operator) {
         
             case MINUS:
-                res = op1.minus(env, op2);
+                res = op1.minus(env, op2, 1);
                 break;
             
             case PLUS:
+                res = op1.plus(env, op2, 1);
                 break;
                 
             case TIMES:
+                res = op1.times(env, op2, 1);
                 break;
             
             case DIV:
+                res = op1.div(env, op2, 1);
                 break;
                 
             case MOD:
+                res = op1.mod(env, op2, 1);
                 break;
                 
             case POWER:
+                res = op1.power(env, op2, 1);
                 break;
                 
             case ASIGNMENT:
@@ -128,6 +133,13 @@ public class Binary implements Expression {
                 
             case OR:
                 break;
+        }
+        
+        if (res instanceof CompileError) {
+            if (((CompileError)res).getRow() == 0 || ((CompileError)res).getColumn() == 0) {
+                ((CompileError)res).setRow(this.line);
+                ((CompileError)res).setColumn(this.line);
+            }
         }
         return res;
     }
