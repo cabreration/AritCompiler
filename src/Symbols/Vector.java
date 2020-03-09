@@ -586,22 +586,22 @@ public class Vector implements Symbol, Value {
                 boolean flag = false;
                 switch (operator) {
                     case "<":
-                        flag = one.compareTo(two) < 0 ? true : false;
+                        flag = one.compareTo(two) < 0;
                         break;
                     case ">":
-                        flag = one.compareTo(two) > 0 ? true : false;
+                        flag = one.compareTo(two) > 0;
                         break;
                     case "<=":
-                        flag = one.compareTo(two) <= 0 ? true : false;
+                        flag = one.compareTo(two) <= 0;
                         break;
                     case ">=":
-                        flag = one.compareTo(two) >= 0 ? true : false;
+                        flag = one.compareTo(two) >= 0;
                         break;
                     case "==":
-                        flag = one.compareTo(two) == 0 ? true : false;
+                        flag = one.compareTo(two) == 0;
                         break;
                     case "!=":
-                        flag = one.compareTo(two) != 0 ? true : false;
+                        flag = one.compareTo(two) != 0;
                         break;
                 }
             }

@@ -108,24 +108,31 @@ public class Binary implements Expression {
                 break;
                 
             case ASIGNMENT:
+                /* ESTE ES DIFERENTE A TODOS LOS DEMAS */
                 break;
                 
             case EQUALS:
+                res = op1.equals(env, op2, 1);
                 break;
                 
             case NOT_EQUALS:
+                res = op1.notEquals(env, op2, 1);
                 break;
                 
             case GREATER:
+                res = op1.greater(env, op2, 1);
                 break;
                 
             case GREATER_EQUALS:
+                res = op1.greaterEquals(env, op2, 1);
                 break;
                 
             case LESSER:
+                res = op1.lesser(env, op2, 1);
                 break;
                 
             case LESSER_EQUALS:
+                res = op1.lesserEquals(env, op2, 1);
                 break;
                 
             case AND:

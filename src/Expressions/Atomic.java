@@ -76,7 +76,6 @@ public class Atomic implements Expression, Value {
         return value;
     }
     
-    
     /* A partir de aqui todos los metodos que sean sobre operaciones - Value interface*/
     
     @Override
@@ -126,17 +125,17 @@ public class Atomic implements Expression, Value {
                 return new CompileError("Semantico", "La variable '" + String.valueOf(this.value) + "' no ha sido declarada", this.line, this.column);
             
             if (operator.equals("-")) // en esta el orden si importa, tengo que arreglarlo
-                return v.minus(env, this, 1); 
+                return v.minus(env, op, 1); 
             else if (operator.equals("+"))
-                return v.plus(env, this, 1);
+                return v.plus(env, op, 1);
             else if (operator.equals("*"))
-                return v.times(env, this, 1); 
+                return v.times(env, op, 1); 
             else if (operator.equals("/")) // en esta el orden si importa, tengo que arreglarlo
-                return v.div(env, this, 1);
+                return v.div(env, op, 1);
             else if (operator.equals("%")) // en esta el orden si importa, tengo que arreglarlo
-                return v.mod(env, this, 1);
+                return v.mod(env, op, 1);
             else 
-                return v.power(env, this, 1); // en esta el orden si importa, tengo que arreglarlo
+                return v.power(env, op, 1); // en esta el orden si importa, tengo que arreglarlo
         }
         
         if (op instanceof Atomic) {
@@ -211,14 +210,19 @@ public class Atomic implements Expression, Value {
             switch (operator) {
                 case "-":
                     r  = o - t;
+                    break;
                 case "+":
                     r = o + t;
+                    break;
                 case "*":
                     r = o * t;
+                    break;
                 case "/":
                     r = o / t;
+                    break;
                 case "%":
                     r = o % t;
+                    break;
             }
             
             return new Atomic(Type.INTEGER, Integer.valueOf(r));
@@ -234,16 +238,22 @@ public class Atomic implements Expression, Value {
             switch (operator) {
                 case "-":
                     r  = first - second;
+                    break;
                 case "+":
                     r = first + second;
+                    break;
                 case "*":
                     r = first * second;
+                    break;
                 case "/":
                     r = first / second;
+                    break;
                 case "%":
                     r = first % second;
+                    break;
                 case "^":
                     r = Math.pow(first, second);
+                    break;
             }
             
             return new Atomic(Type.NUMERIC, Double.valueOf(r));
@@ -291,34 +301,191 @@ public class Atomic implements Expression, Value {
         return validateBaldor(env, op, "^");
     } 
     
+    
+    private Object validateRelational(Enviroment env, Value op, String operator) {
+        if (this.type == Type.IDENTIFIER) {
+            Value v = env.getValue(String.valueOf(this.value));
+            
+            if (v == null)
+                return new CompileError("Semantico", "La variable '" + String.valueOf(this.value) + "' no ha sido declarada", this.line, this.column);
+            
+            if (operator.equals("<")) // en esta el orden si importa, tengo que arreglarlo
+                return v.lesser(env, op, 1); 
+            else if (operator.equals(">"))
+                return v.greater(env, op, 1);
+            else if (operator.equals("<="))
+                return v.lesserEquals(env, op, 1); 
+            else if (operator.equals(">=")) // en esta el orden si importa, tengo que arreglarlo
+                return v.greaterEquals(env, op, 1);
+            else if (operator.equals("==")) // en esta el orden si importa, tengo que arreglarlo
+                return v.equals(env, op, 1);
+            else 
+                return v.notEquals(env, op, 1); // en esta el orden si importa, tengo que arreglarlo
+        }
+        
+        if (op instanceof Atomic) {
+            if (((Atomic)op).getType() == Atomic.Type.IDENTIFIER) {
+                op = env.getValue(String.valueOf(((Atomic)op).getValue()));
+            }
+        }
+        
+        if (op instanceof Vector) {
+            if (operator.equals("<"))
+                return op.lesser(env, this, 2);
+            else if (operator.equals(">"))
+                return op.greater(env, this, 2);
+            else if (operator.equals("<="))
+                return op.lesserEquals(env, this, 2);
+            else if (operator.equals(">="))
+                return op.greaterEquals(env, this, 2);
+            else if (operator.equals("=="))
+                return op.equals(env, this, 2);
+            else 
+                return op.notEquals(env, this, 2);
+        }
+        
+        if (op instanceof Atomic) {
+            if (this.type == Type.INTEGER || this.type == Type.NUMERIC) {
+                if (((Atomic)op).getType() == Type.INTEGER || (((Atomic)op).getType()) ==  Type.NUMERIC) {
+                    return operateRelational(this, (Atomic)op, Type.NUMERIC, operator);
+                }
+                
+                return new CompileError("Semantico", "Tipo de Operando invalido, operacion no definida", 0 , 0);
+            }
+            
+            if (this.type == Type.BOOLEAN) {
+                if (!operator.equals("==") && !operator.equals("!="))
+                    return new CompileError("Semantico", "Tipo de Operando invalido, operacion no definida", 0 , 0);
+                
+                if (((Atomic)op).getType() == Type.BOOLEAN) {
+                    return operateRelational(this, (Atomic)op, Type.BOOLEAN, operator);
+                }
+                
+                return new CompileError("Semantico", "Tipo de Operando invalido, operacion no definida", 0 , 0);
+            }
+            
+            if (this.type == Type.STRING) {
+                if (((Atomic)op).getType() == Type.STRING) {
+                    return operateRelational(this, (Atomic)op, Type.STRING, operator);
+                }
+                
+                return new CompileError("Semantico", "Tipo de Operando invalido, operacion no definida", 0 , 0);
+            }
+        }
+        
+        //if (op instanceof Matrix) {}
+        return new CompileError("Semantico", "Tipo de Operando invalido, operacion no definida", 0, 0);
+    }
+    
+    private Atomic operateRelational(Atomic one, Atomic two, Type type, String operator) {
+        if (type == Type.NUMERIC) {
+            String o = String.valueOf(one.getValue());
+            String t = String.valueOf(two.getValue());
+            double first = Double.parseDouble(o);
+            double second = Double.parseDouble(t);
+            
+            boolean r = false;
+            
+            switch (operator) {
+                case "<":
+                    r  = first < second;
+                    break;
+                case ">":
+                    r = first > second;
+                    break;
+                case "<=":
+                    r = first <= second;
+                    break;
+                case ">=":
+                    r = first >= second;
+                    break;
+                case "==":
+                    r = first == second;
+                    break;
+                case "!=":
+                    r = first != second;
+                    break;
+            }
+            
+            return new Atomic(Type.BOOLEAN, Boolean.valueOf(r));
+        }
+        else if (type == Type.BOOLEAN) {
+            String o = String.valueOf(one.getValue());
+            String t = String.valueOf(two.getValue());
+            boolean first = Boolean.parseBoolean(o);
+            boolean second = Boolean.parseBoolean(t);
+            
+            boolean r = false;
+            if (operator.equals("=="))
+                r = first == second;
+            else
+                r = first != second;
+            
+            return new Atomic(Type.BOOLEAN, Boolean.valueOf(r));
+        }
+        else {
+            String first = String.valueOf(one.getValue());
+            if (first == null)
+                first = "";
+            String second = String.valueOf(two.getValue());
+            if (second == null)
+                second = "";
+            
+            boolean r = false;
+            
+            switch (operator) {
+                case "<":
+                    r  = first.compareTo(second) < 0;
+                    break;
+                case ">":
+                    r = first.compareTo(second) > 0;
+                    break;
+                case "<=":
+                    r = first.compareTo(second) <= 0;
+                    break;
+                case ">=":
+                    r = first.compareTo(second) >= 0;
+                    break;
+                case "==":
+                    r = first.equals(second);
+                    break;
+                case "!=":
+                    r = !first.equals(second);
+                    break;
+            }
+            
+            return new Atomic(Type.BOOLEAN, r);
+        }
+    }
+    
     @Override
     public Object lesser(Enviroment env, Value op, int order) {
-        return null;
+        return validateRelational(env, op, "<");
     }
     
     @Override
     public Object greater(Enviroment env, Value op, int order) {
-        return null;
+        return validateRelational(env, op, ">");
     }
     
     @Override
     public Object lesserEquals(Enviroment env, Value op, int order) {
-        return null;
+        return validateRelational(env, op, "<=");
     }
     
     @Override
     public Object greaterEquals(Enviroment env, Value op, int order) {
-        return null;
+        return validateRelational(env, op, ">=");
     }
     
     @Override
     public Object equals(Enviroment env, Value op, int order) {
-        return null;
+        return validateRelational(env, op, "==");
     }
     
     @Override
     public Object notEquals(Enviroment env, Value op, int order) {
-        return null;
+        return validateRelational(env, op, "!=");
     }
     
 }
