@@ -40,4 +40,8 @@ public interface Value {
     public Object equals(Enviroment env, Value op, int order);
     
     public Object notEquals(Enviroment env, Value op, int order);
+    
+    public Object and(Enviroment env, Value op);
+    
+    public Object or(Enviroment env, Value op);
 }

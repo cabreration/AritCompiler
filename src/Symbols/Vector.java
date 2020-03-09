@@ -56,7 +56,7 @@ public class Vector implements Symbol, Value {
         return this.content.size();
     }
     
-        public int type() {
+    public int type() {
         return this.type;
     }
 
@@ -511,8 +511,7 @@ public class Vector implements Symbol, Value {
                     return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
                 
                 if (((Atomic)op).getType() == Atomic.Type.BOOLEAN) {
-                    String str = String.valueOf(((Atomic)op).getValue());
-                    boolean arg = Boolean.valueOf(str);
+                    boolean arg = ((Boolean)(((Atomic)op).getValue())).booleanValue();
                     return relationalVector(this.content, arg, operator);
                 }
                 
@@ -566,10 +565,8 @@ public class Vector implements Symbol, Value {
                 res.add(Boolean.valueOf(flag));
             }
             else if (type == 3) {
-                String first = String.valueOf(v1.get(i));
-                String second = String.valueOf(v2.get(i));
-                boolean one = Boolean.valueOf(first);
-                boolean two = Boolean.valueOf(second);
+                boolean one = ((Boolean)v1.get(i)).booleanValue();
+                boolean two = ((Boolean)v2.get(i)).booleanValue();
                 
                 boolean flag = false;
                 if (operator.equals("=="))
@@ -647,8 +644,7 @@ public class Vector implements Symbol, Value {
         ArrayList<Object> res = new ArrayList<Object>();
         
         for (Object ob: v1) {
-            String one = String.valueOf(ob);
-            boolean dib = Boolean.valueOf(one);
+            boolean dib = ((Boolean)ob).booleanValue();
             
             boolean flag  = false;
             switch (operator) {
@@ -726,5 +722,96 @@ public class Vector implements Symbol, Value {
     @Override
     public Object notEquals(Enviroment env, Value op, int order) {
         return validateRelational(env, op, "!=", order);
+    }
+    
+    /* operaciones booleanas */ 
+    private Object validateBoolean(Enviroment env, Value op, String operator) {
+        if (this.type != 3)
+            return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
+        
+        if (op instanceof Atomic) {
+            if (((Atomic)op).getType() == Atomic.Type.IDENTIFIER) {
+                String name = String.valueOf(((Atomic)op).getValue());
+                int l = ((Atomic)op).getLine();
+                int c = ((Atomic)op).getColumn();
+                op = env.getValue(String.valueOf(((Atomic)op).getValue()));
+                
+                if (op == null)
+                    return new CompileError("Semantico", "La variable '" + name + "' no ha sido declarada", l, c);
+            }
+        }
+        
+        if (op instanceof Vector) {
+            if (((Vector)op).getSize() == this.getSize()) {
+                if (((Vector)op).type() == 3) {
+                    Vector vec = (Vector)op;
+                    return booleanVectors(this.content, (ArrayList<Object>)vec.getValue(), operator);
+                }
+                    
+                return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
+            }
+            
+            return new CompileError("Semantico", "Solo pueden realizarse operaciones sobre vectores del mismo tamaño", 0, 0);
+        }
+        
+        if (op instanceof Atomic) {
+            if (((Atomic)op).getType() == Atomic.Type.BOOLEAN) {
+                Atomic val = (Atomic)op;
+                boolean bool = ((Boolean)val.getValue()).booleanValue();
+                return booleanVector(this.content, bool, operator);
+            }
+            
+            return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
+        }
+        
+        // op is matrix, array or list
+        return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
+    }
+    
+    private Vector booleanVectors(ArrayList<Object> v1, ArrayList<Object> v2, String operator) {
+        ArrayList<Object> res = new ArrayList<Object>();
+        
+        for (int i = 0; i < v1.size(); i++) {
+            boolean one = ((Boolean)v1.get(i)).booleanValue();
+            boolean two = ((Boolean)v2.get(i)).booleanValue();
+            
+            boolean flag = false;
+            if (operator.equals("&"))
+                flag = one && two;
+            else 
+                flag = one || two;
+            
+            res.add(Boolean.valueOf(flag));
+        }
+        
+        return new Vector(res, 3);
+    }
+    
+    private Vector booleanVector(ArrayList<Object> v1, boolean bool, String operator) {
+        ArrayList<Object> res = new ArrayList<Object>();
+        
+        for (Object ob : v1) {
+            boolean one = ((Boolean)ob).booleanValue();
+            
+            boolean flag = false;
+            if (operator.equals("&"))
+                flag = one && bool;
+            else 
+                flag = one || bool;
+            
+            res.add(Boolean.valueOf(flag));
+        }
+        
+        return new Vector(res, 3);
+    }
+    
+    @Override
+    public Object and(Enviroment env, Value op) {
+        return validateBoolean(env, op, "&");
+    }
+    
+    @Override
+    public Object or(Enviroment env, Value op) {
+        return validateBoolean(env, op, "|");
     }
 }

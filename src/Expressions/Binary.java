@@ -136,9 +136,11 @@ public class Binary implements Expression {
                 break;
                 
             case AND:
+                res = op1.and(env, op2);
                 break;
                 
             case OR:
+                res = op1.or(env, op2);
                 break;
         }
         

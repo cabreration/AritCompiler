@@ -301,7 +301,7 @@ public class Atomic implements Expression, Value {
         return validateBaldor(env, op, "^");
     } 
     
-    
+    /* Operaciones relacionales */
     private Object validateRelational(Enviroment env, Value op, String operator) {
         if (this.type == Type.IDENTIFIER) {
             Value v = env.getValue(String.valueOf(this.value));
@@ -410,10 +410,8 @@ public class Atomic implements Expression, Value {
             return new Atomic(Type.BOOLEAN, Boolean.valueOf(r));
         }
         else if (type == Type.BOOLEAN) {
-            String o = String.valueOf(one.getValue());
-            String t = String.valueOf(two.getValue());
-            boolean first = Boolean.parseBoolean(o);
-            boolean second = Boolean.parseBoolean(t);
+            boolean first = ((Boolean)one.getValue()).booleanValue();
+            boolean second = ((Boolean)two.getValue()).booleanValue();
             
             boolean r = false;
             if (operator.equals("=="))
@@ -488,4 +486,71 @@ public class Atomic implements Expression, Value {
         return validateRelational(env, op, "!=");
     }
     
+    /* operaciones booleanas */ 
+    
+    private Object validateBoolean(Enviroment env, Value op, String operator) { 
+        if (this.type == Type.IDENTIFIER) {
+            Value v = env.getValue(String.valueOf(this.value));
+            
+            if (v == null)
+                return new CompileError("Semantico", "La variable '" + String.valueOf(this.value) + "' no ha sido declarada", this.line, this.column);
+            
+            if (operator.equals("&"))
+                return v.and(env, op); 
+            else 
+                return v.or(env, op);
+        }
+        
+        if (op instanceof Atomic) {
+            if (((Atomic)op).getType() == Atomic.Type.IDENTIFIER) {
+                op = env.getValue(String.valueOf(((Atomic)op).getValue()));
+            }
+        }
+        
+        if (this.type != Type.BOOLEAN)
+            return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", this.line, this.column);
+        
+        if (op instanceof Vector) {
+            if (operator.equals("&"))
+                return op.and(env, this);
+            else 
+                return op.or(env, this);
+        }
+        
+        if (op instanceof Atomic) {
+            if (((Atomic)op).getType() == Type.BOOLEAN) {
+                return operateBoolean(this, (Atomic)op, operator);
+            }
+            
+            return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
+        }
+        
+        //if (op instanceof Matrix) {}
+        
+        //op instance of array or list
+        return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
+    }
+    
+    public Atomic operateBoolean(Atomic one, Atomic two, String operator) {
+        boolean first = ((Boolean)one.getValue()).booleanValue();
+        boolean second = ((Boolean)two.getValue()).booleanValue();
+        
+        boolean flag = false;
+        if (operator.equals("&"))
+            flag = first && second;
+        else 
+            flag = first || second;
+        
+        return new Atomic(Type.BOOLEAN, Boolean.valueOf(flag));
+    }
+    
+    @Override
+    public Object and(Enviroment env, Value op) {
+        return validateBoolean(env, op, "&");
+    }
+    
+    @Override
+    public Object or(Enviroment env, Value op) {
+        return validateBoolean(env, op, "|");
+    }
 }
