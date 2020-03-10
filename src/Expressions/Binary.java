@@ -61,6 +61,9 @@ public class Binary implements Expression {
         Object atom1 = exp1.process(env);
         Object atom2 = exp2.process(env);
         
+        if (atom1 == null || atom2 == null)
+            return new CompileError("Semantico", "No es posible realizar operaciones el valor nulo", this.line, this.column);
+        
         if (atom1 instanceof CompileError)
             return atom1;
         

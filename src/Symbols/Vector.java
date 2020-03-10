@@ -16,34 +16,35 @@ import java.util.ArrayList;
  */
 public class Vector implements Symbol, Value {
 
-    private ArrayList<Object> content;
+    private ArrayList<Atomic> content;
     private int type; // 1 - integer, 2 - numeric, 3 - bool, 4 - string
     
-    public Vector(Object value) {
-        this.content = new ArrayList<Object>();
+    public Vector(Atomic value) {
+        this.content = new ArrayList<Atomic>();
         
-        if (value == null)
+        if (value.getType() == Atomic.Type.STRING)
             type = 4;
-        else if (value instanceof Integer)
+        else if (value.getType() == Atomic.Type.INTEGER)
             type = 1;
-        else if (value instanceof Double)
+        else if (value.getType() == Atomic.Type.NUMERIC)
             type = 2;
-        else if (value instanceof Boolean)
+        else if (value.getType() == Atomic.Type.BOOLEAN)
             type = 3;
-        else 
-            type = 4;
+        
+        if (value.getType() == Atomic.Type.IDENTIFIER)
+            System.err.println("ESTO NO DEBERIA ESTAR PASANDO");
         
         this.content.add(value);
     }
     
-    public Vector(ArrayList<Object> content, int type) {
+    public Vector(ArrayList<Atomic> content, int type) {
         this.content = content;
         this.type = type;
     }
     
     public Vector(int type) {
         this.type = type;
-        this.content = new ArrayList<Object>();
+        this.content = new ArrayList<Atomic>();
     }
     
     @Override
@@ -65,10 +66,10 @@ public class Vector implements Symbol, Value {
         if (this.type != 3)
             return new CompileError("Semantico", "Tipo de operando incorrecto: no se puede operar valores no booleanos con el operador '!'", 0, 0);
         
-        ArrayList<Object> store = new ArrayList<Object>();
-        for (Object ob : this.content) {
-            boolean val = !((Boolean)ob).booleanValue();
-            store.add(val);
+        ArrayList<Atomic> store = new ArrayList<Atomic>();
+        for (Atomic ob : this.content) {
+            boolean val = !((Boolean)ob.getValue()).booleanValue();
+            store.add(new Atomic(Atomic.Type.BOOLEAN, val));
         }
         
         return new Vector(store, 3);
@@ -79,13 +80,13 @@ public class Vector implements Symbol, Value {
         if (this.type != 1 && this.type != 2)
             return new CompileError("Semantico", "Tipo de operando incorrecto: solo pueden operarse valores numericos y enteros con el operador '-'", 0, 0);
         
-        ArrayList<Object> store = new ArrayList<Object>();
-        for (Object ob : this.content) {
+        ArrayList<Atomic> store = new ArrayList<Atomic>();
+        for (Atomic ob : this.content) {
             
-            if (ob instanceof Integer)
-                store.add(Integer.valueOf(-((Integer)ob)));
+            if (ob.getType() == Atomic.Type.INTEGER)
+                store.add(new Atomic(Atomic.Type.INTEGER, Integer.valueOf(-((Integer)ob.getValue()))));
             else 
-                store.add(Double.valueOf(-((Double)ob)));
+                store.add(new Atomic(Atomic.Type.NUMERIC, Double.valueOf(-((Double)ob.getValue()))));
         }
         
         return this.type == 1 ? new Vector(store, 1) : new Vector(store, 2);
@@ -112,14 +113,14 @@ public class Vector implements Symbol, Value {
                 if (this.type == 1) {
                     if (vec.type == 1) {
                         if (operator.equals("^")) {
-                            Vector thor = baldorVectors(this.content, (ArrayList<Object>)vec.getValue(), 2, operator);
+                            Vector thor = baldorVectors(this.content, (ArrayList<Atomic>)vec.getValue(), 2, operator);
                             if (thor == null)
                                 return new CompileError("Semantico", "Las operaciones de division y modulo sobre 0 no estan definidas", 0, 0);
                             
                             return thor;
                         }
                               
-                        Vector thor = baldorVectors(this.content, (ArrayList<Object>)vec.getValue(), 1, operator);
+                        Vector thor = baldorVectors(this.content, (ArrayList<Atomic>)vec.getValue(), 1, operator);
                         if (thor == null)
                                 return new CompileError("Semantico", "Las operaciones de division y modulo sobre 0 no estan definidas", 0, 0);
                             
@@ -128,7 +129,7 @@ public class Vector implements Symbol, Value {
                         
                     
                     if (vec.type == 2) {
-                        Vector thor = baldorVectors(this.content, (ArrayList<Object>)vec.getValue(), 2, operator);
+                        Vector thor = baldorVectors(this.content, (ArrayList<Atomic>)vec.getValue(), 2, operator);
                         if (thor == null)
                                 return new CompileError("Semantico", "Las operaciones de division y modulo sobre 0 no estan definidas", 0, 0);
                             
@@ -141,7 +142,7 @@ public class Vector implements Symbol, Value {
                 
                 if (this.type == 2) {
                     if (vec.type == 1 || vec.type == 2) {
-                        Vector thor = baldorVectors(this.content, (ArrayList<Object>)vec.getValue(), 2, operator);
+                        Vector thor = baldorVectors(this.content, (ArrayList<Atomic>)vec.getValue(), 2, operator);
                         if (thor == null)
                             return new CompileError("Semantico", "Las operaciones de division y modulo sobre 0 no estan definidas", 0, 0);
                             
@@ -155,7 +156,7 @@ public class Vector implements Symbol, Value {
                 if (operator.equals("+")) {
                     if (this.type == 3) {
                         if (vec.type == 4) {
-                            Vector thor = baldorVectors(this.content, (ArrayList<Object>)vec.getValue(), 4, "+");
+                            Vector thor = baldorVectors(this.content, (ArrayList<Atomic>)vec.getValue(), 4, "+");
                             if (thor == null)
                                 return new CompileError("Semantico", "Las operaciones de division y modulo sobre 0 no estan definidas", 0, 0);
                             
@@ -166,9 +167,9 @@ public class Vector implements Symbol, Value {
                     }
                 
                     if (this.type == 4) {
-                        Vector thor = baldorVectors(this.content, (ArrayList<Object>)vec.getValue(), 4, "+");
+                        Vector thor = baldorVectors(this.content, (ArrayList<Atomic>)vec.getValue(), 4, "+");
                         if (thor == null)
-                            return new CompileError("Semantico", "Las operaciones de division y modulo sobre 0 no estan definidas", 0, 0);
+                            return new CompileError("Semantico", "Operacion invalida, no es posible realizar operaciones con el valor null", 0, 0);
                             
                         return thor;
                     }
@@ -244,7 +245,7 @@ public class Vector implements Symbol, Value {
                 if (this.type == 4) {
                     Vector thor = stringAdding(this.content, String.valueOf(((Atomic)op).getValue()), order);
                     if (thor == null)
-                        return new CompileError("Semantico", "Operacion Invalida", 0, 0);
+                        return new CompileError("Semantico", "No es posible operar valores nulos", 0, 0);
                             
                     return thor;
                 }
@@ -257,37 +258,37 @@ public class Vector implements Symbol, Value {
         return new CompileError("Semantico", "Tipo de operando invalido, operacion imposible con valor de tipo vector", 0, 0);
     }
     
-    private Vector baldorVectors(ArrayList<Object> v1, ArrayList<Object> v2, int type, String operator) { 
-        ArrayList<Object> res = new ArrayList<Object>();
+    private Vector baldorVectors(ArrayList<Atomic> v1, ArrayList<Atomic> v2, int type, String operator) { 
+        ArrayList<Atomic> res = new ArrayList<Atomic>();
         
         for (int i = 0; i < v1.size(); i++) {
             if (type == 1) {
                 int r = 0;
                 
                 if (operator.equals("-"))
-                    r = ((Integer)v1.get(i)).intValue() - ((Integer)v2.get(i)).intValue();
+                    r = ((Integer)v1.get(i).getValue()).intValue() - ((Integer)v2.get(i).getValue()).intValue();
                 else if (operator.equals("*"))
-                    r = ((Integer)v1.get(i)).intValue() * ((Integer)v2.get(i)).intValue();
+                    r = ((Integer)v1.get(i).getValue()).intValue() * ((Integer)v2.get(i).getValue()).intValue();
                 else if (operator.equals("/")) {
-                    if (((Integer)v2.get(i)).intValue()  == 0)
+                    if (((Integer)v2.get(i).getValue()).intValue()  == 0)
                         return null;
                     
-                    r = ((Integer)v1.get(i)).intValue() / ((Integer)v2.get(i)).intValue();
+                    r = ((Integer)v1.get(i).getValue()).intValue() / ((Integer)v2.get(i).getValue()).intValue();
                 }
                 else if (operator.equals("%")) {
-                    if (((Integer)v2.get(i)).intValue()  == 0)
+                    if (((Integer)v2.get(i).getValue()).intValue()  == 0)
                         return null;
                     
-                    r = ((Integer)v1.get(i)).intValue() % ((Integer)v2.get(i)).intValue();
+                    r = ((Integer)v1.get(i).getValue()).intValue() % ((Integer)v2.get(i).getValue()).intValue();
                 }
                 else 
-                    r = ((Integer)v1.get(i)).intValue() + ((Integer)v2.get(i)).intValue();
+                    r = ((Integer)v1.get(i).getValue()).intValue() + ((Integer)v2.get(i).getValue()).intValue();
                 
-                res.add(Integer.valueOf(r));
+                res.add(new Atomic(Atomic.Type.INTEGER, Integer.valueOf(r)));
             }
             else if (type == 2){
-                String one = String.valueOf(v1.get(i));
-                String two = String.valueOf(v2.get(i));
+                String one = String.valueOf(v1.get(i).getValue());
+                String two = String.valueOf(v2.get(i).getValue());
                 double r = 0;
                 
                 if (operator.equals("-"))
@@ -311,28 +312,28 @@ public class Vector implements Symbol, Value {
                 else 
                     r = Math.pow(Double.valueOf(one), Double.valueOf(two));
                     
-                res.add(Double.valueOf(r));
+                res.add(new Atomic(Atomic.Type.NUMERIC, Double.valueOf(r)));
             }
             else {
-                String one = String.valueOf(v1.get(i));
-                if (one ==  null)
-                    one = "";
-                String two = String.valueOf(v2.get(i));
-                if (two == null)
-                    two = "";
+                if (v1.get(i).getValue() == null)
+                    return null;
+                String one = String.valueOf(v1.get(i).getValue());
+                if (v2.get(i).getValue() == null)
+                    return null;
+                String two = String.valueOf(v2.get(i).getValue());
                 
-                res.add(one + two);
+                res.add(new Atomic(Atomic.Type.STRING, one + two));
             }
         }
         
         return new Vector(res, type);
     }
     
-    private Vector baldorVector(ArrayList<Object> v1, double val, String operator, int order) { 
-        ArrayList<Object> res = new ArrayList<Object>();
+    private Vector baldorVector(ArrayList<Atomic> v1, double val, String operator, int order) { 
+        ArrayList<Atomic> res = new ArrayList<Atomic>();
         
-        for (Object ob : v1) {
-            String cur = String.valueOf(ob);
+        for (Atomic ob : v1) {
+            String cur = String.valueOf(ob.getValue());
             double doub = Double.valueOf(cur);
             double r = 0;
             
@@ -361,17 +362,17 @@ public class Vector implements Symbol, Value {
             else 
                 r = Math.pow(doub, val);
                     
-            res.add(Double.valueOf(r));
+            res.add(new Atomic(Atomic.Type.NUMERIC, Double.valueOf(r)));
         }
         
         return new Vector(res, 2);
     }
     
-    private Vector baldorVector(ArrayList<Object> v1, int val, String operator, int order) { 
-        ArrayList<Object> res = new ArrayList<Object>();
+    private Vector baldorVector(ArrayList<Atomic> v1, int val, String operator, int order) { 
+        ArrayList<Atomic> res = new ArrayList<Atomic>();
         
-        for (Object ob: v1) {
-            int ent = ((Integer)ob).intValue();
+        for (Atomic ob: v1) {
+            int ent = ((Integer)ob.getValue()).intValue();
             int r = 0;
             
             if (operator.equals("-"))
@@ -397,26 +398,27 @@ public class Vector implements Symbol, Value {
                 r = order == 1 ? ent % val : val % ent;
             } 
                     
-            res.add(Integer.valueOf(r));
+            res.add(new Atomic(Atomic.Type.INTEGER, Integer.valueOf(r)));
         }
         
         return new Vector(res, 1);
     }
     
-    private Vector stringAdding(ArrayList<Object> v1, String val, int order) {
-        ArrayList<Object> res = new ArrayList<Object>();
+    private Vector stringAdding(ArrayList<Atomic> v1, String val, int order) {
+        ArrayList<Atomic> res = new ArrayList<Atomic>();
         if (val == null)
-            val = "";
+            return null;
         
-        for (Object ob: v1) {
-            String one = String.valueOf(ob);
-            if (one == null)
-                one = "";
+        for (Atomic ob: v1) {
+            if (ob.getValue() == null)
+                return null;
+            String one = String.valueOf(ob.getValue());
+            
             
             if (order == 1)
-                res.add(one + val);
+                res.add(new Atomic(Atomic.Type.STRING, one + val));
             else 
-                res.add(val + one);
+                res.add(new Atomic(Atomic.Type.STRING, val + one));
         }
         
         return new Vector(res, 4);
@@ -469,7 +471,7 @@ public class Vector implements Symbol, Value {
             Vector vec = (Vector)op;
             if (this.type == 1 || this.type == 2) {
                 if (vec.type == 1 || vec.type == 2){
-                    return relationalVectors(this.content, (ArrayList<Object>)vec.getValue(), 2, operator);
+                    return relationalVectors(this.content, (ArrayList<Atomic>)vec.getValue(), 2, operator);
                 }
                 
                 return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
@@ -480,7 +482,7 @@ public class Vector implements Symbol, Value {
                    return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
                 
                 if (vec.type == 3) {
-                    return relationalVectors(this.content, (ArrayList<Object>)vec.getValue(), 3, operator);
+                    return relationalVectors(this.content, (ArrayList<Atomic>)vec.getValue(), 3, operator);
                 }
                 
                 return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
@@ -488,7 +490,11 @@ public class Vector implements Symbol, Value {
             
             if (this.type == 4) {
                 if (vec.type == 4) {
-                    return relationalVectors(this.content, (ArrayList<Object>)vec.getValue(), 4, operator);
+                    Vector thor = relationalVectors(this.content, (ArrayList<Atomic>)vec.getValue(), 4, operator);
+                    if (thor == null)
+                        return new CompileError("Semantico", "No es posible operar valores nulos", 0, 0);
+                    
+                    return thor;
                 }
                 
                 return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
@@ -520,8 +526,15 @@ public class Vector implements Symbol, Value {
             
             if (this.type == 4) {
                 if (((Atomic)op).getType() == Atomic.Type.STRING) {
+                    if (((Atomic)op).getValue() == null)
+                        return new CompileError("Semantico", "No es posible operar valores nulos", 0, 0);
+                    
                     String str = String.valueOf(((Atomic)op).getValue());
-                    return relationalVector(this.content, str, order, operator);
+                    Vector thor = relationalVector(this.content, str, order, operator);
+                    if (thor == null)
+                        return new CompileError("Semantico", "No es posible operar valores nulos", 0, 0);
+                    
+                    return thor;
                 }
             }
         }
@@ -530,13 +543,13 @@ public class Vector implements Symbol, Value {
         return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
     }
     
-    private Vector relationalVectors(ArrayList<Object> v1, ArrayList<Object> v2, int type, String operator) {
-        ArrayList<Object> res = new ArrayList<Object>();
+    private Vector relationalVectors(ArrayList<Atomic> v1, ArrayList<Atomic> v2, int type, String operator) {
+        ArrayList<Atomic> res = new ArrayList<Atomic>();
         
         for (int i = 0; i < v1.size(); i++) {
             if (type == 2) {
-                String first = String.valueOf(v1.get(i));
-                String second = String.valueOf(v2.get(i));
+                String first = String.valueOf(v1.get(i).getValue());
+                String second = String.valueOf(v2.get(i).getValue());
                 double one = Double.valueOf(first);
                 double two = Double.valueOf(second);
                 
@@ -562,11 +575,11 @@ public class Vector implements Symbol, Value {
                         break;
                 }
                 
-                res.add(Boolean.valueOf(flag));
+                res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(flag)));
             }
             else if (type == 3) {
-                boolean one = ((Boolean)v1.get(i)).booleanValue();
-                boolean two = ((Boolean)v2.get(i)).booleanValue();
+                boolean one = ((Boolean)v1.get(i).getValue()).booleanValue();
+                boolean two = ((Boolean)v2.get(i).getValue()).booleanValue();
                 
                 boolean flag = false;
                 if (operator.equals("=="))
@@ -574,11 +587,13 @@ public class Vector implements Symbol, Value {
                 else
                     flag = one != two;
                 
-                res.add(Boolean.valueOf(flag));
+                res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(flag)));
             }
             else {
-                String one = String.valueOf(v1.get(i));
-                String two = String.valueOf(v2.get(i));
+                if (v1.get(i).getValue() == null || v2.get(i).getValue() == null)
+                    return null;
+                String one = String.valueOf(v1.get(i).getValue());
+                String two = String.valueOf(v2.get(i).getValue());
                 
                 boolean flag = false;
                 switch (operator) {
@@ -601,16 +616,18 @@ public class Vector implements Symbol, Value {
                         flag = one.compareTo(two) != 0;
                         break;
                 }
+                
+                res.add(new Atomic(Atomic.Type.BOOLEAN, flag));
             }
         }
         return new Vector(res, 3);
     }
     
-    private Vector relationalVector(ArrayList<Object> v1, double doub, int order, String operator) {
-        ArrayList<Object> res = new ArrayList<Object>();
+    private Vector relationalVector(ArrayList<Atomic> v1, double doub, int order, String operator) {
+        ArrayList<Atomic> res = new ArrayList<Atomic>();
         
-        for (Object ob: v1) {
-            String one = String.valueOf(ob);
+        for (Atomic ob: v1) {
+            String one = String.valueOf(ob.getValue());
             double dib = Double.valueOf(one);
             
             boolean flag  = false;
@@ -635,16 +652,16 @@ public class Vector implements Symbol, Value {
                     break;
             }
             
-            res.add(Boolean.valueOf(flag));
+            res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(flag)));
         }
         return new Vector(res, 3);
     }
     
-    private Vector relationalVector(ArrayList<Object> v1, boolean bool, String operator) {
-        ArrayList<Object> res = new ArrayList<Object>();
+    private Vector relationalVector(ArrayList<Atomic> v1, boolean bool, String operator) {
+        ArrayList<Atomic> res = new ArrayList<Atomic>();
         
-        for (Object ob: v1) {
-            boolean dib = ((Boolean)ob).booleanValue();
+        for (Atomic ob: v1) {
+            boolean dib = ((Boolean)ob.getValue()).booleanValue();
             
             boolean flag  = false;
             switch (operator) {
@@ -656,16 +673,18 @@ public class Vector implements Symbol, Value {
                     break;
             }
             
-            res.add(Boolean.valueOf(flag));
+            res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(flag)));
         }
         return new Vector(res, 3);
     }
     
-    private Vector relationalVector(ArrayList<Object> v1, String str, int order, String operator) {
-        ArrayList<Object> res = new ArrayList<Object>();
+    private Vector relationalVector(ArrayList<Atomic> v1, String str, int order, String operator) {
+        ArrayList<Atomic> res = new ArrayList<Atomic>();
         
-        for (Object ob: v1) {
-            String one = String.valueOf(ob);
+        for (Atomic ob: v1) {
+            if (ob.getValue() == null)
+                return null;
+            String one = String.valueOf(ob.getValue());
             
             boolean flag  = false;
             switch (operator) {
@@ -689,7 +708,7 @@ public class Vector implements Symbol, Value {
                     break;
             }
             
-            res.add(Boolean.valueOf(flag));
+            res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(flag)));
         }
         return new Vector(res, 3);
     }
@@ -745,7 +764,7 @@ public class Vector implements Symbol, Value {
             if (((Vector)op).getSize() == this.getSize()) {
                 if (((Vector)op).type() == 3) {
                     Vector vec = (Vector)op;
-                    return booleanVectors(this.content, (ArrayList<Object>)vec.getValue(), operator);
+                    return booleanVectors(this.content, (ArrayList<Atomic>)vec.getValue(), operator);
                 }
                     
                 return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
@@ -768,12 +787,12 @@ public class Vector implements Symbol, Value {
         return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
     }
     
-    private Vector booleanVectors(ArrayList<Object> v1, ArrayList<Object> v2, String operator) {
-        ArrayList<Object> res = new ArrayList<Object>();
+    private Vector booleanVectors(ArrayList<Atomic> v1, ArrayList<Atomic> v2, String operator) {
+        ArrayList<Atomic> res = new ArrayList<Atomic>();
         
         for (int i = 0; i < v1.size(); i++) {
-            boolean one = ((Boolean)v1.get(i)).booleanValue();
-            boolean two = ((Boolean)v2.get(i)).booleanValue();
+            boolean one = ((Boolean)v1.get(i).getValue()).booleanValue();
+            boolean two = ((Boolean)v2.get(i).getValue()).booleanValue();
             
             boolean flag = false;
             if (operator.equals("&"))
@@ -781,17 +800,17 @@ public class Vector implements Symbol, Value {
             else 
                 flag = one || two;
             
-            res.add(Boolean.valueOf(flag));
+            res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(flag)));
         }
         
         return new Vector(res, 3);
     }
     
-    private Vector booleanVector(ArrayList<Object> v1, boolean bool, String operator) {
-        ArrayList<Object> res = new ArrayList<Object>();
+    private Vector booleanVector(ArrayList<Atomic> v1, boolean bool, String operator) {
+        ArrayList<Atomic> res = new ArrayList<Atomic>();
         
-        for (Object ob : v1) {
-            boolean one = ((Boolean)ob).booleanValue();
+        for (Atomic ob : v1) {
+            boolean one = ((Boolean)ob.getValue()).booleanValue();
             
             boolean flag = false;
             if (operator.equals("&"))
@@ -799,7 +818,7 @@ public class Vector implements Symbol, Value {
             else 
                 flag = one || bool;
             
-            res.add(Boolean.valueOf(flag));
+            res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(flag)));
         }
         
         return new Vector(res, 3);

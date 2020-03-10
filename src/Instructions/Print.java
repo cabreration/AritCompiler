@@ -55,8 +55,8 @@ public class Print implements Instruction {
         else /* (val instanceof Vector) */ {
             StringBuilder builder = new StringBuilder();
             builder.append("[ ");
-            for (Object obj : (ArrayList<Object>)((Vector)val).getValue()) {
-                builder.append(String.valueOf(obj));
+            for (Atomic obj : (ArrayList<Atomic>)((Vector)val).getValue()) {
+                builder.append(String.valueOf(obj.getValue()));
                 builder.append(", ");
             }
             builder.deleteCharAt(builder.length() - 2);

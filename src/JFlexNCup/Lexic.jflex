@@ -91,7 +91,7 @@ multiLineComment   = "#*" [^*] ~"*#" | "#*" "*"+ "#"
 <YYINITIAL> {Inter}                   { return new Symbol(Sym.integerValue, yycolumn, yyline, yytext()); }
 <YYINITIAL> "false"                   { return new Symbol(Sym.falseValue, yycolumn, yyline, "false"); }
 <YYINITIAL> "true"                    { return new Symbol(Sym.trueValue, yycolumn, yyline, "true"); }
-<YYINITIAL> {Id}                      { return new Symbol(Sym.id, yycolumn, yyline, yytext()); }
+<YYINITIAL> {Id}                      { return new Symbol(Sym.id, yycolumn, yyline, yytext().toLowerCase()); }
 
 // --------> String
 

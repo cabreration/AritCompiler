@@ -49,7 +49,7 @@ public class Atomic implements Expression, Value {
      * @return The Atomic Expression itself
     */
     @Override
-    public Object process(SymbolsTable env) {
+    public Object process(SymbolsTable env) {       
         return this;
     }
     
@@ -140,7 +140,11 @@ public class Atomic implements Expression, Value {
         
         if (op instanceof Atomic) {
             if (((Atomic)op).getType() == Atomic.Type.IDENTIFIER) {
+                String id = String.valueOf(((Atomic)op).getValue());
                 op = env.getValue(String.valueOf(((Atomic)op).getValue()));
+                
+                if (op == null)
+                    return new CompileError("Semantico", "La variable '" + id + " no existe en el contexto actual", this.line, this.column);
             }
         }
         
@@ -184,13 +188,23 @@ public class Atomic implements Expression, Value {
             
             if (operator.equals("+")) {
                 if (this.type == Type.BOOLEAN) {
-                    if (((Atomic)op).type == Type.STRING)
-                        return baldorOperate(this, (Atomic)op, Type.STRING, operator);
+                    if (((Atomic)op).type == Type.STRING) {
+                        Atomic bal = baldorOperate(this, (Atomic)op, Type.STRING, operator);
+                        if (bal == null)
+                            return new CompileError("Semanatico", "No es posible realizar operaciones con valores nulos", this.line, this.column);
+                        
+                        return bal;
+                    }
                     
                     return new CompileError("Semantico", "Tipo de operando invalido, no valido para '" + operator + "'", this.line, this.column);
                 }
-                if (this.type == Type.STRING)
-                    return baldorOperate(this, (Atomic)op, Type.STRING, operator);
+                if (this.type == Type.STRING) {
+                    Atomic bal = baldorOperate(this, (Atomic)op, Type.STRING, operator);
+                    if (bal == null)
+                        return new CompileError("Semanatico", "No es posible realizar operaciones con valores nulos", this.line, this.column);
+                    
+                    return bal;
+                }
             }
         }
         
@@ -259,12 +273,12 @@ public class Atomic implements Expression, Value {
             return new Atomic(Type.NUMERIC, Double.valueOf(r));
         }
         else {
+            if (one.getValue() == null)
+                return null;
             String first = String.valueOf(one.getValue());
-            if (first == null)
-                first = "";
+            if (two.getValue() == null)
+                return null;
             String second = String.valueOf(two.getValue());
-            if (second == null)
-                second = "";
             
             return new Atomic(Type.STRING, first + second);
         }
@@ -325,7 +339,11 @@ public class Atomic implements Expression, Value {
         
         if (op instanceof Atomic) {
             if (((Atomic)op).getType() == Atomic.Type.IDENTIFIER) {
+                String id = String.valueOf(((Atomic)op).getValue());
                 op = env.getValue(String.valueOf(((Atomic)op).getValue()));
+                
+                if (op == null)
+                    return new CompileError("Semantico", "La variable '" + id + " no existe en el contexto actual", this.line, this.column);
             }
         }
         
@@ -366,7 +384,9 @@ public class Atomic implements Expression, Value {
             
             if (this.type == Type.STRING) {
                 if (((Atomic)op).getType() == Type.STRING) {
-                    return operateRelational(this, (Atomic)op, Type.STRING, operator);
+                    Atomic rel = operateRelational(this, (Atomic)op, Type.STRING, operator);
+                    if (rel == null)
+                        return new CompileError("Semantico", "No es posible realizar operaciones con valores nulos", this.line, this.column);
                 }
                 
                 return new CompileError("Semantico", "Tipo de Operando invalido, operacion no definida", 0 , 0);
@@ -422,12 +442,13 @@ public class Atomic implements Expression, Value {
             return new Atomic(Type.BOOLEAN, Boolean.valueOf(r));
         }
         else {
+            if (one.getValue() == null)
+                return null;
             String first = String.valueOf(one.getValue());
-            if (first == null)
-                first = "";
+            if (two.getValue() == null)
+                return null;
             String second = String.valueOf(two.getValue());
-            if (second == null)
-                second = "";
+            
             
             boolean r = false;
             
@@ -503,7 +524,11 @@ public class Atomic implements Expression, Value {
         
         if (op instanceof Atomic) {
             if (((Atomic)op).getType() == Atomic.Type.IDENTIFIER) {
+                String id = String.valueOf(((Atomic)op).getValue());
                 op = env.getValue(String.valueOf(((Atomic)op).getValue()));
+                
+                if (op == null)
+                    return new CompileError("Semantico", "La variable '" + id + " no existe en el contexto actual", this.line, this.column);
             }
         }
         

@@ -752,7 +752,7 @@ public class Scanner implements java_cup.runtime.Scanner {
             // fall through
           case 61: break;
           case 4: 
-            { return new Symbol(Sym.id, yycolumn, yyline, yytext());
+            { return new Symbol(Sym.id, yycolumn, yyline, yytext().toLowerCase());
             } 
             // fall through
           case 62: break;

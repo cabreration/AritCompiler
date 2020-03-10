@@ -35,8 +35,6 @@ public class Concat implements Instruction {
         for (Object param : this.params) {
             Object val = ((Expression)param).process(env);
             
-            if (val == null)
-                return null;
             if (val instanceof CompileError) {
                 Singleton.insertError((CompileError)val);
                 return null;
@@ -48,15 +46,25 @@ public class Concat implements Instruction {
         if (type == 0)
             return null;
         
-        ArrayList<Object> ret = null;
-        if (type == 3)
-            ret = castToString(elements);
-        else if (type == 4)
-            ret = castToNumeric(elements);
-        else if (type == 5)
-            ret = castToInt(elements);
-        else 
-            ret = castToBoolean(elements);
+        /* if (type == 1) {} else if (type == 2) {} */
+        
+        Vector ret = null;
+        if (type == 3) {
+            ArrayList<Atomic> content = castToString(elements);
+            ret = new Vector(content, 4);
+        }
+        else if (type == 4) {
+            ArrayList<Atomic> content = castToString(elements);
+            ret = new Vector(content, 2);
+        }
+        else if (type == 5) {
+            ArrayList<Atomic> content = castToString(elements);
+            ret = new Vector(content, 1);
+        }
+        else {
+            ArrayList<Atomic> content = castToString(elements);
+            ret = new Vector(content, 3);
+        }
         
         return ret;
     }
@@ -64,6 +72,8 @@ public class Concat implements Instruction {
     private int determineType(ArrayList<Object> elements, SymbolsTable env) {
         int type = 6; // 1 - list, 2 - vector, 3 - string, 4 - numeric, 5 - integer, 6 - boolean
         for (Object element : elements) {
+            if (element == null)
+                type = type > 3 ? 3 : type;
             //if (element instanceof List) {}
             if (element instanceof Vector) 
                 type = type > 2 ? 2 : type;
@@ -96,49 +106,49 @@ public class Concat implements Instruction {
         return type;
     }
     
-    private ArrayList<Object> castToString(ArrayList<Object> elements) {
-        ArrayList<Object> strings = new ArrayList<Object>();
+    private ArrayList<Atomic> castToString(ArrayList<Object> elements) {
+        ArrayList<Atomic> strings = new ArrayList<Atomic>();
         for (Object element: elements) {
-            String val = String.valueOf(element);
-            strings.add(val);
+            String val = String.valueOf(((Atomic)element).getValue());
+            strings.add(new Atomic(Atomic.Type.STRING, val));
         }
         return strings;
     }
     
-    private ArrayList<Object> castToNumeric(ArrayList<Object> elements) {
-        ArrayList<Object> doubles = new ArrayList<Object>();
+    private ArrayList<Atomic> castToNumeric(ArrayList<Object> elements) {
+        ArrayList<Atomic> doubles = new ArrayList<Atomic>();
         for (Object element: elements) {
             if (((Atomic)element).getType() == Atomic.Type.BOOLEAN) {
                 if (((Boolean)(((Atomic)element).getValue())).booleanValue())
-                    doubles.add(Double.valueOf(1.0));
+                    doubles.add(new Atomic(Atomic.Type.NUMERIC, Double.valueOf(1.0)));
                 else 
-                    doubles.add(Double.valueOf(0.0));
+                    doubles.add(new Atomic(Atomic.Type.NUMERIC, Double.valueOf(0.0)));
             }
             else {
                 Double doub = ((Integer)((Atomic)element).getValue()).doubleValue();
-                doubles.add(doub);
+                doubles.add(new Atomic(Atomic.Type.NUMERIC, doub));
             }
         }
         return doubles;
     }
     
-    private ArrayList<Object> castToInt(ArrayList<Object> elements) {
-        ArrayList<Object> inters = new ArrayList<Object>();
+    private ArrayList<Atomic> castToInt(ArrayList<Object> elements) {
+        ArrayList<Atomic> inters = new ArrayList<Atomic>();
         for (Object obj : elements) {
             if (((Atomic)obj).getType() == Atomic.Type.BOOLEAN) {
                 if (((Boolean)(((Atomic)obj).getValue())).booleanValue())
-                    inters.add(Integer.valueOf(1));
+                    inters.add(new Atomic(Atomic.Type.INTEGER, Integer.valueOf(1)));
                 else 
-                    inters.add(Double.valueOf(0));
+                    inters.add(new Atomic(Atomic.Type.INTEGER, Integer.valueOf(0)));
             } 
         }
         return inters;
     }
     
-    private ArrayList<Object> castToBoolean(ArrayList<Object> elements) {
-        ArrayList<Object> booleans = new ArrayList<Object>();
+    private ArrayList<Atomic> castToBoolean(ArrayList<Object> elements) {
+        ArrayList<Atomic> booleans = new ArrayList<Atomic>();
         for (Object obj : elements) {
-            booleans.add(((Atomic)obj).getValue());
+            booleans.add((Atomic)obj);
         }
         return booleans;
     }

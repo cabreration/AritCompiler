@@ -6,6 +6,7 @@
 package Instructions;
 
 import APIServices.CompileError;
+import Expressions.Atomic;
 import Expressions.Expression;
 import Symbols.Symbol;
 import Symbols.SymbolsTable;
@@ -17,7 +18,7 @@ import java.util.ArrayList;
  *
  * @author jacab
  */
-public class Function_Call implements Instruction {
+public class Function_Call implements Instruction, Expression {
     private String name;
     private ArrayList<Object> params;
     private int line;
@@ -56,14 +57,15 @@ public class Function_Call implements Instruction {
 
     @Override
     public Object process(SymbolsTable env) {
-        
+        Object retorno = null;
         //Funciones Nativas
         switch (name.toLowerCase()) {
             case "print":
-                Print(env);
+                retorno = Print(env);
                 break;
             case "c":
-                return Concat(env);
+                retorno = Concat(env);
+                break;
             case "length":
                 break;
             case "ncol":
@@ -83,10 +85,14 @@ public class Function_Call implements Instruction {
             case "round":
                 break;
         }
-        return null;
+        
+        if (retorno == null)
+            retorno = new Atomic(Atomic.Type.STRING, null);
+        
+        return retorno;
     }
     
-    private void Print(SymbolsTable env) {
+    private Object Print(SymbolsTable env) {
         if (params.size() != 1)
             Singleton.insertError(new CompileError("Semantico", "La funcion print recibe una sola expresion como argumento", this.line, this.column));
         
@@ -96,6 +102,7 @@ public class Function_Call implements Instruction {
         Print printer = new Print((Expression)this.params.get(0));
         String result = (String)printer.process(env);
         Singleton.insertPrint(result);
+        return null;
     }
     
     private boolean validateNoDefault() {

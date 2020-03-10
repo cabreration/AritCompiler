@@ -80,6 +80,8 @@ public class TreeProcesor {
                 return new Atomic(Atomic.Type.INTEGER, expression.getRow(), expression.getColumn(), Integer.valueOf((int)expression.getContent()));
             case "bool value":
                 return new Atomic(Atomic.Type.BOOLEAN, expression.getRow(), expression.getColumn(), Boolean.valueOf((boolean)expression.getContent()));
+            case "call":
+                return processCall(expression);
             default:
                 return new Atomic(Atomic.Type.IDENTIFIER, expression.getRow(), expression.getColumn(), String.valueOf(expression.getContent()));
         }
@@ -128,7 +130,8 @@ public class TreeProcesor {
         
         if (call.getChildrenCount() == 1) {
             return new Function_Call(name, line, col);
-        } else {
+        } 
+        else {
             ArrayList<Object> params = new ArrayList<Object>();
             for (Node child : call.getChildAt(1).getChildren()) {
                 if (child.getNodeType().equals("default"))
