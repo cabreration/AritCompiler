@@ -18,6 +18,7 @@ public class Singleton {
     
     private static Hashtable<String, Function> functions = new Hashtable<String, Function>();
     private static ArrayList<CompileError> errors = new ArrayList<CompileError>();
+    private static ArrayList<String> console = new ArrayList<String>();
     
     private Singleton() {}
     
@@ -58,5 +59,13 @@ public class Singleton {
         functions.put(name, function);
         
         return true;
+    }
+    
+    public static void newCompilation() {
+        console = new ArrayList<String>();
+    }
+    
+    public static void insertPrint(String str) {
+        console.add(str);
     }
 }

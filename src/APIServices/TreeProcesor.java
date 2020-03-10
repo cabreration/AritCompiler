@@ -123,9 +123,11 @@ public class TreeProcesor {
     
     private static Function_Call processCall(Node call) {
         String name = String.valueOf(call.getChildAt(0).getContent());
+        int line = call.getChildAt(0).getRow();
+        int col = call.getChildAt(0).getColumn();
         
         if (call.getChildrenCount() == 1) {
-            return new Function_Call(name);
+            return new Function_Call(name, line, col);
         } else {
             ArrayList<Object> params = new ArrayList<Object>();
             for (Node child : call.getChildAt(1).getChildren()) {
@@ -136,7 +138,7 @@ public class TreeProcesor {
                     params.add(exp);
                 }
             }
-            return new Function_Call(name, params);
+            return new Function_Call(name, params, line, col);
         }
     }
     

@@ -7,13 +7,16 @@ package aritcompiler;
 
 import APIServices.Node;
 import APIServices.TreePrinter;
+import Instructions.Instruction;
 import JFlexNCup.Parser;
 import JFlexNCup.Scanner;
 import JavaCC.Grammar;
+import Symbols.SymbolsTable;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.Reader;
 import java.io.StringReader;
+import java.util.ArrayList;
 import java_cup.runtime.Symbol;
 
 /**
@@ -27,9 +30,17 @@ public class AritCompiler {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        Node root = cupTry();
+        if (root != null) {
+            ArrayList<Instruction> sentences = new ArrayList<Instruction>();
+            SymbolsTable env = new SymbolsTable();
+            for (Instruction ins : sentences) {
+                ins.process(env);
+            }
+        }
     }
    
-    public static void cupTry() {
+    public static Node cupTry() {
         BufferedReader bufferedReader;
         String name = "C:\\Users\\jacab\\Documents\\Compi 2\\R-it\\Pruebas\\tree.arit";
         try {
@@ -55,6 +66,7 @@ public class AritCompiler {
                 parse_tree = parser.debug_parse(); 
                 Node root = parser.root;
                 TreePrinter.printTree(root);
+                return root;
             }
             catch (Exception e) {
                 System.out.println(e.getMessage());
@@ -64,6 +76,7 @@ public class AritCompiler {
         catch (Exception e) {
             System.out.println(e.getMessage());
         }
+        return null;
     }
     
     
