@@ -11,6 +11,7 @@ import Expressions.Expression;
 import Symbols.Symbol;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
+import aritcompiler.Singleton;
 
 /**
  *
@@ -38,8 +39,11 @@ public class Asignment implements Instruction {
     public Object process(SymbolsTable env) {
         Object exp = expression.process(env);
         
+        if (exp == null)
+            return null;
+        
         if (exp instanceof CompileError) {
-            // agregar el error a la lista de errores
+            Singleton.insertError((CompileError)exp);
             return null;
         }
             
@@ -50,7 +54,7 @@ public class Asignment implements Instruction {
                 
                 if (exp == null) {
                     CompileError error = new CompileError("Semantico", "La variable " + id + " no existe", 0, 0);
-                    // guardar el error en la lista de errores
+                    Singleton.insertError(error);
                 }
                 
                 env.updateSymbol(this.identifier, (Symbol)exp);
@@ -58,8 +62,11 @@ public class Asignment implements Instruction {
             
             Vector vector = new Vector(((Atomic)exp).getValue());
             env.updateSymbol(this.identifier, vector);
-        }
-            
+            return null;
+        }   
+        
+        // if it is a vector, array, matrix or list
+        env.updateSymbol(this.identifier, (Symbol)exp);
         return null;
     }
     

@@ -59,8 +59,8 @@ public class Print implements Instruction {
                 builder.append(String.valueOf(obj));
                 builder.append(", ");
             }
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(" ]");
+            builder.deleteCharAt(builder.length() - 2);
+            builder.append("]");
             return builder.toString();
         }
         //else if (val instanceof Matrix) {}

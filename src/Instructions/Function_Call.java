@@ -7,7 +7,9 @@ package Instructions;
 
 import APIServices.CompileError;
 import Expressions.Expression;
+import Symbols.Symbol;
 import Symbols.SymbolsTable;
+import Symbols.Vector;
 import aritcompiler.Singleton;
 import java.util.ArrayList;
 
@@ -52,23 +54,16 @@ public class Function_Call implements Instruction {
         return params;
     }
 
-    public int getLine() {
-        return line;
-    }
-
-    public int getColumn() {
-        return column;
-    }
-
     @Override
     public Object process(SymbolsTable env) {
         
         //Funciones Nativas
         switch (name.toLowerCase()) {
             case "print":
+                Print(env);
                 break;
             case "c":
-                break;
+                return Concat(env);
             case "length":
                 break;
             case "ncol":
@@ -91,7 +86,7 @@ public class Function_Call implements Instruction {
         return null;
     }
     
-    public void Print(SymbolsTable env) {
+    private void Print(SymbolsTable env) {
         if (params.size() != 1)
             Singleton.insertError(new CompileError("Semantico", "La funcion print recibe una sola expresion como argumento", this.line, this.column));
         
@@ -101,5 +96,24 @@ public class Function_Call implements Instruction {
         Print printer = new Print((Expression)this.params.get(0));
         String result = (String)printer.process(env);
         Singleton.insertPrint(result);
+    }
+    
+    private boolean validateNoDefault() {
+        for (Object obj : this.params) {
+            if (String.valueOf(obj).equals("default"))
+                return false;
+        }
+        return true;
+    }
+    
+    private Symbol Concat(SymbolsTable env) {
+        if (!validateNoDefault()) {
+            Singleton.insertError(new CompileError("Semantico", "La funcion C no acepta 'default' como parametro", this.line, this.column));
+            return null;
+        }
+        
+        Concat concatenator = new Concat(this.params, this.line, this.column);
+        Symbol sym = (Symbol)concatenator.process(env);
+        return sym;
     }
 }

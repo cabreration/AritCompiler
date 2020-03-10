@@ -190,7 +190,7 @@ public class Atomic implements Expression, Value {
                     return new CompileError("Semantico", "Tipo de operando invalido, no valido para '" + operator + "'", this.line, this.column);
                 }
                 if (this.type == Type.STRING)
-                    return baldorOperate(this, (Atomic)op, Type.NUMERIC, operator);
+                    return baldorOperate(this, (Atomic)op, Type.STRING, operator);
             }
         }
         

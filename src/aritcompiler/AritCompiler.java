@@ -7,6 +7,7 @@ package aritcompiler;
 
 import APIServices.Node;
 import APIServices.TreePrinter;
+import APIServices.TreeProcesor;
 import Instructions.Instruction;
 import JFlexNCup.Parser;
 import JFlexNCup.Scanner;
@@ -32,11 +33,12 @@ public class AritCompiler {
         // TODO code application logic here
         Node root = cupTry();
         if (root != null) {
-            ArrayList<Instruction> sentences = new ArrayList<Instruction>();
+            ArrayList<Instruction> sentences = TreeProcesor.processTree(root);
             SymbolsTable env = new SymbolsTable();
             for (Instruction ins : sentences) {
                 ins.process(env);
             }
+            Singleton.print();
         }
     }
    
@@ -53,7 +55,7 @@ public class AritCompiler {
                 parcial = bufferedReader.readLine();
             }
             
-            System.out.println(completo);
+            //System.out.println(completo);
             bufferedReader.close();
 
             /* Here we will try to parse it and see what does it generate */
@@ -63,7 +65,8 @@ public class AritCompiler {
             Symbol parse_tree = null;
             
             try {
-                parse_tree = parser.debug_parse(); 
+                //parse_tree = parser.debug_parse();
+                parse_tree = parser.parse();
                 Node root = parser.root;
                 TreePrinter.printTree(root);
                 return root;

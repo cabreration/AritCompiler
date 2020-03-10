@@ -80,7 +80,7 @@ start with ROOT
 ROOT ::= SENTENCES_LIST:root    {: Node rut = new Node("root");
                                    rut.addChildren(root);
                                    parser.root = rut;
-                                   System.out.println("Si estoy llegando a la raiz");
+                                   //System.out.println("Si estoy llegando a la raiz");
                                    RESULT = rut;
                                 :}
 ;

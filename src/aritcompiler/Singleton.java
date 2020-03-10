@@ -68,4 +68,12 @@ public class Singleton {
     public static void insertPrint(String str) {
         console.add(str);
     }
+    
+    public static void print() {
+        StringBuilder builder = new StringBuilder();
+        for (String str : console) {
+            builder.append(str);
+        }
+        System.out.println(builder.toString());
+    }
 }

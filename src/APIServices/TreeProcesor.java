@@ -27,7 +27,7 @@ public class TreeProcesor {
     public static ArrayList<Instruction> processTree(Node root) {
         
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
-        for (Node child : root.getChildren()) {
+        for (Node child : root.getChildAt(0).getChildren()) {
             Instruction sentence = processIndividual(child);
             
             if (sentence != null)
