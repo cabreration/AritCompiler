@@ -6,7 +6,7 @@
 package Expressions;
 
 import APIServices.CompileError;
-import Symbols.Enviroment;
+import Symbols.SymbolsTable;
 
 /**
  *
@@ -33,7 +33,7 @@ public class Unary implements Expression {
     }
     
     @Override
-    public Object process(Enviroment env) {
+    public Object process(SymbolsTable env) {
         Object atom = exp.process(env);
         
         if (atom instanceof CompileError)

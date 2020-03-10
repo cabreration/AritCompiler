@@ -6,7 +6,7 @@
 package Expressions;
 
 import APIServices.CompileError;
-import Symbols.Enviroment;
+import Symbols.SymbolsTable;
 
 /**
  *
@@ -37,7 +37,7 @@ public class Ternary implements Expression {
     }
     
     @Override
-    public Object process(Enviroment env) {
+    public Object process(SymbolsTable env) {
         Object atom1 = arg1.process(env);
         Object atom2 = arg2.process(env);
         Object atom3 = arg3.process(env);

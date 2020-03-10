@@ -6,7 +6,7 @@
 package Expressions;
 
 import APIServices.CompileError;
-import Symbols.Enviroment;
+import Symbols.SymbolsTable;
 import Symbols.Symbol;
 import Symbols.Vector;
 
@@ -49,14 +49,14 @@ public class Atomic implements Expression, Value {
      * @return The Atomic Expression itself
     */
     @Override
-    public Object process(Enviroment env) {
+    public Object process(SymbolsTable env) {
         return this;
     }
     
     /**
      * @return Either a Vector, List, Matrix or Array; Returns null if the Symbol doesnt exist
     */
-    public Symbol findInTable(Enviroment env) {
+    public Symbol findInTable(SymbolsTable env) {
         return env.getSymbol(String.valueOf(this.value));
     }
 
@@ -79,7 +79,7 @@ public class Atomic implements Expression, Value {
     /* A partir de aqui todos los metodos que sean sobre operaciones - Value interface*/
     
     @Override
-    public Object booleanNegation(Enviroment env) {
+    public Object booleanNegation(SymbolsTable env) {
         
         if (type == Type.BOOLEAN) {
             Boolean bool = !(((Boolean)value).booleanValue());
@@ -95,7 +95,7 @@ public class Atomic implements Expression, Value {
     }
 
     @Override
-    public Object aritmeticNegation(Enviroment env) {
+    public Object aritmeticNegation(SymbolsTable env) {
         
         if (type == Type.INTEGER) {
             Integer ent = -(((Integer)value).intValue());
@@ -116,7 +116,7 @@ public class Atomic implements Expression, Value {
         
     }
     
-    private Object validateBaldor(Enviroment env, Value op, String operator) {
+    private Object validateBaldor(SymbolsTable env, Value op, String operator) {
         
         if (this.type == Type.IDENTIFIER) {
             Value v = env.getValue(String.valueOf(this.value));
@@ -272,37 +272,37 @@ public class Atomic implements Expression, Value {
     }
     
     @Override
-    public Object minus(Enviroment env, Value op, int order) {
+    public Object minus(SymbolsTable env, Value op, int order) {
         return validateBaldor(env, op, "-");
     }
     
     @Override
-    public Object plus(Enviroment env, Value op, int order) {
+    public Object plus(SymbolsTable env, Value op, int order) {
         return validateBaldor(env, op, "+");
     } 
     
     @Override
-    public Object times(Enviroment env, Value op, int order) {
+    public Object times(SymbolsTable env, Value op, int order) {
         return validateBaldor(env, op, "*");
     }
     
     @Override
-    public Object div(Enviroment env, Value op, int order) {
+    public Object div(SymbolsTable env, Value op, int order) {
         return validateBaldor(env, op, "/");
     }
     
     @Override
-    public Object mod(Enviroment env, Value op, int order) {
+    public Object mod(SymbolsTable env, Value op, int order) {
         return validateBaldor(env, op, "%");
     } 
     
     @Override
-    public Object power(Enviroment env, Value op, int order) {
+    public Object power(SymbolsTable env, Value op, int order) {
         return validateBaldor(env, op, "^");
     } 
     
     /* Operaciones relacionales */
-    private Object validateRelational(Enviroment env, Value op, String operator) {
+    private Object validateRelational(SymbolsTable env, Value op, String operator) {
         if (this.type == Type.IDENTIFIER) {
             Value v = env.getValue(String.valueOf(this.value));
             
@@ -457,38 +457,38 @@ public class Atomic implements Expression, Value {
     }
     
     @Override
-    public Object lesser(Enviroment env, Value op, int order) {
+    public Object lesser(SymbolsTable env, Value op, int order) {
         return validateRelational(env, op, "<");
     }
     
     @Override
-    public Object greater(Enviroment env, Value op, int order) {
+    public Object greater(SymbolsTable env, Value op, int order) {
         return validateRelational(env, op, ">");
     }
     
     @Override
-    public Object lesserEquals(Enviroment env, Value op, int order) {
+    public Object lesserEquals(SymbolsTable env, Value op, int order) {
         return validateRelational(env, op, "<=");
     }
     
     @Override
-    public Object greaterEquals(Enviroment env, Value op, int order) {
+    public Object greaterEquals(SymbolsTable env, Value op, int order) {
         return validateRelational(env, op, ">=");
     }
     
     @Override
-    public Object equals(Enviroment env, Value op, int order) {
+    public Object equals(SymbolsTable env, Value op, int order) {
         return validateRelational(env, op, "==");
     }
     
     @Override
-    public Object notEquals(Enviroment env, Value op, int order) {
+    public Object notEquals(SymbolsTable env, Value op, int order) {
         return validateRelational(env, op, "!=");
     }
     
     /* operaciones booleanas */ 
     
-    private Object validateBoolean(Enviroment env, Value op, String operator) { 
+    private Object validateBoolean(SymbolsTable env, Value op, String operator) { 
         if (this.type == Type.IDENTIFIER) {
             Value v = env.getValue(String.valueOf(this.value));
             
@@ -545,12 +545,12 @@ public class Atomic implements Expression, Value {
     }
     
     @Override
-    public Object and(Enviroment env, Value op) {
+    public Object and(SymbolsTable env, Value op) {
         return validateBoolean(env, op, "&");
     }
     
     @Override
-    public Object or(Enviroment env, Value op) {
+    public Object or(SymbolsTable env, Value op) {
         return validateBoolean(env, op, "|");
     }
 }

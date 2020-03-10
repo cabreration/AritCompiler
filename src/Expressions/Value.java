@@ -5,7 +5,7 @@
  */
 package Expressions;
 
-import Symbols.Enviroment;
+import Symbols.SymbolsTable;
 
 /**
  *
@@ -13,35 +13,35 @@ import Symbols.Enviroment;
  */
 public interface Value {
     
-    public Object booleanNegation(Enviroment env);
+    public Object booleanNegation(SymbolsTable env);
     
-    public Object aritmeticNegation(Enviroment env);
+    public Object aritmeticNegation(SymbolsTable env);
     
-    public Object minus(Enviroment env, Value op, int order);
+    public Object minus(SymbolsTable env, Value op, int order);
     
-    public Object plus(Enviroment env, Value op, int order);
+    public Object plus(SymbolsTable env, Value op, int order);
     
-    public Object times(Enviroment env, Value op, int order);
+    public Object times(SymbolsTable env, Value op, int order);
     
-    public Object div(Enviroment env, Value op, int order);
+    public Object div(SymbolsTable env, Value op, int order);
     
-    public Object power(Enviroment env, Value op, int order);
+    public Object power(SymbolsTable env, Value op, int order);
     
-    public Object mod(Enviroment env, Value op, int order);
+    public Object mod(SymbolsTable env, Value op, int order);
     
-    public Object lesser(Enviroment env, Value op, int order);
+    public Object lesser(SymbolsTable env, Value op, int order);
     
-    public Object greater(Enviroment env, Value op, int order);
+    public Object greater(SymbolsTable env, Value op, int order);
     
-    public Object lesserEquals(Enviroment env, Value op, int order);
+    public Object lesserEquals(SymbolsTable env, Value op, int order);
     
-    public Object greaterEquals(Enviroment env, Value op, int order);
+    public Object greaterEquals(SymbolsTable env, Value op, int order);
     
-    public Object equals(Enviroment env, Value op, int order);
+    public Object equals(SymbolsTable env, Value op, int order);
     
-    public Object notEquals(Enviroment env, Value op, int order);
+    public Object notEquals(SymbolsTable env, Value op, int order);
     
-    public Object and(Enviroment env, Value op);
+    public Object and(SymbolsTable env, Value op);
     
-    public Object or(Enviroment env, Value op);
+    public Object or(SymbolsTable env, Value op);
 }

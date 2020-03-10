@@ -6,13 +6,17 @@
 package Expressions;
 
 import APIServices.CompileError;
-import Symbols.Enviroment;
+import Symbols.SymbolsTable;
 
 /**
  *
  * @author jacab
  */
 public class Binary implements Expression {
+
+    public Binary() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
     public enum Operator {
         PLUS,
@@ -53,7 +57,7 @@ public class Binary implements Expression {
     }
     
     @Override
-    public Object process(Enviroment env) {
+    public Object process(SymbolsTable env) {
         Object atom1 = exp1.process(env);
         Object atom2 = exp2.process(env);
         
@@ -78,7 +82,7 @@ public class Binary implements Expression {
         return res;
     }
     
-    private Object operations(Enviroment env, Value op1, Value op2) {
+    private Object operations(SymbolsTable env, Value op1, Value op2) {
         
         Object res = null;
         switch (this.operator) {

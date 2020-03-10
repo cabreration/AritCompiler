@@ -61,7 +61,7 @@ public class Vector implements Symbol, Value {
     }
 
     @Override
-    public Object booleanNegation(Enviroment env) {
+    public Object booleanNegation(SymbolsTable env) {
         if (this.type != 3)
             return new CompileError("Semantico", "Tipo de operando incorrecto: no se puede operar valores no booleanos con el operador '!'", 0, 0);
         
@@ -75,7 +75,7 @@ public class Vector implements Symbol, Value {
     }
     
     @Override
-    public Object aritmeticNegation(Enviroment env) {
+    public Object aritmeticNegation(SymbolsTable env) {
         if (this.type != 1 && this.type != 2)
             return new CompileError("Semantico", "Tipo de operando incorrecto: solo pueden operarse valores numericos y enteros con el operador '-'", 0, 0);
         
@@ -91,7 +91,7 @@ public class Vector implements Symbol, Value {
         return this.type == 1 ? new Vector(store, 1) : new Vector(store, 2);
     }
     
-    private Object validateBaldor(Enviroment env, Value op, String operator, int order) {
+    private Object validateBaldor(SymbolsTable env, Value op, String operator, int order) {
         /* Valid cases */
         if (op instanceof Atomic) {
             if (((Atomic)op).getType() == Atomic.Type.IDENTIFIER) {
@@ -423,36 +423,36 @@ public class Vector implements Symbol, Value {
     }
     
     @Override
-    public Object minus(Enviroment env, Value op, int order) {
+    public Object minus(SymbolsTable env, Value op, int order) {
         return validateBaldor(env, op, "-", order);
     }
     
     @Override
-    public Object plus(Enviroment env, Value op, int order) {
+    public Object plus(SymbolsTable env, Value op, int order) {
         return validateBaldor(env, op, "+", order);
     } 
     
     @Override
-    public Object times(Enviroment env, Value op, int order) {
+    public Object times(SymbolsTable env, Value op, int order) {
         return validateBaldor(env, op, "*", order);
     }
     
     @Override
-    public Object div(Enviroment env, Value op, int order) {
+    public Object div(SymbolsTable env, Value op, int order) {
         return validateBaldor(env, op, "/", order);
     }
     
     @Override
-    public Object mod(Enviroment env, Value op, int order) {
+    public Object mod(SymbolsTable env, Value op, int order) {
         return validateBaldor(env, op, "%", order);
     } 
     
     @Override
-    public Object power(Enviroment env, Value op, int order) {
+    public Object power(SymbolsTable env, Value op, int order) {
         return validateBaldor(env, op, "^", order);
     } 
     
-    private Object validateRelational(Enviroment env, Value op, String operator, int order) {
+    private Object validateRelational(SymbolsTable env, Value op, String operator, int order) {
         if (op instanceof Atomic) {
             if (((Atomic)op).getType() == Atomic.Type.IDENTIFIER) {
                 String name = String.valueOf(((Atomic)op).getValue());
@@ -695,37 +695,37 @@ public class Vector implements Symbol, Value {
     }
     
     @Override
-    public Object lesser(Enviroment env, Value op, int order) {
+    public Object lesser(SymbolsTable env, Value op, int order) {
         return validateRelational(env, op, "<", order);
     }
     
     @Override
-    public Object greater(Enviroment env, Value op, int order) {
+    public Object greater(SymbolsTable env, Value op, int order) {
         return validateRelational(env, op, ">", order);
     }
     
     @Override
-    public Object lesserEquals(Enviroment env, Value op, int order) {
+    public Object lesserEquals(SymbolsTable env, Value op, int order) {
         return validateRelational(env, op, "<=", order);
     }
     
     @Override
-    public Object greaterEquals(Enviroment env, Value op, int order) {
+    public Object greaterEquals(SymbolsTable env, Value op, int order) {
         return validateRelational(env, op, ">=", order);
     }
     
     @Override
-    public Object equals(Enviroment env, Value op, int order) {
+    public Object equals(SymbolsTable env, Value op, int order) {
         return validateRelational(env, op, "==", order);
     }
     
     @Override
-    public Object notEquals(Enviroment env, Value op, int order) {
+    public Object notEquals(SymbolsTable env, Value op, int order) {
         return validateRelational(env, op, "!=", order);
     }
     
     /* operaciones booleanas */ 
-    private Object validateBoolean(Enviroment env, Value op, String operator) {
+    private Object validateBoolean(SymbolsTable env, Value op, String operator) {
         if (this.type != 3)
             return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
         
@@ -806,12 +806,12 @@ public class Vector implements Symbol, Value {
     }
     
     @Override
-    public Object and(Enviroment env, Value op) {
+    public Object and(SymbolsTable env, Value op) {
         return validateBoolean(env, op, "&");
     }
     
     @Override
-    public Object or(Enviroment env, Value op) {
+    public Object or(SymbolsTable env, Value op) {
         return validateBoolean(env, op, "|");
     }
 }

@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Expressions;
+package Instructions;
 
 import Symbols.SymbolsTable;
 
@@ -11,6 +11,8 @@ import Symbols.SymbolsTable;
  *
  * @author jacab
  */
-public interface Expression {
+public interface Instruction {
+    
     public Object process(SymbolsTable env);
+    
 }
