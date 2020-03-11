@@ -8,11 +8,14 @@ package APIServices;
 import Expressions.Atomic;
 import Expressions.Binary;
 import Expressions.Expression;
+import Expressions.StructureAccess;
 import Expressions.Ternary;
 import Expressions.Unary;
 import Instructions.Asignment;
 import Instructions.Function_Call;
 import Instructions.Instruction;
+import Instructions.StructureAsignment;
+import Symbols.Address;
 import Symbols.Function;
 import java.util.ArrayList;
 
@@ -44,6 +47,8 @@ public class TreeProcesor {
                 return processAsignment(ins.getChildAt(0), ins.getChildAt(1));
             case "call":
                 return processCall(ins);
+            case "structure asignment":
+                return processStructureAsignment(ins.getChildAt(0), ins.getChildAt(1));
         }
         
         return sent;
@@ -58,7 +63,14 @@ public class TreeProcesor {
         }
         
         Expression exp = processExpression(expression);
-        return new Asignment(id, exp);
+        return new Asignment(id, exp, identifier.getRow(), identifier.getColumn());
+    }
+    
+    private static StructureAsignment processStructureAsignment(Node structure, Node expression) {
+        StructureAccess access = processStructureAccess(structure);
+        Expression exp = processExpression(expression);
+        
+        return new StructureAsignment(access.getIdentifier(), access.getLine(), access.getColumn(), access.getDirecciones(), exp);
     }
     
     private static Expression processExpression(Node expression) {
@@ -82,6 +94,8 @@ public class TreeProcesor {
                 return new Atomic(Atomic.Type.BOOLEAN, expression.getRow(), expression.getColumn(), Boolean.valueOf((boolean)expression.getContent()));
             case "call":
                 return processCall(expression);
+            case "structure access":
+                return processStructureAccess(expression);
             default:
                 return new Atomic(Atomic.Type.IDENTIFIER, expression.getRow(), expression.getColumn(), String.valueOf(expression.getContent()));
         }
@@ -179,4 +193,27 @@ public class TreeProcesor {
                 return Binary.Operator.OR;
         }
     } 
+    
+    private static StructureAccess processStructureAccess(Node exp) { 
+        String id = String.valueOf(exp.getChildAt(0).getContent());
+        int line = exp.getChildAt(0).getRow();
+        int column = exp.getChildAt(0).getColumn();
+        int n = exp.getChildAt(1).getChildrenCount();
+        Address[] adds = new Address[n];
+        n = 0;
+        
+        for (Node child : exp.getChildAt(1).getChildren()) {
+            int type = 0;
+            if (String.valueOf(child.getContent()).equals("singleB"))
+                type = 1;
+            else
+                type = 2;
+            Expression address = processExpression(child.getChildAt(0));
+            
+            adds[n] = new Address(type, address);
+            n++;
+        }
+        
+        return new StructureAccess(id, line, column, adds); 
+    }
 }

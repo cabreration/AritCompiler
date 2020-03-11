@@ -14,4 +14,8 @@ public interface Symbol {
     public Object getValue();
     
     public int getSize();
+    
+    public Object getValue(int i);
+    
+    public Object getValue2B(int i);
 }

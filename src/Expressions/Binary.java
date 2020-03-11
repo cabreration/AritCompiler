@@ -64,11 +64,21 @@ public class Binary implements Expression {
         if (atom1 == null || atom2 == null)
             return new CompileError("Semantico", "No es posible realizar operaciones el valor nulo", this.line, this.column);
         
-        if (atom1 instanceof CompileError)
+        if (atom1 instanceof CompileError) {
+            if (((CompileError)atom1).getRow() == 0 && ((CompileError)atom1).getColumn() == 0) {
+                ((CompileError)atom1).setRow(this.line);
+                ((CompileError)atom1).setColumn(this.column);
+            }
             return atom1;
+        }
         
-        if (atom2 instanceof CompileError)
+        if (atom2 instanceof CompileError) {
+            if (((CompileError)atom2).getRow() == 0 && ((CompileError)atom2).getColumn() == 0) {
+                ((CompileError)atom2).setRow(this.line);
+                ((CompileError)atom2).setColumn(this.column);
+            }
             return atom2;
+        }
         
         if (!(atom1 instanceof Value) || !(atom2 instanceof Value)) {
             throw new Error("Esto no deberia estar pasando Binario");

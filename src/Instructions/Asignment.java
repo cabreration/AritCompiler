@@ -21,10 +21,14 @@ public class Asignment implements Instruction {
     
     private String identifier;
     private Expression expression;
+    private int line;
+    private int column;
 
-    public Asignment(String identifier, Expression expression) {
+    public Asignment(String identifier, Expression expression, int line, int column) {
         this.identifier = identifier;
         this.expression = expression;
+        this.line = line;
+        this.column = column;
     }
 
     public String getIdentifier() {
@@ -43,6 +47,10 @@ public class Asignment implements Instruction {
             return null;
         
         if (exp instanceof CompileError) {
+            if (((CompileError)exp).getRow() == 0 && ((CompileError)exp).getColumn() == 0) {
+                ((CompileError)exp).setRow(this.line);
+                ((CompileError)exp).setColumn(this.column);
+            }
             Singleton.insertError((CompileError)exp);
             return null;
         }

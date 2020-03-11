@@ -294,9 +294,17 @@ ASIGNMENT ::= id:id valAsignment LONE_EXPRESSION:exp                {: Node as =
                                                                        RESULT = as;
                                                                     :}
 
-    | MATRIX_ACCESS valAsignment LONE_EXPRESSION
+    | MATRIX_ACCESS:mat valAsignment LONE_EXPRESSION:exp            {: Node as = new Node("matrix asignment");
+                                                                       as.addChildren(mat);
+                                                                       as.addChildren(exp);
+                                                                       RESULT = as;
+                                                                    :}
 
-    | VECTOR_ACCESS valAsignment LONE_EXPRESSION
+    | VECTOR_ACCESS:vec valAsignment LONE_EXPRESSION:exp            {: Node as = new Node("structure asignment");
+                                                                       as.addChildren(vec);
+                                                                       as.addChildren(exp);
+                                                                       RESULT = as;
+                                                                    :}
 
     | id:id valAsignment ARROW_FUNCTION:f                           {: Node as = new Node("arrow function");
                                                                        Node ident = new Node("identifier", idright, idleft, String.valueOf(id));

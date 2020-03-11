@@ -8,6 +8,7 @@ package Symbols;
 import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Value;
+import aritcompiler.Singleton;
 import java.util.ArrayList;
 
 /**
@@ -832,5 +833,20 @@ public class Vector implements Symbol, Value {
     @Override
     public Object or(SymbolsTable env, Value op) {
         return validateBoolean(env, op, "|");
+    }
+    
+    @Override
+    public Object getValue(int i) {
+        i--;
+        if (i > this.content.size() - 1 || i < 0)
+            return new CompileError("Semantico", "Indice de acceso fuera de limites", 0, 0);
+        
+        Atomic atom = this.content.get(i);
+        return new Vector(atom);
+    }
+    
+    @Override
+    public Object getValue2B(int i) {
+        return new CompileError("Semantico", "El acceso con corchetes dobles [[]] no esta definido para Vectores", 0, 0);
     }
 }

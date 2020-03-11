@@ -46,23 +46,27 @@ public class Concat implements Instruction {
         if (type == 0)
             return null;
         
-        /* if (type == 1) {} else if (type == 2) {} */
-        
+        /* if (type == 1) {} */
         Vector ret = null;
+        if (type == 2) {
+            elements = castToVector(elements);
+            type = determineType(elements, env);
+        }
+        
         if (type == 3) {
             ArrayList<Atomic> content = castToString(elements);
             ret = new Vector(content, 4);
         }
         else if (type == 4) {
-            ArrayList<Atomic> content = castToString(elements);
+            ArrayList<Atomic> content = castToNumeric(elements);
             ret = new Vector(content, 2);
         }
         else if (type == 5) {
-            ArrayList<Atomic> content = castToString(elements);
+            ArrayList<Atomic> content = castToInt(elements);
             ret = new Vector(content, 1);
         }
         else {
-            ArrayList<Atomic> content = castToString(elements);
+            ArrayList<Atomic> content = castToBoolean(elements);
             ret = new Vector(content, 3);
         }
         
@@ -106,6 +110,21 @@ public class Concat implements Instruction {
         return type;
     }
     
+    private ArrayList<Object> castToVector(ArrayList<Object> elements) {
+        ArrayList<Object> params = new ArrayList<Object>();
+        for (Object obj : elements) {
+            if (obj instanceof Vector) {
+                for (Atomic atom : (ArrayList<Atomic>)((Vector)obj).getValue()) {
+                        params.add(atom);
+                }
+            }
+            else {
+                params.add(obj);
+            }
+        }
+        return params;
+    }
+    
     private ArrayList<Atomic> castToString(ArrayList<Object> elements) {
         ArrayList<Atomic> strings = new ArrayList<Atomic>();
         for (Object element: elements) {
@@ -124,6 +143,9 @@ public class Concat implements Instruction {
                 else 
                     doubles.add(new Atomic(Atomic.Type.NUMERIC, Double.valueOf(0.0)));
             }
+            else if (((Atomic)element).getType() == Atomic.Type.NUMERIC) {
+                doubles.add((Atomic)element);
+            }
             else {
                 Double doub = ((Integer)((Atomic)element).getValue()).doubleValue();
                 doubles.add(new Atomic(Atomic.Type.NUMERIC, doub));
@@ -140,7 +162,10 @@ public class Concat implements Instruction {
                     inters.add(new Atomic(Atomic.Type.INTEGER, Integer.valueOf(1)));
                 else 
                     inters.add(new Atomic(Atomic.Type.INTEGER, Integer.valueOf(0)));
-            } 
+            }
+            else {
+                inters.add((Atomic)obj);
+            }
         }
         return inters;
     }
