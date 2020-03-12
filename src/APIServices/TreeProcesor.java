@@ -19,6 +19,7 @@ import Instructions.If_Sentence;
 import Instructions.Instruction;
 import Instructions.StructureAsignment;
 import Instructions.Switch_Sentence;
+import Instructions.While_Sentence;
 import Symbols.Address;
 import Symbols.Function;
 import java.util.ArrayList;
@@ -61,6 +62,8 @@ public class TreeProcesor {
                 return new Break_Sentence(ins.getRow(), ins.getColumn());
             case "continue sentence":
                 return new Break_Sentence(ins.getRow(), ins.getColumn());
+            case "while sentence":
+                return processWhileSentence(ins);
         }
         
         return sent;
@@ -290,5 +293,9 @@ public class TreeProcesor {
             }
         }
         return cases;
+    }
+
+    private static While_Sentence processWhileSentence(Node ins) {
+        return null;
     }
 }
