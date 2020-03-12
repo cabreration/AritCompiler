@@ -25,12 +25,13 @@ public class Break_Sentence implements Instruction {
     
     @Override
     public Object process(SymbolsTable env) {
-        if (env.getType().equals("while") || env.getType().equals("case") || env.getType().equals("for") || env.getType().equals("do_while")
+        /*if (env.getType().equals("while") || env.getType().equals("case") || env.getType().equals("for") || env.getType().equals("do_while")
                 || env.getType().equals("fwhile") || env.getType().equals("fcase") || env.getType().equals("ffor") || env.getType().equals("fdo_while")) 
             return this;
         
         Singleton.insertError(new CompileError("Semantico", "La sentencia break solo puede ser usada dentro de una sentencia de repeticion", this.line, this.column));
-        return null;
+        return null;*/
+        return this;
     }
     
 }

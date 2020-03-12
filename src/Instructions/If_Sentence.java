@@ -56,7 +56,7 @@ public class If_Sentence implements Instruction {
         if (this.condition == null) {
             SymbolsTable local = new SymbolsTable("if", env);
             for (Instruction ins : this.sentences) {
-                ins.process(local);
+                Object r = ins.process(local);
             }
             
             /* TODAVIA FALTA AGREGAR LOS RETURN */
@@ -114,8 +114,9 @@ public class If_Sentence implements Instruction {
             }
         }
         else {
-            if (elseSentence != null)
-                elseSentence.process(env);
+            if (elseSentence != null) {
+                Object r = elseSentence.process(env);
+            }
         }
          /* TODAVIA NO HE AGREGADO EL RETURN */
         return null;

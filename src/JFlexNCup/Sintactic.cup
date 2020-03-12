@@ -472,7 +472,7 @@ SINGLE_CASE ::= caseKeyword:c LONE_EXPRESSION:exp colon SENTENCES_LIST:actions  
                                                                                     :}
 ;
 
-DEFAULT_CASE ::= defaultKeyword colon SENTENCES_LIST:actions                        {: Node defa = new Node("default");
+DEFAULT_CASE ::= defaultKeyword:d colon SENTENCES_LIST:actions                      {: Node defa = new Node("default", dright, dleft, null);
                                                                                        defa.addChildren(actions);
                                                                                        RESULT = defa;
                                                                                     :}

@@ -235,7 +235,8 @@ public class TreeProcesor {
             ArrayList<Instruction> sentences = new ArrayList<Instruction>();
             for (Node sentence : ins.getChildAt(1).getChildren()) {
                 Instruction sent = processIndividual(sentence);
-                sentences.add(sent);
+                if (sent != null)
+                    sentences.add(sent);
             }
             If_Sentence elseIf = processIfSentence(ins.getChildAt(2));
             return new If_Sentence(condition, sentences, elseIf, ins.getRow(), ins.getColumn());
@@ -245,7 +246,8 @@ public class TreeProcesor {
             ArrayList<Instruction> sentences = new ArrayList<Instruction>();
             for (Node sentence : ins.getChildAt(1).getChildren()) {
                 Instruction sent = processIndividual(sentence);
-                sentences.add(sent);
+                if (sent != null)
+                    sentences.add(sent);
             }
             return new If_Sentence(condition, sentences, ins.getRow(), ins.getColumn());
         }
@@ -267,7 +269,25 @@ public class TreeProcesor {
     private static ArrayList<Case_Component> processCases(Node casesList) {
         ArrayList<Case_Component> cases = new ArrayList<Case_Component>();
         for (Node kase : casesList.getChildren()) {
-            
+            if (kase.getNodeType().equals("case")) {
+                Expression exp = processExpression(kase.getChildAt(0).getChildAt(0));
+                ArrayList<Instruction> sentences = new ArrayList<Instruction>();
+                for (Node sent : kase.getChildAt(1).getChildren()) {
+                    Instruction ins = processIndividual(sent);
+                    if (ins != null)
+                        sentences.add(ins);
+                }
+                cases.add(new Case_Component(exp, sentences, kase.getRow(), kase.getColumn()));
+            }
+            else { //default
+                ArrayList<Instruction> sentences = new ArrayList<Instruction>();
+                for (Node sent : kase.getChildAt(0).getChildren()) {
+                    Instruction ins = processIndividual(sent);
+                    if (ins != null)
+                        sentences.add(ins);
+                }
+                cases.add(new Case_Component(sentences, kase.getRow(), kase.getColumn()));
+            }
         }
         return cases;
     }

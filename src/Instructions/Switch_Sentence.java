@@ -5,8 +5,12 @@
  */
 package Instructions;
 
+import APIServices.CompileError;
+import Expressions.Atomic;
 import Expressions.Expression;
 import Symbols.SymbolsTable;
+import Symbols.Vector;
+import aritcompiler.Singleton;
 import java.util.ArrayList;
 
 /**
@@ -28,6 +32,54 @@ public class Switch_Sentence implements Instruction {
 
     @Override
     public Object process(SymbolsTable env) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        Object val = condition.process(env);
+        
+        if (val instanceof CompileError) {
+            if (((CompileError)val).getRow() == 0 && ((CompileError)val).getColumn() == 0) {
+                ((CompileError)val).setRow(this.line);
+                ((CompileError)val).setColumn(this.column);
+            }
+            
+            Singleton.insertError((CompileError)val);
+            return null;
+        }
+        
+        if (val instanceof Atomic) {
+            if (((Atomic)val).getType() == Atomic.Type.IDENTIFIER) {
+                String id = String.valueOf(((Atomic)val).getValue());
+                int line = ((Atomic)val).getLine();
+                int col = ((Atomic)val).getColumn();
+                
+                val = env.getSymbol(id);
+                if (val == null) {
+                    Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col));
+                    return null;
+                }
+            }
+        }
+        
+        if (val instanceof Vector) {
+            // Retornamos el primer valor
+            val = ((ArrayList<Atomic>)(((Vector)val).getValue())).get(0);
+        }
+        /* MATRIX, LIST, ARRAY - all will return the first value */
+        
+        for (Case_Component kase : this.cases) {
+            kase.setOriginal(val);
+            Object r = kase.process(env);
+            
+            if (r instanceof CompileError) {
+                Singleton.insertError((CompileError)r);
+                continue;
+            }
+            
+            if (r != null) {
+                if (r instanceof Break_Sentence)
+                    break;
+                //else if (r instanceof Return)
+            }
+        }
+        
+        return null;
     }
 }

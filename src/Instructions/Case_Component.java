@@ -5,8 +5,12 @@
  */
 package Instructions;
 
+import APIServices.CompileError;
+import Expressions.Atomic;
 import Expressions.Expression;
 import Symbols.SymbolsTable;
+import Symbols.Vector;
+import aritcompiler.Singleton;
 import java.util.ArrayList;
 
 /**
@@ -41,7 +45,86 @@ public class Case_Component implements Instruction {
     
     @Override
     public Object process(SymbolsTable env) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (this.kase == null) {
+            for (Instruction ins : this.sentences) {
+                SymbolsTable local = new SymbolsTable("case", env);
+                Object r = ins.process(local);
+                
+                if (r != null && r instanceof Break_Sentence)
+                    return r;     
+            }
+        }
+        
+        Object val = kase.process(env);
+        
+        if (val instanceof CompileError) {
+            if (((CompileError)val).getRow() == 0 && ((CompileError)val).getColumn() == 0) {
+                ((CompileError)val).setRow(this.line);
+                ((CompileError)val).setColumn(this.column);
+            }
+            
+            return val;
+        }
+        
+        if (val instanceof Atomic) {
+            if (((Atomic)val).getType() == Atomic.Type.IDENTIFIER) {
+                String id = String.valueOf(((Atomic)val).getValue());
+                int line = ((Atomic)val).getLine();
+                int col = ((Atomic)val).getColumn();
+                
+                val = env.getSymbol(id);
+                if (val == null)
+                    return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col);
+            }
+        }
+        
+        if (val instanceof Vector) {
+            // Retornamos el primer valor
+            val = ((ArrayList<Atomic>)(((Vector)val).getValue())).get(0);
+        }
+        /* MATRIX, ARRAY, LIST */
+        
+        Atomic one = (Atomic)original;
+        Atomic two = (Atomic)val;
+        
+        boolean flag = false;
+        if (one.getType() == Atomic.Type.STRING && two.getType() == Atomic.Type.STRING) {
+            if (one.getValue() == null || two.getValue() == null)
+                return new CompileError("Semantico", "No es posible operar valores nulos", this.line, this.column);
+            
+            String f = String.valueOf(one.getValue());
+            String s = String.valueOf(two.getValue());
+            flag = f.equals(s);
+        }
+        else if (one.getType() == Atomic.Type.BOOLEAN && two.getType() == Atomic.Type.BOOLEAN) {
+            boolean f = ((Boolean)one.getValue()).booleanValue();
+            boolean s = ((Boolean)two.getValue()).booleanValue();
+            
+            flag = f == s;
+        }
+        else if ((one.getType() == Atomic.Type.NUMERIC || one.getType() == Atomic.Type.INTEGER)
+                && (two.getType() == Atomic.Type.NUMERIC || two.getType() == Atomic.Type.INTEGER)) {
+            String af = String.valueOf(one.getValue());
+            String as = String.valueOf(two.getValue());
+            double f = Double.parseDouble(af);
+            double s = Double.parseDouble(as);
+            
+            flag = f == s;
+        }
+        else {
+            return new CompileError("Semantico", "El valor no concuerda con el tipo dado para el switch", this.line, this.column);
+        }
+        
+        if (flag) {
+            for (Instruction ins : this.sentences) {
+                SymbolsTable local = new SymbolsTable("case", env);
+                Object r = ins.process(local);
+                
+                if (r != null && r instanceof Break_Sentence)
+                    return r;     
+            }
+        }
+        return null;
     }
     
     
