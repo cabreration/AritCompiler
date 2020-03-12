@@ -12,10 +12,13 @@ import Expressions.StructureAccess;
 import Expressions.Ternary;
 import Expressions.Unary;
 import Instructions.Asignment;
+import Instructions.Break_Sentence;
+import Instructions.Case_Component;
 import Instructions.Function_Call;
 import Instructions.If_Sentence;
 import Instructions.Instruction;
 import Instructions.StructureAsignment;
+import Instructions.Switch_Sentence;
 import Symbols.Address;
 import Symbols.Function;
 import java.util.ArrayList;
@@ -52,6 +55,12 @@ public class TreeProcesor {
                 return processStructureAsignment(ins.getChildAt(0), ins.getChildAt(1));
             case "if sentence":
                 return processIfSentence(ins);
+            case "switch sentence":
+                return processSwitchSentence(ins);
+            case "break sentence":
+                return new Break_Sentence(ins.getRow(), ins.getColumn());
+            case "continue sentence":
+                return new Break_Sentence(ins.getRow(), ins.getColumn());
         }
         
         return sent;
@@ -220,7 +229,7 @@ public class TreeProcesor {
         return new StructureAccess(id, line, column, adds); 
     }
 
-    private static Instruction processIfSentence(Node ins) {
+    private static If_Sentence processIfSentence(Node ins) {
         if (ins.getChildrenCount() == 3) {
             Expression condition = processExpression(ins.getChildAt(0).getChildAt(0));
             ArrayList<Instruction> sentences = new ArrayList<Instruction>();
@@ -228,7 +237,7 @@ public class TreeProcesor {
                 Instruction sent = processIndividual(sentence);
                 sentences.add(sent);
             }
-            If_Sentence elseIf = (If_Sentence)processIfSentence(ins.getChildAt(2));
+            If_Sentence elseIf = processIfSentence(ins.getChildAt(2));
             return new If_Sentence(condition, sentences, elseIf, ins.getRow(), ins.getColumn());
         }
         else if (ins.getChildrenCount() == 2) {
@@ -244,5 +253,22 @@ public class TreeProcesor {
             ArrayList<Instruction> sentences = processTree(ins);
             return new If_Sentence(sentences, ins.getRow(), ins.getColumn());
         }
+    }
+    
+    private static Switch_Sentence processSwitchSentence(Node swit) {
+        int line = swit.getRow();
+        int col = swit.getColumn();
+        Expression cond = processExpression(swit.getChildAt(0).getChildAt(0));
+        ArrayList<Case_Component> cases = processCases(swit.getChildAt(1));
+        
+        return new Switch_Sentence(cond, line, col, cases);
+    } 
+
+    private static ArrayList<Case_Component> processCases(Node casesList) {
+        ArrayList<Case_Component> cases = new ArrayList<Case_Component>();
+        for (Node kase : casesList.getChildren()) {
+            
+        }
+        return cases;
     }
 }

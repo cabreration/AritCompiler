@@ -435,7 +435,7 @@ ELSE_SENTENCE ::= elseKeyword:e SENTENCES_BLOCK:sentences                  {: No
                                                                            :}
 ;
 
-SWITCH_SENTENCE ::= switchKeyword openingPar LONE_EXPRESSION:val closingPar openingCurly SWITCH_BODY:body closingCurly      {:  Node switchNode = new Node("switch sentence");
+SWITCH_SENTENCE ::= switchKeyword:s openingPar LONE_EXPRESSION:val closingPar openingCurly SWITCH_BODY:body closingCurly      {:  Node switchNode = new Node("switch sentence", sright, sleft, null);
                                                                                                                                 Node condition = new Node("condition");
                                                                                                                                 condition.addChildren(val);
                                                                                                                                 switchNode.addChildren(condition);
@@ -463,7 +463,7 @@ CASES_LIST ::= CASES_LIST:cases SINGLE_CASE:single              {: Node casesNod
                                                                 :}
 ;
 
-SINGLE_CASE ::= caseKeyword LONE_EXPRESSION:exp colon SENTENCES_LIST:actions        {: Node single = new Node("case");
+SINGLE_CASE ::= caseKeyword:c LONE_EXPRESSION:exp colon SENTENCES_LIST:actions      {: Node single = new Node("case", cright, cleft, null);
                                                                                        Node condition = new Node("value");
                                                                                        condition.addChildren(exp);
                                                                                        single.addChildren(condition);
@@ -515,10 +515,10 @@ RETURN_SENTENCE ::= returnKeyword                                               
                                                                                 :}
 ;
 
-BREAK_SENTENCE ::=  breakKeyword                    {: RESULT = new Node("break sentence"); :}
+BREAK_SENTENCE ::=  breakKeyword:b                    {: RESULT = new Node("break sentence", bright, bleft, null); :}
 ;
 
-CONTINUE_SENTENCE ::= continueKeyword               {: RESULT = new Node("continue sentence"); :}
+CONTINUE_SENTENCE ::= continueKeyword:b               {: RESULT = new Node("continue sentence", bright, bleft, null); :}
 ;
 
 VECTOR_ACCESS ::= id:id ADDRESSES:add               {: Node res = new Node("structure access");
