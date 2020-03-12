@@ -50,18 +50,27 @@ public class Print implements Instruction {
         }
         
         if (val instanceof Atomic) {
-           return String.valueOf(((Atomic)val).getValue());
+            String ret = String.valueOf(((Atomic)val).getValue());
+            //if (((Atomic)val).getType() == Atomic.Type.STRING && !ret.equals("\n"))
+                //ret = "\"" + String.valueOf(((Atomic)val).getValue()) + "\"";
+           
+            return ret + "\n";
         }
         else /* (val instanceof Vector) */ {
             StringBuilder builder = new StringBuilder();
             builder.append("[ ");
             for (Atomic obj : (ArrayList<Atomic>)((Vector)val).getValue()) {
-                builder.append(String.valueOf(obj.getValue()));
+                String ap = "";
+                if (obj.getType() == Atomic.Type.STRING)
+                    ap = "\"" + String.valueOf(obj.getValue()) + "\"";
+                else 
+                    ap = String.valueOf(obj.getValue());
+                builder.append(ap);
                 builder.append(", ");
             }
             builder.deleteCharAt(builder.length() - 2);
             builder.append("]");
-            return builder.toString();
+            return builder.toString() + "\n";
         }
         //else if (val instanceof Matrix) {}
         //else if (val instanceof List) {}

@@ -387,6 +387,8 @@ public class Atomic implements Expression, Value {
                     Atomic rel = operateRelational(this, (Atomic)op, Type.STRING, operator);
                     if (rel == null)
                         return new CompileError("Semantico", "No es posible realizar operaciones con valores nulos", this.line, this.column);
+                    
+                    return rel;
                 }
                 
                 return new CompileError("Semantico", "Tipo de Operando invalido, operacion no definida", 0 , 0);

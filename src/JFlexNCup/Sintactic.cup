@@ -406,7 +406,7 @@ PARAMS ::= defaultKeyword:def               {: System.out.println("default"); RE
     | LONE_EXPRESSION:exp                {: RESULT = exp; :}
 ;
 
-IF_SENTENCE ::= ifKeyword openingPar LONE_EXPRESSION:cond closingPar SENTENCES_BLOCK:sentences                  {:  Node ifNode = new Node("if sentence");
+IF_SENTENCE ::= ifKeyword:i openingPar LONE_EXPRESSION:cond closingPar SENTENCES_BLOCK:sentences                {:  Node ifNode = new Node("if sentence", iright, ileft, null);
                                                                                                                     Node condition = new Node("condition");
                                                                                                                     condition.addChildren(cond);
                                                                                                                     ifNode.addChildren(condition);
@@ -414,7 +414,7 @@ IF_SENTENCE ::= ifKeyword openingPar LONE_EXPRESSION:cond closingPar SENTENCES_B
                                                                                                                     RESULT = ifNode;
                                                                                                                  :}
 
-    | ifKeyword openingPar LONE_EXPRESSION:cond closingPar SENTENCES_BLOCK:sentences ELSE_SENTENCE:elseNode         {:  Node ifNode = new Node("if sentence");
+    | ifKeyword:i openingPar LONE_EXPRESSION:cond closingPar SENTENCES_BLOCK:sentences ELSE_SENTENCE:elseNode        {:  Node ifNode = new Node("if sentence", iright, ileft, null);
                                                                                                                         Node condition = new Node("condition");
                                                                                                                         condition.addChildren(cond);
                                                                                                                         ifNode.addChildren(condition);
@@ -424,12 +424,12 @@ IF_SENTENCE ::= ifKeyword openingPar LONE_EXPRESSION:cond closingPar SENTENCES_B
                                                                                                                      :}
 ;
 
-ELSE_SENTENCE ::= elseKeyword SENTENCES_BLOCK:sentences                    {: Node elseNode = new Node("else sentence");
+ELSE_SENTENCE ::= elseKeyword:e SENTENCES_BLOCK:sentences                  {: Node elseNode = new Node("else sentence", eright, eleft, null);
                                                                               elseNode.addChildren(sentences);
                                                                               RESULT = elseNode;
                                                                            :}
 
-    | elseKeyword IF_SENTENCE:ifSentences                                  {: Node elseNode = new Node("else if sentence");
+    | elseKeyword:e IF_SENTENCE:ifSentences                                {: Node elseNode = new Node("else if sentence", eright, eleft, null);
                                                                               transferChildren(ifSentences, elseNode);
                                                                               RESULT = elseNode;
                                                                            :}

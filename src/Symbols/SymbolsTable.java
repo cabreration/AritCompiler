@@ -7,6 +7,7 @@ package Symbols;
 
 import Expressions.Value;
 import java.util.Hashtable;
+import java.util.Set;
 
 /**
  *
@@ -20,6 +21,25 @@ public class SymbolsTable {
     public SymbolsTable(String type) {
         symbols = new Hashtable<String, Symbol>();
         this.type = type;
+    }
+    
+    public SymbolsTable(String type, SymbolsTable vader) {
+        this.symbols = new Hashtable<String, Symbol>();
+        this.type = type;
+        
+        Set<String> keys = vader.getSymbols().keySet();
+        for (String key : keys) {
+            Symbol sym = vader.getSymbol(key);
+            this.symbols.put(key, sym);
+        }
+    }
+
+    public Hashtable<String, Symbol> getSymbols() {
+        return symbols;
+    }
+
+    public String getType() {
+        return type;
     }
     
     public void updateSymbol(String name, Symbol symbol) {

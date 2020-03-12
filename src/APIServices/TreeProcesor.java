@@ -13,6 +13,7 @@ import Expressions.Ternary;
 import Expressions.Unary;
 import Instructions.Asignment;
 import Instructions.Function_Call;
+import Instructions.If_Sentence;
 import Instructions.Instruction;
 import Instructions.StructureAsignment;
 import Symbols.Address;
@@ -49,6 +50,8 @@ public class TreeProcesor {
                 return processCall(ins);
             case "structure asignment":
                 return processStructureAsignment(ins.getChildAt(0), ins.getChildAt(1));
+            case "if sentence":
+                return processIfSentence(ins);
         }
         
         return sent;
@@ -215,5 +218,31 @@ public class TreeProcesor {
         }
         
         return new StructureAccess(id, line, column, adds); 
+    }
+
+    private static Instruction processIfSentence(Node ins) {
+        if (ins.getChildrenCount() == 3) {
+            Expression condition = processExpression(ins.getChildAt(0).getChildAt(0));
+            ArrayList<Instruction> sentences = new ArrayList<Instruction>();
+            for (Node sentence : ins.getChildAt(1).getChildren()) {
+                Instruction sent = processIndividual(sentence);
+                sentences.add(sent);
+            }
+            If_Sentence elseIf = (If_Sentence)processIfSentence(ins.getChildAt(2));
+            return new If_Sentence(condition, sentences, elseIf, ins.getRow(), ins.getColumn());
+        }
+        else if (ins.getChildrenCount() == 2) {
+            Expression condition = processExpression(ins.getChildAt(0).getChildAt(0));
+            ArrayList<Instruction> sentences = new ArrayList<Instruction>();
+            for (Node sentence : ins.getChildAt(1).getChildren()) {
+                Instruction sent = processIndividual(sentence);
+                sentences.add(sent);
+            }
+            return new If_Sentence(condition, sentences, ins.getRow(), ins.getColumn());
+        }
+        else {
+            ArrayList<Instruction> sentences = processTree(ins);
+            return new If_Sentence(sentences, ins.getRow(), ins.getColumn());
+        }
     }
 }

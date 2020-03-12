@@ -36,7 +36,8 @@ public class AritCompiler {
             ArrayList<Instruction> sentences = TreeProcesor.processTree(root);
             SymbolsTable env = new SymbolsTable("global");
             for (Instruction ins : sentences) {
-                ins.process(env);
+                if (ins != null)
+                    ins.process(env);
             }
             Singleton.print();
         }

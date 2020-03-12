@@ -892,6 +892,7 @@ public class Vector implements Symbol, Value {
                 }
                 values.remove(i);
                 values.add(i, atom);
+                this.content = values;
             }
             else if (this.type == 3) {
                 for (Atomic mic : this.content) {
@@ -900,6 +901,7 @@ public class Vector implements Symbol, Value {
                 }
                 values.remove(i);
                 values.add(i, atom);
+                this.content = values;
             }
             else if (this.type == 4) {
                 Atomic mic = new Atomic(Atomic.Type.STRING, String.valueOf(atom.getValue()));
@@ -920,6 +922,7 @@ public class Vector implements Symbol, Value {
                 }
                 values.remove(i);
                 values.add(i, atom);
+                this.content = values;
             }
             else if (this.type == 4) {
                 Atomic mic = new Atomic(Atomic.Type.STRING, String.valueOf(atom.getValue()));
