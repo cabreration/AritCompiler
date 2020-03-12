@@ -57,7 +57,7 @@ public class StructureAccess implements Expression {
                 return sym;
             
             if (!(sym instanceof Symbol))
-                return new CompileError("Semantico", "Algo aqui salio mal y no deberia haber apsado", this.line, this.column);
+                return new CompileError("Semantico", "Algo aqui salio mal y no deberia haber pasado", this.line, this.column);
             
             int index = 0;
             Object res = address.getAddress().process(env);
@@ -90,6 +90,8 @@ public class StructureAccess implements Expression {
                 continue;
                 
             }
+            
+            /* MATRIX, ARRAY, LIST */
             
             return new CompileError("Semantico", "Unicamente se aceptan valores enteros como indices", this.line, this.column);
         }

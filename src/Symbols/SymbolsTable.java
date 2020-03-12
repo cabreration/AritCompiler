@@ -15,9 +15,11 @@ import java.util.Hashtable;
 public class SymbolsTable {
     
     private Hashtable<String, Symbol> symbols;
+    private String type;
     
-    public SymbolsTable() {
+    public SymbolsTable(String type) {
         symbols = new Hashtable<String, Symbol>();
+        this.type = type;
     }
     
     public void updateSymbol(String name, Symbol symbol) {

@@ -849,4 +849,102 @@ public class Vector implements Symbol, Value {
     public Object getValue2B(int i) {
         return new CompileError("Semantico", "El acceso con corchetes dobles [[]] no esta definido para Vectores", 0, 0);
     }
+    
+    @Override
+    public void expand(int i) {
+        if (i < this.getSize())
+            return;
+        
+        Atomic keeper;
+        if (this.type == 1) 
+            keeper = new Atomic(Atomic.Type.INTEGER, Integer.valueOf(0));
+        else if (this.type == 2) 
+            keeper = new Atomic(Atomic.Type.NUMERIC, Double.valueOf(0.0));
+        else if (this.type == 3) 
+            keeper = new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(false));
+        else 
+            keeper = new Atomic(Atomic.Type.STRING, null);
+        
+        for (int j = this.getSize(); j <= i; j++) {
+            this.content.add(keeper);
+        }
+    }
+    
+    @Override
+    public void insertValue(Object obj, int i) {
+        Atomic atom = (Atomic)obj;
+        ArrayList<Atomic> values = new ArrayList<Atomic>();
+        
+        if (atom.getType() == Atomic.Type.STRING && this.type < 4) {
+            for (Atomic mic : this.content) {
+                String val = String.valueOf(mic.getValue());
+                values.add(new Atomic(Atomic.Type.STRING, val));
+            }
+            values.remove(i);
+            values.add(i, atom);
+            this.content = values;
+        }
+        else if (atom.getType() == Atomic.Type.NUMERIC) {
+            if (this.type == 1) {
+                for (Atomic mic : this.content) {
+                    double val = ((Integer)mic.getValue()).doubleValue();
+                    values.add(new Atomic(Atomic.Type.NUMERIC, Double.valueOf(val)));
+                }
+                values.remove(i);
+                values.add(i, atom);
+            }
+            else if (this.type == 3) {
+                for (Atomic mic : this.content) {
+                    double val = ((Boolean)mic.getValue()).booleanValue() == true ? 1.0 : 0.0;
+                    values.add(new Atomic(Atomic.Type.NUMERIC, Double.valueOf(val)));
+                }
+                values.remove(i);
+                values.add(i, atom);
+            }
+            else if (this.type == 4) {
+                Atomic mic = new Atomic(Atomic.Type.STRING, String.valueOf(atom.getValue()));
+                this.content.remove(i);
+                this.content.add(i, mic);
+            }
+        }
+        else if (atom.getType() == Atomic.Type.INTEGER) {
+            if (this.type == 2) {
+                Atomic mic = new Atomic(Atomic.Type.NUMERIC, Double.valueOf(((Integer)atom.getValue()).doubleValue()));
+                this.content.remove(i);
+                this.content.add(i, mic);
+            }
+            else if (this.type == 3) {
+                for (Atomic mic : this.content) {
+                    int val = ((Boolean)mic.getValue()).booleanValue() == true ? 1 : 0;
+                    values.add(new Atomic(Atomic.Type.INTEGER, Integer.valueOf(val)));
+                }
+                values.remove(i);
+                values.add(i, atom);
+            }
+            else if (this.type == 4) {
+                Atomic mic = new Atomic(Atomic.Type.STRING, String.valueOf(atom.getValue()));
+                this.content.remove(i);
+                this.content.add(i, mic);
+            }
+        }
+        else {
+            if (this.type == 2) {
+                double doub = ((Boolean)(atom.getValue())).booleanValue() ? 1.0 : 0.0;
+                Atomic mic = new Atomic(Atomic.Type.NUMERIC, Double.valueOf(doub));
+                this.content.remove(i);
+                this.content.add(i, mic);
+            }
+            else if (this.type == 3) {
+                int doub = ((Boolean)(atom.getValue())).booleanValue() ? 1 : 0;
+                Atomic mic = new Atomic(Atomic.Type.INTEGER, Integer.valueOf(doub));
+                this.content.remove(i);
+                this.content.add(i, mic);
+            }
+            else if (this.type == 4) {
+                Atomic mic = new Atomic(Atomic.Type.STRING, String.valueOf(atom.getValue()));
+                this.content.remove(i);
+                this.content.add(i, mic);
+            }
+        }
+    }
 }

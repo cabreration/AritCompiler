@@ -129,7 +129,11 @@ public class Concat implements Instruction {
         ArrayList<Atomic> strings = new ArrayList<Atomic>();
         for (Object element: elements) {
             String val = String.valueOf(((Atomic)element).getValue());
-            strings.add(new Atomic(Atomic.Type.STRING, val));
+            
+            if (((Atomic)element).getValue() == null)
+                strings.add(new Atomic(Atomic.Type.STRING, null));
+            else
+                strings.add(new Atomic(Atomic.Type.STRING, val));
         }
         return strings;
     }

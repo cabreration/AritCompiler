@@ -18,4 +18,8 @@ public interface Symbol {
     public Object getValue(int i);
     
     public Object getValue2B(int i);
+    
+    public void expand(int i);
+    
+    public void insertValue(Object obj, int i);
 }
