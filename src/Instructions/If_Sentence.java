@@ -54,12 +54,25 @@ public class If_Sentence implements Instruction {
     @Override
     public Object process(SymbolsTable env) {
         if (this.condition == null) {
-            SymbolsTable local = new SymbolsTable("if", env);
+            String name = "if";
+            if (env.getType().contains("loop"))
+                name += "-loop";
+            if (env.getType().contains("function"))
+                name += "-function";
+            
+            SymbolsTable local = new SymbolsTable(name, env);
             for (Instruction ins : this.sentences) {
                 Object r = ins.process(local);
+                
+                if (r != null) {
+                    if ((r instanceof Break_Sentence || r instanceof Continue_Sentence) && name.contains("loop")) {
+                        return r;
+                    }
+                    else {
+                        /// Return
+                    }
+                }
             }
-            
-            /* TODAVIA FALTA AGREGAR LOS RETURN */
             return null;
         }
         
@@ -72,7 +85,6 @@ public class If_Sentence implements Instruction {
         if (val instanceof CompileError)
             return val;
         
-        boolean cond = false;
         if (val instanceof Atomic) {
             if (((Atomic)val).getType() == Atomic.Type.IDENTIFIER) {
                 String id = String.valueOf(((Atomic)val).getValue());
@@ -87,6 +99,7 @@ public class If_Sentence implements Instruction {
             }
         }
         
+        boolean cond = false;
         if (val instanceof Vector) {
             Atomic bool = ((ArrayList<Atomic>)(((Vector)val).getValue())).get(0);
             if (bool.getType() == Atomic.Type.BOOLEAN)
@@ -106,19 +119,33 @@ public class If_Sentence implements Instruction {
             }
         }
         /* MATRIX, LIST, ARRAY */
+        String name = "if";
+        if (env.getType().contains("loop"))
+            name += "-loop";
+        if (env.getType().contains("function"))
+            name += "-function";
+        SymbolsTable local = new SymbolsTable(name, env);
         
-        SymbolsTable local = new SymbolsTable("if", env);
         if (cond) {
             for (Instruction ins : this.sentences) {
                 Object r = ins.process(local);
+                
+                if (r != null) {
+                    if ((r instanceof Break_Sentence || r instanceof Continue_Sentence) && name.contains("loop")) {
+                        return r;
+                    }
+                    else {
+                        /// Return
+                    }
+                }
             }
         }
         else {
             if (elseSentence != null) {
                 Object r = elseSentence.process(env);
+                /* If r is a return then return that */
             }
         }
-         /* TODAVIA NO HE AGREGADO EL RETURN */
         return null;
     }
 }
