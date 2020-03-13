@@ -16,6 +16,7 @@ import Instructions.Break_Sentence;
 import Instructions.Case_Component;
 import Instructions.Continue_Sentence;
 import Instructions.DoWhile_Sentence;
+import Instructions.For_Sentence;
 import Instructions.Function_Call;
 import Instructions.If_Sentence;
 import Instructions.Instruction;
@@ -68,6 +69,8 @@ public class TreeProcesor {
                 return processWhileSentence(ins);
             case "do while sentence":
                 return processDoWhileSentence(ins);
+            case "for sentence":
+                return processForSentence(ins);
         }
         
         return sent;
@@ -318,12 +321,27 @@ public class TreeProcesor {
         int col = ins.getColumn();
         Expression cond = processExpression(ins.getChildAt(1).getChildAt(0));
         ArrayList<Instruction> sentences = new ArrayList<Instruction>();
-            for (Node sentence : ins.getChildAt(0).getChildren()) {
-                Instruction sent = processIndividual(sentence);
-                if (sent != null)
-                    sentences.add(sent);
+        for (Node sentence : ins.getChildAt(0).getChildren()) {
+            Instruction sent = processIndividual(sentence);
+            if (sent != null)
+                sentences.add(sent);
         }
             
         return new DoWhile_Sentence(cond, sentences, line, col);
+    }
+
+    private static For_Sentence processForSentence(Node ins) {
+        int line = ins.getRow();
+        int column = ins.getColumn();
+        String id = String.valueOf(ins.getChildAt(0).getContent());
+        Expression condition = processExpression(ins.getChildAt(1).getChildAt(0));
+        ArrayList<Instruction> sentences = new ArrayList<Instruction>();
+        for (Node sentence : ins.getChildAt(2).getChildren()) {
+            Instruction sent = processIndividual(sentence);
+            if (sent != null)
+                sentences.add(sent);
+        }
+        
+        return new For_Sentence(line, column, id, condition, sentences);
     }
 }

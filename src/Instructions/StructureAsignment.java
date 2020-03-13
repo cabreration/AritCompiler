@@ -120,6 +120,18 @@ public class StructureAsignment implements Instruction {
         int index = 0;
         Object res = exp.process(env);
             
+        if (res instanceof Atomic) {
+            if (((Atomic)res).getType() == Atomic.Type.IDENTIFIER) {
+                String id = String.valueOf(((Atomic)res).getValue());
+                int line = ((Atomic)res).getLine();
+                int col = ((Atomic)res).getColumn();
+                
+                res = env.getSymbol(id);
+                if (res == null)
+                    return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col);
+            }
+        }
+        
         if (res instanceof Vector) {
             res = ((ArrayList<Atomic>)(((Vector)res).getValue())).get(0);
         }

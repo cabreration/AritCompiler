@@ -62,6 +62,18 @@ public class StructureAccess implements Expression {
             int index = 0;
             Object res = address.getAddress().process(env);
             
+            if (res instanceof Atomic) {
+                if (((Atomic)res).getType() == Atomic.Type.IDENTIFIER) {
+                    String id = String.valueOf(((Atomic)res).getValue());
+                    int line = ((Atomic)res).getLine();
+                    int col = ((Atomic)res).getColumn();
+                
+                    res = env.getSymbol(id);
+                    if (res == null)
+                        return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col);
+                }
+            }
+            
             /* FALTAN MATRIX, LIST, ARRAY */
             
             if (res instanceof Vector) {

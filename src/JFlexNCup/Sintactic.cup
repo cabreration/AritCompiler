@@ -496,7 +496,7 @@ DOWHILE_SENTENCE ::= doKeyword:d SENTENCES_BLOCK:actions whileKeyword openingPar
                                                                                                                     :}
 ;
 
-FOR_SENTENCE ::= forKeyword openingPar id:id inKeyword LONE_EXPRESSION:exp closingPar SENTENCES_BLOCK:actions       {:  Node forNode = new Node("for sentence");
+FOR_SENTENCE ::= forKeyword:f openingPar id:id inKeyword LONE_EXPRESSION:exp closingPar SENTENCES_BLOCK:actions     {:  Node forNode = new Node("for sentence", fright, fleft, null);
                                                                                                                         Node idNode = new Node("identifier", idright, idleft, String.valueOf(id));
                                                                                                                         forNode.addChildren(idNode);
                                                                                                                         Node condition = new Node("condition");

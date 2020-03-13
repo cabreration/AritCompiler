@@ -8,6 +8,7 @@ package Instructions;
 import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
+import Expressions.StructureAccess;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
 import aritcompiler.Singleton;
@@ -56,7 +57,11 @@ public class Print implements Instruction {
            
             return ret + "\n";
         }
-        else /* (val instanceof Vector) */ {
+        else if (val instanceof Vector)  {
+            if (((Vector)val).getSize() == 1) {
+                Atomic a = ((ArrayList<Atomic>)((Vector)val).getValue()).get(0);
+                return String.valueOf(a.getValue()) + "\n";
+            }
             StringBuilder builder = new StringBuilder();
             builder.append("[ ");
             for (Atomic obj : (ArrayList<Atomic>)((Vector)val).getValue()) {
@@ -75,6 +80,7 @@ public class Print implements Instruction {
         //else if (val instanceof Matrix) {}
         //else if (val instanceof List) {}
         // else {} // instance of array
+        return "";
     }
     
 }
