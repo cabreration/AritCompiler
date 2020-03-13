@@ -155,7 +155,7 @@ public class Vector implements Symbol, Value {
                 }
                 
                 if (operator.equals("+")) {
-                    if (this.type == 3) {
+                    if (this.type < 4) {
                         if (vec.type == 4) {
                             Vector thor = baldorVectors(this.content, (ArrayList<Atomic>)vec.getValue(), 4, "+");
                             if (thor == null)
@@ -231,7 +231,7 @@ public class Vector implements Symbol, Value {
             }
             
             if (operator.equals("+")) {
-                if (this.type == 3) {
+                if (this.type < 4) {
                     if (((Atomic)op).getType() == Atomic.Type.STRING) {
                         Vector thor = stringAdding(this.content, String.valueOf(((Atomic)op).getValue()), order);
                         if (thor == null)

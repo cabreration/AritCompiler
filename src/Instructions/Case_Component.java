@@ -117,11 +117,11 @@ public class Case_Component implements Instruction {
         
         if (flag) {
             for (Instruction ins : this.sentences) {
-                SymbolsTable local = new SymbolsTable("case", env);
-                Object r = ins.process(local);
+                Object r = ins.process(env);
                 
-                if (r != null && r instanceof Break_Sentence)
+                if (r != null && r instanceof Break_Sentence) {
                     return r;     
+                }
             }
         }
         return null;

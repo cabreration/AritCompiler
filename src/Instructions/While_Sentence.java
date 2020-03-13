@@ -47,6 +47,8 @@ public class While_Sentence implements Instruction {
                 return null;
             }
             cond = ((Boolean)condit).booleanValue();
+            if (!cond)
+                break;
             
             SymbolsTable local = new SymbolsTable("loop", env);
             for (Instruction ins : this.sentences) {
@@ -55,15 +57,19 @@ public class While_Sentence implements Instruction {
                 if (r != null) {
                     if (r instanceof Break_Sentence) {
                         cond = false;
+                        env.update(local);
                         break;
                     }
-                    else if (r instanceof Continue_Sentence)
-                        continue;
-                    else {
+                    else if (r instanceof Continue_Sentence) {
+                        env.update(local);
+                        break;
+                    }           
+                    /*else {
                         // Este seria para el return
-                    }
+                    }*/
                 }
             }
+            env.update(local);
         }
         return null;
     }

@@ -73,6 +73,7 @@ public class If_Sentence implements Instruction {
                     }
                 }
             }
+            env.update(local);
             return null;
         }
         
@@ -132,18 +133,21 @@ public class If_Sentence implements Instruction {
                 
                 if (r != null) {
                     if ((r instanceof Break_Sentence || r instanceof Continue_Sentence) && name.contains("loop")) {
+                        env.update(local);
                         return r;
                     }
-                    else {
+                    /*else if (r instanceof Return_Sentence) {
+                        env.update(local);
                         /// Return
-                    }
+                    }*/
                 }
             }
+            env.update(local);
         }
         else {
             if (elseSentence != null) {
                 Object r = elseSentence.process(env);
-                /* If r is a return then return that */
+                return r;
             }
         }
         return null;

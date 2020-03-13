@@ -66,6 +66,7 @@ public class Switch_Sentence implements Instruction {
         
         for (Case_Component kase : this.cases) {
             kase.setOriginal(val);
+            SymbolsTable local = new SymbolsTable("case", env);
             Object r = kase.process(env);
             
             if (r instanceof CompileError) {
@@ -74,10 +75,13 @@ public class Switch_Sentence implements Instruction {
             }
             
             if (r != null) {
-                if (r instanceof Break_Sentence)
+                if (r instanceof Break_Sentence) {
+                    env.update(local);
                     break;
-                //else if (r instanceof Return)
+                }
+                //else if (r instanceof Return) {}
             }
+            env.update(local);
         }
         
         return null;

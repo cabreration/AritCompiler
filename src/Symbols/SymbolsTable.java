@@ -33,6 +33,15 @@ public class SymbolsTable {
             this.symbols.put(key, sym);
         }
     }
+    
+    public void update(SymbolsTable luke) {
+        Set<String> keys = luke.getSymbols().keySet();
+        for (String key : keys) {
+            if (this.symbols.containsKey(key)) {
+                this.updateSymbol(key, luke.getSymbols().get(key));
+            }
+        }
+    }
 
     public Hashtable<String, Symbol> getSymbols() {
         return symbols;

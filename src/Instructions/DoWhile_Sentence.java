@@ -5,8 +5,12 @@
  */
 package Instructions;
 
+import APIServices.CompileError;
+import Expressions.Atomic;
 import Expressions.Expression;
 import Symbols.SymbolsTable;
+import Symbols.Vector;
+import aritcompiler.Singleton;
 import java.util.ArrayList;
 
 /**
@@ -29,6 +33,80 @@ public class DoWhile_Sentence implements Instruction{
 
     @Override
     public Object process(SymbolsTable env) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        boolean cond = true;
+        
+        do {
+            SymbolsTable local = new SymbolsTable("loop", env);
+            for (Instruction ins : this.sentences) {
+                Object r = ins.process(local);
+                
+                if (r != null) {
+                    if (r instanceof Break_Sentence) {
+                        cond = false;
+                        env.update(local);
+                        break;
+                    }
+                    else if (r instanceof Continue_Sentence) {
+                        env.update(local);
+                        break;
+                    }           
+                    /*else {
+                        // Este seria para el return
+                    }*/
+                }
+            }
+            env.update(local);
+            
+            Object condit = determine(env);
+            if (condit instanceof CompileError) {
+                Singleton.insertError((CompileError)condit);
+                return null;
+            }
+            cond = ((Boolean)condit).booleanValue();
+        } while (cond); 
+        return null;
+    }
+    
+    private Object determine(SymbolsTable env) {
+        Object val = condition.process(env);
+        
+        if (val == null)
+            return new CompileError("Semantico", "Puntero a valor nulo", this.line, this.column); // Esto no deberia pasar
+            
+        if (val instanceof CompileError)
+            return val;
+        
+        boolean cond = false;
+        if (val instanceof Atomic) {
+            if (((Atomic)val).getType() == Atomic.Type.IDENTIFIER) {
+                String id = String.valueOf(((Atomic)val).getValue());
+                int line = ((Atomic)val).getLine();
+                int col = ((Atomic)val).getColumn();
+                val = env.getSymbol(id);
+                
+                if (val == null) {
+                     return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col);
+                }
+            }
+        }
+        
+        if (val instanceof Vector) {
+            Atomic bool = ((ArrayList<Atomic>)(((Vector)val).getValue())).get(0);
+            if (bool.getType() == Atomic.Type.BOOLEAN)
+                cond = ((Boolean)bool.getValue()).booleanValue();
+            else {
+                return new CompileError("Semantico", "Las condiciones unicamente pueden ser evaluadas si son de tipo booleano", this.line, this.column);
+            }
+        }
+        else if (val instanceof Atomic) {
+            Atomic bool = (Atomic)val;
+            if (bool.getType() == Atomic.Type.BOOLEAN) 
+                cond = ((Boolean)bool.getValue()).booleanValue();
+            else {
+                return new CompileError("Semantico", "Las condiciones unicamente pueden ser evaluadas si son de tipo booleano", this.line, this.column);
+            }
+        }
+        /* MATRIX, LIST, ARRAY */
+        return Boolean.valueOf(cond);
     }
 }

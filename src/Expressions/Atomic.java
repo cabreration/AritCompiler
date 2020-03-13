@@ -187,7 +187,7 @@ public class Atomic implements Expression, Value {
             }
             
             if (operator.equals("+")) {
-                if (this.type == Type.BOOLEAN) {
+                if (this.type == Type.BOOLEAN || this.type == Type.NUMERIC || this.type == Type.INTEGER) {
                     if (((Atomic)op).type == Type.STRING) {
                         Atomic bal = baldorOperate(this, (Atomic)op, Type.STRING, operator);
                         if (bal == null)
