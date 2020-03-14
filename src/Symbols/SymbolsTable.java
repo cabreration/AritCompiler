@@ -76,4 +76,13 @@ public class SymbolsTable {
         
         return (Value)(symbols.get(name));
     }
+    
+    public void deleteSymbol(String name) {
+        boolean exists = symbols.containsKey(name);
+        
+        if (!exists)
+            return;
+        
+        symbols.remove(name);
+    }
 }

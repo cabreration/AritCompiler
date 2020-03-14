@@ -14,7 +14,7 @@ import Symbols.Vector;
  *
  * @author jacab
  */
-public class Atomic implements Expression, Value {
+public class Atomic implements Expression, Value, Cloneable {
 
     /**
      * Values that can be used
@@ -44,6 +44,11 @@ public class Atomic implements Expression, Value {
         this.line = 0;
         this.column = 0;
     }
+    
+    @Override
+    public Object clone()throws CloneNotSupportedException{  
+        return super.clone();  
+    }  
     
     /**
      * @return The Atomic Expression itself

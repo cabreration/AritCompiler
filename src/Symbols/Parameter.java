@@ -31,4 +31,14 @@ public class Parameter {
         this.name = name;
         this.defaultValue = null;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public Expression getDefaultValue() {
+        return defaultValue;
+    }
+    
+    
 }

@@ -6,10 +6,13 @@
 package Instructions;
 
 import APIServices.CompileError;
+import Expressions.Atomic;
 import Expressions.Expression;
 import Symbols.Function;
+import Symbols.Parameter;
 import Symbols.Symbol;
 import Symbols.SymbolsTable;
+import Symbols.Vector;
 import aritcompiler.Singleton;
 import java.util.ArrayList;
 
@@ -135,6 +138,38 @@ public class Function_Call implements Instruction, Expression {
         }
         else {
             // Una funcion con parametros
+            if (f.getParameters().size() != this.params.size()) {
+                return new CompileError("Semantico", "La funcion '" + f.getName() + "' acepta unicamente " + f.getParameters().size() + " parametros", this.line, this.column);
+            }
+            
+            Object ret = null;
+            SymbolsTable local = new SymbolsTable("function", env);
+            for (Parameter param : f.getParameters()) {
+                local.deleteSymbol(param.getName());
+            }
+            
+            for (int i = 0; i < this.params.size(); i++) {
+                Object param = this.params.get(i);
+                if (param instanceof String) {
+                    
+                }
+                else {
+                    Expression exp = (Expression)param;
+                    Object val = exp.process(env);
+                    if (val instanceof CompileError) {
+                        return val;
+                    }
+                    
+                    if (val instanceof Atomic) {
+                        
+                    }
+                    
+                    if (val instanceof Vector) {
+                        Vector nu = (Vector)((Vector)val).clone();
+                    }
+                    
+                }
+            }
         }
         return null;
     }

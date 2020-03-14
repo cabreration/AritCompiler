@@ -47,6 +47,14 @@ public class StructureAsignment implements Instruction {
             Singleton.insertError(new CompileError("Semantico", "La funcion no devolvio ningun valor", this.line, this.column));
             return null;
         }
+        else if (val instanceof CompileError) {
+            if (((CompileError)val).getRow() == 0 && ((CompileError)val).getColumn() == 0) {
+                ((CompileError)val).setRow(this.line);
+                ((CompileError)val).setColumn(this.column);
+            }
+            Singleton.insertError((CompileError)val);
+            return null;
+        }
         
         if (sym instanceof Vector) 
             onVector((Symbol)sym, env);
@@ -82,10 +90,6 @@ public class StructureAsignment implements Instruction {
             }
             
             Object res = expression.process(env);
-            if (res instanceof CompileError) {
-                Singleton.insertError((CompileError)res);
-                return;
-            }
             
             if (res instanceof Atomic) {
                 if (((Atomic)res).getType() == Atomic.Type.IDENTIFIER) {

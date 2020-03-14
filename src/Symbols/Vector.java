@@ -15,7 +15,7 @@ import java.util.ArrayList;
  *
  * @author jacab
  */
-public class Vector implements Symbol, Value {
+public class Vector implements Symbol, Value, Cloneable {
 
     private ArrayList<Atomic> content;
     private int type; // 1 - integer, 2 - numeric, 3 - bool, 4 - string
@@ -47,6 +47,11 @@ public class Vector implements Symbol, Value {
         this.type = type;
         this.content = new ArrayList<Atomic>();
     }
+    
+    @Override
+    public Object clone()throws CloneNotSupportedException{  
+        return super.clone();  
+    }  
     
     @Override
     public Object getValue() {
