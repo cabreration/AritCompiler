@@ -33,6 +33,7 @@ public class AritCompiler {
         // TODO code application logic here
         Node root = cupTry();
         if (root != null) {
+            TreeProcesor.processFunctions(root);
             ArrayList<Instruction> sentences = TreeProcesor.processTree(root);
             SymbolsTable env = new SymbolsTable("global");
             for (Instruction ins : sentences) {

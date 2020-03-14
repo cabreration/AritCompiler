@@ -15,14 +15,35 @@ import java.util.ArrayList;
 public class Function {
     
     private String name;
-    private ArrayList<Object> parameters;
+    private ArrayList<Parameter> parameters;
     private ArrayList<Instruction> sentences;
-    
-    public Function(String name) {
+    private int line;
+    private int column;
+
+    public Function(String name, ArrayList<Parameter> parameters, ArrayList<Instruction> sentences, int line, int column) {
         this.name = name;
+        this.parameters = parameters;
+        this.sentences = sentences;
+        this.line = line;
+        this.column = column;
+    }
+
+    public Function(String name, ArrayList<Instruction> sentences, int line, int column) {
+        this.name = name;
+        this.sentences = sentences;
+        this.line = line;
+        this.column = column;
     }
     
     public String getName() {
         return this.name;
+    }
+
+    public ArrayList<Parameter> getParameters() {
+        return parameters;
+    }
+
+    public ArrayList<Instruction> getSentences() {
+        return sentences;
     }
 }

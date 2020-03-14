@@ -6,11 +6,10 @@
 package Instructions;
 
 import APIServices.CompileError;
-import Expressions.Atomic;
 import Expressions.Expression;
+import Symbols.Function;
 import Symbols.Symbol;
 import Symbols.SymbolsTable;
-import Symbols.Vector;
 import aritcompiler.Singleton;
 import java.util.ArrayList;
 
@@ -24,16 +23,6 @@ public class Function_Call implements Instruction, Expression {
     private int line;
     private int column;
 
-    public Function_Call(String name, ArrayList<Object> params) {
-        this.name = name;
-        this.params = params;
-    }
-
-    public Function_Call(String name) {
-        this.name = name;
-        this.params = new ArrayList<Object>();
-    }
-
     public Function_Call(String name, ArrayList<Object> params, int line, int column) {
         this.name = name;
         this.params = params;
@@ -45,6 +34,7 @@ public class Function_Call implements Instruction, Expression {
         this.name = name;
         this.line = line;
         this.column = column;
+        
     }
     
     public String getName() {
@@ -61,7 +51,7 @@ public class Function_Call implements Instruction, Expression {
         //Funciones Nativas
         switch (name.toLowerCase()) {
             case "print":
-                retorno = Print(env);
+                Print(env);
                 break;
             case "c":
                 retorno = Concat(env);
@@ -86,8 +76,11 @@ public class Function_Call implements Instruction, Expression {
                 break;
         }
         
-        if (retorno == null)
-            retorno = new Atomic(Atomic.Type.STRING, null);
+        Function f = Singleton.getFunction(this.name);
+        if (f == null)
+            Singleton.insertError(new CompileError("Semantico", "La funcion '" + this.name + "' no existe", this.line, this.column));
+        else 
+            retorno = executeFunction(f);
         
         return retorno;
     }
@@ -122,5 +115,15 @@ public class Function_Call implements Instruction, Expression {
         Concat concatenator = new Concat(this.params, this.line, this.column);
         Symbol sym = (Symbol)concatenator.process(env);
         return sym;
+    }
+
+    private Object executeFunction(Function f) {
+        if (f.getParameters() == null) {
+            // Una funcion sin parametros
+            if (this.params)
+        }
+        else {
+            // Una funcion con parametros
+        }
     }
 }

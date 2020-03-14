@@ -73,6 +73,10 @@ public class Node {
         children.add(node);
     }
     
+    public void addChildrenAt(int i, Node node) {
+        children.add(i, node);
+    }
+    
     public int getChildrenCount() {
         return children.size();
     }

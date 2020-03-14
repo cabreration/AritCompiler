@@ -65,7 +65,7 @@ public class If_Sentence implements Instruction {
                 Object r = ins.process(local);
                 
                 if (r != null) {
-                    if ((r instanceof Break_Sentence || r instanceof Continue_Sentence) && name.contains("loop")) {
+                    if (r instanceof Break_Sentence || r instanceof Continue_Sentence) {
                         return r;
                     }
                     else {
@@ -132,7 +132,7 @@ public class If_Sentence implements Instruction {
                 Object r = ins.process(local);
                 
                 if (r != null) {
-                    if ((r instanceof Break_Sentence || r instanceof Continue_Sentence) && name.contains("loop")) {
+                    if (r instanceof Break_Sentence || r instanceof Continue_Sentence) {
                         env.update(local);
                         return r;
                     }

@@ -25,6 +25,8 @@ import Instructions.Switch_Sentence;
 import Instructions.While_Sentence;
 import Symbols.Address;
 import Symbols.Function;
+import Symbols.Parameter;
+import aritcompiler.Singleton;
 import java.util.ArrayList;
 
 /**
@@ -33,12 +35,109 @@ import java.util.ArrayList;
  */
 public class TreeProcesor {
     
-    public static ArrayList<Function> processFunctions(Node root) { return null; }
+    public static void processFunctions(Node root) { 
+        for (Node child : root.getChildAt(0).getChildren()) {
+            if (child.getNodeType().equals("function")) 
+                processIndividualFunction(child);
+            else if (child.getNodeType().equals("arrow function"))
+                processArrowFunction(child);
+            else if (child.getNodeType().equals("asignment")) {
+                if (child.getChildAt(1).getNodeType().equals("arrow def")) {
+                    processArrowFunction(child);
+                }
+            }
+        }
+    }
+    
+    private static void processArrowFunction(Node arrow) {
+        String id = String.valueOf(arrow.getChildAt(0).getContent());
+        int line = arrow.getRow();
+        int column = arrow.getColumn();
+        Node def = arrow.getChildAt(1);
+        Node instructions = null;
+        ArrayList<Parameter> params = new ArrayList<Parameter>();
+        if (def.getChildrenCount() == 1) 
+            instructions = def.getChildAt(0);
+        else {
+            instructions = def.getChildAt(1);           
+            Node parameters = def.getChildAt(0);
+            for (Node parameter : parameters.getChildren()) {
+                Parameter param = processParameter(parameter);
+                params.add(param);
+            }
+        }
+        ArrayList<Instruction> sentences = new ArrayList<Instruction>();
+        for (Node ins : instructions.getChildren()) {
+            Instruction sentence = processIndividual(ins);
+            sentences.add(sentence);
+        }
+        
+        if (def.getChildrenCount() == 1) {
+            boolean flag = Singleton.insertFunction(new Function(id, sentences, line, column));
+            if (!flag) 
+                Singleton.insertError(new CompileError("Semantico", "Ya existe una funcion '" + id + "'", line, column));
+        }
+        else {
+            boolean flag =Singleton.insertFunction(new Function(id, params, sentences, line, column));
+            if (!flag)
+                Singleton.insertError(new CompileError("Semantico", "Ya existe una funcion '" + id + "'", line, column));
+        }
+    }
+    
+    private static void processIndividualFunction(Node func) {
+        String id = String.valueOf(func.getChildAt(0).getContent());
+        int line = func.getRow();
+        int column = func.getColumn();
+        ArrayList<Instruction> sentences = new ArrayList<Instruction>();
+        if (func.getChildrenCount() == 2) {
+            // No tiene parametros
+            for (Node sentence : func.getChildAt(1).getChildren()) {
+                Instruction sent = processIndividual(sentence);
+                sentences.add(sent);
+            }
+            boolean flag = Singleton.insertFunction(new Function(id, sentences, line, column));
+            if (!flag)
+                Singleton.insertError(new CompileError("Semantico", "Ya existe una funcion '" + id + "'", line, column));
+        }
+        else {
+            // Si tiene parametros y deben ser procesados
+            for (Node sentence : func.getChildAt(2).getChildren()) {
+                Instruction sent = processIndividual(sentence);
+                sentences.add(sent);
+            }
+            
+            ArrayList<Parameter> params = new ArrayList<Parameter>();
+            for (Node parameter : func.getChildAt(1).getChildren()) {
+                Parameter param = processParameter(parameter);
+                params.add(param);
+            }
+            boolean flag = Singleton.insertFunction(new Function(id, params, sentences, line, column));
+            if (!flag)
+                Singleton.insertError(new CompileError("Semantico", "Ya existe una funcion '" + id + "'", line, column));
+        }
+    }
+    
+    private static Parameter processParameter(Node param) {
+        int line = param.getRow();
+        int column = param.getColumn();
+        if (param.getNodeType().equals("identifier")) {
+            String id = String.valueOf(param.getContent());
+            return new Parameter(line, column, id);
+        }
+        else {
+            String id = String.valueOf(param.getChildAt(0).getContent());
+            Expression exp = processExpression(param.getChildAt(1));
+            return new Parameter(line, column, id, exp);
+        }
+    }
     
     public static ArrayList<Instruction> processTree(Node root) {
         
         ArrayList<Instruction> instructions = new ArrayList<Instruction>();
         for (Node child : root.getChildAt(0).getChildren()) {
+            if (child.getNodeType().equals("function"))
+                continue;
+            
             Instruction sentence = processIndividual(child);
             
             if (sentence != null)
@@ -76,12 +175,11 @@ public class TreeProcesor {
         return sent;
     }
     
-    public static Asignment processAsignment(Node identifier, Node expression) {
+    private static Asignment processAsignment(Node identifier, Node expression) {
         String id = String.valueOf(identifier.getContent());
         
         if (expression.getNodeType().equals("arrow single")) {
-            // arrow function, manage accordingly
-            
+            return null;
         }
         
         Expression exp = processExpression(expression);

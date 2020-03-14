@@ -26,6 +26,15 @@ public class Singleton {
         return functions;
     }
     
+    public static Function getFunction(String name) {
+        boolean flag = functions.containsKey(name);
+        if (flag) {
+            return functions.get(name);
+        }
+        
+        return null;
+    }
+    
     public static ArrayList<CompileError> errors() {
         return errors;
     }

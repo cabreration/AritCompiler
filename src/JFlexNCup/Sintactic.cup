@@ -230,20 +230,24 @@ LFOUR_EXPRESSION ::= LFOUR_EXPRESSION:exp1 OPERATOR:op LFOUR_EXPRESSION:exp2    
 
     | MATRIX_ACCESS:mat                                                             {: RESULT = mat; :}
 
-    | openingPar id:id closingPar arrowFunction SENTENCES_BLOCK:list                {: Node arr = new Node("arrow single");
+    | openingPar id:id closingPar arrowFunction SENTENCES_BLOCK:list                {: Node arr = new Node("arrow def");
                                                                                        Node param = new Node("identifier", idright, idleft, String.valueOf(id));
-                                                                                       arr.addChildren(param);
+                                                                                       Node parameters = new Node("parameters");
+                                                                                       parameters.addChildren(param);
+                                                                                       arr.addChildren(parameters);
                                                                                        arr.addChildren(list);
                                                                                        RESULT = arr;
                                                                                     :}
 
     | openingPar id:id valAsignment LONE_EXPRESSION:exp closingPar
-        arrowFunction SENTENCES_BLOCK:sent                                          {: Node arr = new Node("arrow single");
+        arrowFunction SENTENCES_BLOCK:sent                                          {: Node arr = new Node("arrow def");
                                                                                        Node param = new Node("asignment");
                                                                                        Node ident = new Node("identifier", idright, idleft, String.valueOf(id));
                                                                                        param.addChildren(ident);
                                                                                        param.addChildren(exp);
-                                                                                       arr.addChildren(param);
+                                                                                       Node parameters = new Node("parameters");
+                                                                                       parameters.addChildren(param);
+                                                                                       arr.addChildren(parameters);
                                                                                        arr.addChildren(sent);
                                                                                        RESULT = arr;
                                                                                     :}
@@ -287,7 +291,7 @@ OPERATOR ::= plus       {: RESULT = "+"; :}
     | mod               {: RESULT = "%%"; :}
 ;
 
-ASIGNMENT ::= id:id valAsignment LONE_EXPRESSION:exp                {: Node as = new Node("asignment");
+ASIGNMENT ::= id:id valAsignment:v LONE_EXPRESSION:exp              {: Node as = new Node("asignment", vright, vleft, null);
                                                                        Node ident = new Node("identifier", idright, idleft, String.valueOf(id));
                                                                        as.addChildren(ident);
                                                                        as.addChildren(exp);
@@ -306,21 +310,21 @@ ASIGNMENT ::= id:id valAsignment LONE_EXPRESSION:exp                {: Node as =
                                                                        RESULT = as;
                                                                     :}
 
-    | id:id valAsignment ARROW_FUNCTION:f                           {: Node as = new Node("arrow function");
+    | id:id valAsignment:v ARROW_FUNCTION:f                         {: Node as = new Node("arrow function", vright, vleft, null);
                                                                        Node ident = new Node("identifier", idright, idleft, String.valueOf(id));
                                                                        as.addChildren(ident);
                                                                        as.addChildren(f);
                                                                        RESULT = as;
                                                                     :}
 
-    | id:id valAsignment functionKeyword openingPar closingPar SENTENCES_BLOCK:actions                              {: Node fun = new Node("function");
+    | id:id valAsignment functionKeyword:f openingPar closingPar SENTENCES_BLOCK:actions                            {: Node fun = new Node("function", fright, fleft, null);
                                                                                                                        Node ident = new Node("identifier", idright, idleft, String.valueOf(id));
                                                                                                                        fun.addChildren(ident);
                                                                                                                        fun.addChildren(actions);
                                                                                                                        RESULT = fun;
                                                                                                                     :}
 
-    | id:id valAsignment functionKeyword openingPar PARAMETERS_DECL:params closingPar SENTENCES_BLOCK:actions       {: Node fun = new Node("function");
+    | id:id valAsignment functionKeyword:f openingPar PARAMETERS_DECL:params closingPar SENTENCES_BLOCK:actions     {: Node fun = new Node("function", fright, fleft, null);
                                                                                                                        Node ident = new Node("identifier", idright, idleft, String.valueOf(id));
                                                                                                                        fun.addChildren(ident);
                                                                                                                        fun.addChildren(params);
@@ -336,7 +340,7 @@ ARROW_FUNCTION ::= openingPar closingPar arrowFunction SENTENCES_BLOCK:list     
 
     | openingPar id:id comma PARAMETERS_DECL:params closingPar arrowFunction SENTENCES_BLOCK:list                           {: Node res = new Node("arrow def");
                                                                                                                                Node ident = new Node("identifier", idright, idleft, String.valueOf(id));
-                                                                                                                               params.addChildren(ident);
+                                                                                                                               params.addChildrenAt(0, ident);
                                                                                                                                res.addChildren(params);
                                                                                                                                res.addChildren(list);
                                                                                                                                RESULT = res;
@@ -347,7 +351,7 @@ ARROW_FUNCTION ::= openingPar closingPar arrowFunction SENTENCES_BLOCK:list     
                                                                                                                                       Node ident = new Node("identifier", idright, idleft, String.valueOf(id));
                                                                                                                                       param.addChildren(ident);
                                                                                                                                       param.addChildren(exp);
-                                                                                                                                      params.addChildren(param);
+                                                                                                                                      params.addChildrenAt(0, param);
                                                                                                                                       res.addChildren(params);
                                                                                                                                       res.addChildren(list);
                                                                                                                                       RESULT = res;
@@ -367,7 +371,7 @@ PARAMETERS_DECL ::= PARAMETERS_DECL:ters comma PARAMETER:par                    
 
 PARAMETER ::= id:id                                         {: RESULT = new Node("identifier", idright, idleft, String.valueOf(id)); :}
 
-    | id:id valAsignment LONE_EXPRESSION:exp                {: Node param = new Node("asignment");
+    | id:id valAsignment:v LONE_EXPRESSION:exp              {: Node param = new Node("asignment", vright, vleft, null);
                                                                Node ident = new Node("identifier", idright, idleft, String.valueOf(id));
                                                                param.addChildren(ident);
                                                                param.addChildren(exp);

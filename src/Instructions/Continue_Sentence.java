@@ -25,13 +25,11 @@ public class Continue_Sentence implements Instruction {
     
     @Override
     public Object process(SymbolsTable env) {
-        return this;
-        /*if (env.getType().equals("while") || env.getType().equals("case") || env.getType().equals("for") || env.getType().equals("do_while")
-                || env.getType().equals("fwhile") || env.getType().equals("fcase") || env.getType().equals("ffor") || env.getType().equals("fdo_while")) 
+        if (env.getType().contains("loop"))
             return this;
         
         Singleton.insertError(new CompileError("Semantico", "La sentencia continue solo puede ser usada dentro de una sentencia de repeticion", this.line, this.column));
-        return null;*/
+        return null;
     }
     
 }
