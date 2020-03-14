@@ -20,6 +20,7 @@ import Instructions.For_Sentence;
 import Instructions.Function_Call;
 import Instructions.If_Sentence;
 import Instructions.Instruction;
+import Instructions.Return_Sentence;
 import Instructions.StructureAsignment;
 import Instructions.Switch_Sentence;
 import Instructions.While_Sentence;
@@ -170,6 +171,8 @@ public class TreeProcesor {
                 return processDoWhileSentence(ins);
             case "for sentence":
                 return processForSentence(ins);
+            case "return sentence":
+                return processReturnSentece(ins);
         }
         
         return sent;
@@ -178,9 +181,8 @@ public class TreeProcesor {
     private static Asignment processAsignment(Node identifier, Node expression) {
         String id = String.valueOf(identifier.getContent());
         
-        if (expression.getNodeType().equals("arrow single")) {
+        if (expression.getNodeType().equals("arrow def"))
             return null;
-        }
         
         Expression exp = processExpression(expression);
         return new Asignment(id, exp, identifier.getRow(), identifier.getColumn());
@@ -441,5 +443,13 @@ public class TreeProcesor {
         }
         
         return new For_Sentence(line, column, id, condition, sentences);
+    }
+
+    private static Return_Sentence processReturnSentece(Node ins) {
+        if (ins.getChildrenCount() == 0) 
+            return new Return_Sentence(ins.getRow(), ins.getColumn());
+        
+        Expression exp = processExpression(ins.getChildAt(0));
+        return new Return_Sentence(exp, ins.getRow(), ins.getColumn());
     }
 }

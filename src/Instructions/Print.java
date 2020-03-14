@@ -67,7 +67,7 @@ public class Print implements Instruction {
             for (Atomic obj : (ArrayList<Atomic>)((Vector)val).getValue()) {
                 String ap = "";
                 if (obj.getType() == Atomic.Type.STRING)
-                    ap = "\"" + String.valueOf(obj.getValue()) + "\"";
+                    ap = String.valueOf(obj.getValue());
                 else 
                     ap = String.valueOf(obj.getValue());
                 builder.append(ap);

@@ -71,7 +71,7 @@ public class Switch_Sentence implements Instruction {
                 name += "-function";
             if (env.getType().contains("loop"))
                 name += "-loop";
-            SymbolsTable local = new SymbolsTable("case", env);
+            SymbolsTable local = new SymbolsTable(name, env);
             Object r = kase.process(env);
             
             if (r instanceof CompileError) {

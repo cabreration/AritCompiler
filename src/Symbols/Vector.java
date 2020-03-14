@@ -15,7 +15,7 @@ import java.util.ArrayList;
  *
  * @author jacab
  */
-public class Vector implements Symbol, Value, Cloneable {
+public class Vector implements Symbol, Value {
 
     private ArrayList<Atomic> content;
     private int type; // 1 - integer, 2 - numeric, 3 - bool, 4 - string
@@ -48,9 +48,29 @@ public class Vector implements Symbol, Value, Cloneable {
         this.content = new ArrayList<Atomic>();
     }
     
-    @Override
-    public Object clone()throws CloneNotSupportedException{  
-        return super.clone();  
+
+    public Vector clonation() {  
+          ArrayList<Atomic> nuContent = new ArrayList<Atomic>();
+          int tipo = this.type;
+          for (Atomic atom : this.content) {
+              if (atom.getType() == Atomic.Type.INTEGER) {
+                  int one = ((Integer)atom.getValue()).intValue();
+                  nuContent.add(new Atomic(Atomic.Type.INTEGER, Integer.valueOf(one)));
+              }
+              else if (atom.getType() == Atomic.Type.NUMERIC) {
+                  double two = ((Double)atom.getValue()).doubleValue();
+                  nuContent.add(new Atomic(Atomic.Type.NUMERIC, Double.valueOf(two)));
+              }
+              else if (atom.getType() == Atomic.Type.BOOLEAN) {
+                  boolean three = ((Boolean)atom.getValue()).booleanValue();
+                  nuContent.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(three)));
+              }
+              else {
+                  String four = ((String)atom.getValue());
+                  nuContent.add(new Atomic(Atomic.Type.STRING, new String(four)));
+              }
+          }
+          return new Vector(nuContent, tipo);
     }  
     
     @Override
@@ -880,14 +900,20 @@ public class Vector implements Symbol, Value, Cloneable {
         Atomic atom = (Atomic)obj;
         ArrayList<Atomic> values = new ArrayList<Atomic>();
         
-        if (atom.getType() == Atomic.Type.STRING && this.type < 4) {
-            for (Atomic mic : this.content) {
-                String val = String.valueOf(mic.getValue());
-                values.add(new Atomic(Atomic.Type.STRING, val));
+        if (atom.getType() == Atomic.Type.STRING) {
+            if (this.type < 4) {
+                for (Atomic mic : this.content) {
+                    String val = String.valueOf(mic.getValue());
+                    values.add(new Atomic(Atomic.Type.STRING, val));
+                }
+                values.remove(i);
+                values.add(i, atom);
+                this.content = values;
             }
-            values.remove(i);
-            values.add(i, atom);
-            this.content = values;
+            else {
+                this.content.remove(i);
+                this.content.add(i, atom);
+            }
         }
         else if (atom.getType() == Atomic.Type.NUMERIC) {
             if (this.type == 1) {
@@ -913,6 +939,10 @@ public class Vector implements Symbol, Value, Cloneable {
                 this.content.remove(i);
                 this.content.add(i, mic);
             }
+            else {
+                this.content.remove(i);
+                this.content.add(i, atom);
+            }
         }
         else if (atom.getType() == Atomic.Type.INTEGER) {
             if (this.type == 2) {
@@ -934,6 +964,10 @@ public class Vector implements Symbol, Value, Cloneable {
                 this.content.remove(i);
                 this.content.add(i, mic);
             }
+            else {
+                this.content.remove(i);
+                this.content.add(i, atom);
+            }
         }
         else {
             if (this.type == 2) {
@@ -942,7 +976,7 @@ public class Vector implements Symbol, Value, Cloneable {
                 this.content.remove(i);
                 this.content.add(i, mic);
             }
-            else if (this.type == 3) {
+            else if (this.type == 1) {
                 int doub = ((Boolean)(atom.getValue())).booleanValue() ? 1 : 0;
                 Atomic mic = new Atomic(Atomic.Type.INTEGER, Integer.valueOf(doub));
                 this.content.remove(i);
@@ -952,6 +986,10 @@ public class Vector implements Symbol, Value, Cloneable {
                 Atomic mic = new Atomic(Atomic.Type.STRING, String.valueOf(atom.getValue()));
                 this.content.remove(i);
                 this.content.add(i, mic);
+            }
+            else {
+                this.content.remove(i);
+                this.content.add(i, atom);
             }
         }
     }

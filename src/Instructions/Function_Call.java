@@ -77,6 +77,20 @@ public class Function_Call implements Instruction, Expression {
                 break;
             case "round":
                 break;
+            case "mean":
+                break;
+            case "median":
+                break;
+            case "mode":
+                break;
+            case "barplot":
+                break;
+            case "pie":
+                break;
+            case "plot":
+                break;
+            case "hist":
+                break;
         }
         
         Function f = Singleton.getFunction(this.name);
@@ -132,6 +146,7 @@ public class Function_Call implements Instruction, Expression {
             for (Instruction ins : f.getSentences()) {
                 ret = ins.process(local);
                 if (ret != null && ret instanceof Return_Sentence) {
+                    env.update(local);
                     return ((Return_Sentence)ret).getProcessedValue();
                 } 
             }
@@ -151,9 +166,45 @@ public class Function_Call implements Instruction, Expression {
             for (int i = 0; i < this.params.size(); i++) {
                 Object param = this.params.get(i);
                 if (param instanceof String) {
+                    // Default value
+                    Parameter p = f.getParameters().get(i);
+                    if (p.getDefaultValue() == null)
+                        return new CompileError("Semantico", "El parametro no tiene un valor por defecto definido", this.line, this.column);
                     
+                    Object value = p.getDefaultValue().process(env);
+                    if (value instanceof CompileError) {
+                        if (((CompileError)value).getRow() == 0 && ((CompileError)value).getColumn() == 0) {
+                            ((CompileError)value).setRow(this.line);
+                            ((CompileError)value).setColumn(this.column);
+                        }
+                        return value;
+                    }
+                    
+                    if (value instanceof Atomic) {
+                        if (((Atomic)value).getType() == Atomic.Type.IDENTIFIER) {
+                            String id = String.valueOf(((Atomic)value).getValue());
+                            int line = ((Atomic)value).getLine();
+                            int column = ((Atomic)value).getColumn();
+                            
+                            value = env.getSymbol(id);
+                            if (value == null)
+                                return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, column);
+                        }
+                    }
+                    
+                    if (value instanceof Vector) {
+                        Vector nu = ((Vector)value).clonation();
+                        local.updateSymbol(p.getName(), nu);
+                    }
+                    else if (value instanceof Atomic) {
+                        Atomic at = ((Atomic)value).clonation();
+                        Vector nu = new Vector(at);
+                        local.updateSymbol(p.getName(), nu);
+                    }
+                    /* MATRIX, ARRAY, LIST */
                 }
                 else {
+                    Parameter p = f.getParameters().get(i);
                     Expression exp = (Expression)param;
                     Object val = exp.process(env);
                     if (val instanceof CompileError) {
@@ -161,15 +212,49 @@ public class Function_Call implements Instruction, Expression {
                     }
                     
                     if (val instanceof Atomic) {
-                        
+                        if (((Atomic)val).getType() == Atomic.Type.IDENTIFIER) {
+                            String id = String.valueOf(((Atomic)val).getValue());
+                            int line = ((Atomic)val).getLine();
+                            int column = ((Atomic)val).getColumn();
+                            
+                            val = env.getSymbol(id);
+                            if (val == null)
+                                return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, column);
+                        }
                     }
                     
                     if (val instanceof Vector) {
-                        Vector nu = (Vector)((Vector)val).clone();
+                        Vector nu = ((Vector)val).clonation();
+                        local.updateSymbol(p.getName(), nu);
                     }
-                    
+                    else if (val instanceof Atomic) {
+                        Atomic at = ((Atomic)val).clonation();
+                        Vector nu = new Vector(at);
+                        local.updateSymbol(p.getName(), nu);
+                    }
+                    /* MATRIX, ARRAY, LIST */
                 }
             }
+            
+            for (Instruction ins : f.getSentences()) {
+                ret = ins.process(local);
+                if (ret != null && ret instanceof Return_Sentence) {
+                    for (Parameter param : f.getParameters())
+                        local.deleteSymbol(param.getName());
+                    
+                    env.update(local);
+                    Object returnment = ((Return_Sentence)ret).getProcessedValue();
+                    if (returnment instanceof String)
+                        return null;
+                    
+                    return returnment;
+                } 
+            }
+            
+            for (Parameter param : f.getParameters()) {
+                local.deleteSymbol(param.getName());
+            }
+            env.update(local);
         }
         return null;
     }

@@ -6,6 +6,7 @@
 package Instructions;
 
 import APIServices.CompileError;
+import Expressions.Atomic;
 import Expressions.Expression;
 import Symbols.SymbolsTable;
 import aritcompiler.Singleton;
@@ -20,12 +21,16 @@ public class Return_Sentence implements Instruction {
     private int line;
     private int column;
 
-    public Return_Sentence(Expression value) {
+    public Return_Sentence(Expression value, int line, int column) {
         this.value = value;
+        this.line = line;
+        this.column = column;
     }
 
-    public Return_Sentence() {
+    public Return_Sentence(int line, int column) {
         this.value = null;
+        this.line = line;
+        this.column = column;
     }
 
     @Override
@@ -45,14 +50,22 @@ public class Return_Sentence implements Instruction {
             Singleton.insertError((CompileError)this.processedValue);
             return null;
         }
+        
+        if (this.processedValue instanceof Atomic) {
+            if (((Atomic)this.processedValue).getType() == Atomic.Type.IDENTIFIER) {
+                String id = String.valueOf(((Atomic)this.processedValue).getValue());
+                this.processedValue = env.getSymbol(id);
+                
+                if (this.processedValue == null) {
+                    Singleton.insertError(new CompileError("Semantico", "La variable '" +  id + "' no existe en el contexto actual", this.line, this.column));
+                    return null;
+                }
+            }
+        }
         return this;
     }
     
     public Object getProcessedValue() {
         return this.processedValue;
-    }
-    
-    public void setVoid() {
-        
     }
 }

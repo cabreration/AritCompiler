@@ -14,7 +14,7 @@ import Symbols.Vector;
  *
  * @author jacab
  */
-public class Atomic implements Expression, Value, Cloneable {
+public class Atomic implements Expression, Value {
 
     /**
      * Values that can be used
@@ -45,10 +45,24 @@ public class Atomic implements Expression, Value, Cloneable {
         this.column = 0;
     }
     
-    @Override
-    public Object clone()throws CloneNotSupportedException{  
-        return super.clone();  
-    }  
+    public Atomic clonation() {
+        if (this.getType() == Atomic.Type.INTEGER) {
+            int one = ((Integer)this.getValue()).intValue();
+            return new Atomic(Type.INTEGER, Integer.valueOf(one));
+        }
+        else if (this.getType() == Atomic.Type.NUMERIC) {
+            double two = ((Double)this.getValue()).doubleValue();
+            return new Atomic(Type.NUMERIC, Double.valueOf(two));
+        }
+        else if (this.getType() == Atomic.Type.BOOLEAN) {
+            boolean three = ((Boolean)this.getValue()).booleanValue();
+            return new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(three));
+        }
+        else {
+            String four = ((String)this.getValue());
+            return new Atomic(Atomic.Type.STRING, new String(four));
+        }
+    }
     
     /**
      * @return The Atomic Expression itself

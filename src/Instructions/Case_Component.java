@@ -53,6 +53,7 @@ public class Case_Component implements Instruction {
                 if (r != null && r instanceof Break_Sentence)
                     return r;     
             }
+            return null;
         }
         
         Object val = kase.process(env);
@@ -119,7 +120,7 @@ public class Case_Component implements Instruction {
             for (Instruction ins : this.sentences) {
                 Object r = ins.process(env);
                 
-                if (r != null && r instanceof Break_Sentence) {
+                if (r != null && (r instanceof Break_Sentence || r instanceof Continue_Sentence || r instanceof Return_Sentence)) {
                     return r;     
                 }
             }
