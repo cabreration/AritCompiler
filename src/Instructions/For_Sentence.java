@@ -61,7 +61,10 @@ public class For_Sentence implements Instruction{
         
         if (val instanceof Vector) {
             for (Atomic atom : (ArrayList<Atomic>)((Vector)val).getValue()) {
-                SymbolsTable local = new SymbolsTable("loop", env);
+                String name = "loop";
+                if (env.getType().contains("function"))
+                    name += "-function";
+                SymbolsTable local = new SymbolsTable(name, env);
                 Vector vec = new Vector(atom);
                 local.updateSymbol(i, vec);
                 for (Instruction ins: this.sentences) {
@@ -69,10 +72,15 @@ public class For_Sentence implements Instruction{
                     if (r != null) {
                         if (r instanceof Break_Sentence) { //Falta el return
                             env.update(local);
-                            return r;
+                            return null;
                         }
                         else if (r instanceof Continue_Sentence) {
+                            env.update(local);
                             break;
+                        }
+                        else if (r instanceof Return_Sentence) {
+                            env.update(local);
+                            return r;
                         }
                     }
                 }
@@ -80,13 +88,20 @@ public class For_Sentence implements Instruction{
             }
         }
         else if (val instanceof Atomic) {
-            SymbolsTable local = new SymbolsTable("loop", env);
+            String name = "loop";
+            if (env.getType().contains("function"))
+                name += "-function";
+            SymbolsTable local = new SymbolsTable(name, env);
             Vector vec = new Vector((Atomic)val);
             local.updateSymbol(i, vec);
             for (Instruction ins: this.sentences) {
                 Object r = ins.process(local);
                 if (r != null) {
                     if (r instanceof Break_Sentence || r instanceof Continue_Sentence) { //Falta el return
+                        env.update(local);
+                        return null;
+                    }
+                    if (r instanceof Return_Sentence) {
                         env.update(local);
                         return r;
                     }

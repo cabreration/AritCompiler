@@ -36,7 +36,10 @@ public class DoWhile_Sentence implements Instruction{
         boolean cond = true;
         
         do {
-            SymbolsTable local = new SymbolsTable("loop", env);
+            String name = "loop";
+            if (env.getType().contains("function"))
+                name += "-function";
+            SymbolsTable local = new SymbolsTable(name, env);
             for (Instruction ins : this.sentences) {
                 Object r = ins.process(local);
                 
@@ -50,9 +53,10 @@ public class DoWhile_Sentence implements Instruction{
                         env.update(local);
                         break;
                     }           
-                    /*else {
-                        // Este seria para el return
-                    }*/
+                    else if (r instanceof Return_Sentence) {
+                        env.update(local);
+                        return r;
+                    }
                 }
             }
             env.update(local);

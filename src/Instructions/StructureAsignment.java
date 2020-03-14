@@ -42,6 +42,12 @@ public class StructureAsignment implements Instruction {
             return new CompileError("Semantico", "La variable '" + this.id + "' no existe en el contexto actual", this.line, this.column);
         }
         
+        Object val = expression.process(env);
+        if (val == null) {
+            Singleton.insertError(new CompileError("Semantico", "La funcion no devolvio ningun valor", this.line, this.column));
+            return null;
+        }
+        
         if (sym instanceof Vector) 
             onVector((Symbol)sym, env);
         

@@ -34,7 +34,7 @@ public class Function_Call implements Instruction, Expression {
         this.name = name;
         this.line = line;
         this.column = column;
-        
+        this.params = null;
     }
     
     public String getName() {
@@ -80,7 +80,7 @@ public class Function_Call implements Instruction, Expression {
         if (f == null)
             Singleton.insertError(new CompileError("Semantico", "La funcion '" + this.name + "' no existe", this.line, this.column));
         else 
-            retorno = executeFunction(f);
+            retorno = executeFunction(f, env);
         
         return retorno;
     }
@@ -117,13 +117,25 @@ public class Function_Call implements Instruction, Expression {
         return sym;
     }
 
-    private Object executeFunction(Function f) {
+    private Object executeFunction(Function f, SymbolsTable env) {
         if (f.getParameters() == null) {
             // Una funcion sin parametros
-            if (this.params)
+            if (this.params != null) {
+                return new CompileError("Semantico", "La funcion '" + this.name + "' no acepta parametros", this.line, this.column);
+            }
+            
+            Object ret = null;
+            SymbolsTable local = new SymbolsTable("function", env);
+            for (Instruction ins : f.getSentences()) {
+                ret = ins.process(local);
+                if (ret != null && ret instanceof Return_Sentence) {
+                    return ((Return_Sentence)ret).getProcessedValue();
+                } 
+            }
         }
         else {
             // Una funcion con parametros
         }
+        return null;
     }
 }

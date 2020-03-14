@@ -65,11 +65,9 @@ public class If_Sentence implements Instruction {
                 Object r = ins.process(local);
                 
                 if (r != null) {
-                    if (r instanceof Break_Sentence || r instanceof Continue_Sentence) {
+                    if (r instanceof Break_Sentence || r instanceof Continue_Sentence || r instanceof Return_Sentence) {
+                        env.update(local);
                         return r;
-                    }
-                    else {
-                        /// Return
                     }
                 }
             }
@@ -132,14 +130,10 @@ public class If_Sentence implements Instruction {
                 Object r = ins.process(local);
                 
                 if (r != null) {
-                    if (r instanceof Break_Sentence || r instanceof Continue_Sentence) {
+                    if (r instanceof Break_Sentence || r instanceof Continue_Sentence || r instanceof Return_Sentence) {
                         env.update(local);
                         return r;
                     }
-                    /*else if (r instanceof Return_Sentence) {
-                        env.update(local);
-                        /// Return
-                    }*/
                 }
             }
             env.update(local);

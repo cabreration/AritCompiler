@@ -28,7 +28,7 @@ public class Continue_Sentence implements Instruction {
         if (env.getType().contains("loop"))
             return this;
         
-        Singleton.insertError(new CompileError("Semantico", "La sentencia continue solo puede ser usada dentro de una sentencia de repeticion", this.line, this.column));
+        Singleton.insertError(new CompileError("Semantico", "La sentencia continue no tiene sentido dentro del contexto actual", this.line, this.column));
         return null;
     }
     

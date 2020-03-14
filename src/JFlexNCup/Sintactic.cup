@@ -511,12 +511,12 @@ FOR_SENTENCE ::= forKeyword:f openingPar id:id inKeyword LONE_EXPRESSION:exp clo
                                                                                                                     :}
 ;
 
-RETURN_SENTENCE ::= returnKeyword                                               {: RESULT = new Node("return sentence"); :}
+RETURN_SENTENCE ::= returnKeyword:r                                               {: RESULT = new Node("return sentence", rright, rleft, null); :}
 
-    | returnKeyword openingPar LONE_EXPRESSION:exp closingPar                   {: Node retNode = new Node("return sentence");
-                                                                                   retNode.addChildren(exp);
-                                                                                   RESULT = retNode;
-                                                                                :}
+    | returnKeyword:r openingPar LONE_EXPRESSION:exp closingPar                   {: Node retNode = new Node("return sentence", rright, rleft, null);
+                                                                                     retNode.addChildren(exp);
+                                                                                     RESULT = retNode;
+                                                                                  :}
 ;
 
 BREAK_SENTENCE ::=  breakKeyword:b                    {: RESULT = new Node("break sentence", bright, bleft, null); :}

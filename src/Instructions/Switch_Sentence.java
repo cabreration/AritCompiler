@@ -66,6 +66,11 @@ public class Switch_Sentence implements Instruction {
         
         for (Case_Component kase : this.cases) {
             kase.setOriginal(val);
+            String name = "case";
+            if (env.getType().contains("function"))
+                name += "-function";
+            if (env.getType().contains("loop"))
+                name += "-loop";
             SymbolsTable local = new SymbolsTable("case", env);
             Object r = kase.process(env);
             
@@ -79,7 +84,10 @@ public class Switch_Sentence implements Instruction {
                     env.update(local);
                     break;
                 }
-                //else if (r instanceof Return) {}
+                else if (r instanceof Continue_Sentence || r instanceof Return_Sentence) {
+                    env.update(local);
+                    return r;
+                }
             }
             env.update(local);
         }
