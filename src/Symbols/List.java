@@ -6,6 +6,7 @@
 package Symbols;
 
 import APIServices.CompileError;
+import Expressions.Atomic;
 import Expressions.Value;
 import java.util.ArrayList;
 
@@ -21,6 +22,23 @@ public class List implements Value, Symbol {
         this.elements = elements;
     }
     
+    public List(Object element) {
+        this.elements = new ArrayList();
+        this.elements.add(element);
+    }
+    
+    public List clonation() {
+        ArrayList nu = new ArrayList();
+        for (Object obj : this.elements) {
+            Object ref = null;
+            if (obj instanceof Vector)
+                ref = ((Vector)obj).clonation();
+            else 
+                ref = ((List)obj).clonation();
+            nu.add(ref);
+        }
+        return new List(nu);
+    }
     
     @Override
     public Object booleanNegation(SymbolsTable env) {
@@ -116,18 +134,44 @@ public class List implements Value, Symbol {
     @Override
     public Object getValue(int i) {
         //Devuelve una lista
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        i--;
+        if (i > this.elements.size() - 1 || i < 0)
+            return new CompileError("Semantico", "Indice de acceso fuera de limites", 0, 0);
+        
+        Object atom = this.elements.get(i);
+        if (atom instanceof Vector)
+            atom = ((Vector)atom).clonation();
+        else 
+            atom = ((List)atom).clonation();
+        
+        return new List(atom);
     }
 
     @Override
     public Object getValue2B(int i) {
         //Devuelve un vector
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        i--;
+        if (i > this.elements.size() - 1 || i < 0)
+            return new CompileError("Semantico", "Indice de acceso fuera de limites", 0, 0);
+        
+        Object atom = this.elements.get(i);
+        if (atom instanceof Vector) {
+            return atom;
+        }
+        else {
+            // atom is a list
+            return new CompileError("Semantico", "El elemento en la posicion " + i + " es una lista", 0, 0);
+        }
     }
 
     @Override
     public void expand(int i) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    @Override
+    public void insertValue2B(Object obj, int i) {
+    
     }
 
     @Override

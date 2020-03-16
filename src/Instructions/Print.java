@@ -59,7 +59,7 @@ public class Print implements Instruction {
             return ret + "\n";
         }
         else if (val instanceof Vector)  {
-            return printVector((Vector)val);
+            return printVector((Vector)val, "[", "]");
         }
         else if (val instanceof List) {
             return printList((List)val);
@@ -69,20 +69,20 @@ public class Print implements Instruction {
         return "";
     }
     
-    private String printVector(Vector val) {
+    private String printVector(Vector val, String limit, String limit2) {
         /*if (val.getSize() == 1) {
                 Atomic a = ((ArrayList<Atomic>)val.getValue()).get(0);
                 return String.valueOf(a.getValue()) + "\n";
         }*/
         StringBuilder builder = new StringBuilder();
-        builder.append("[ ");
+        builder.append(limit + " ");
         for (Atomic obj : (ArrayList<Atomic>)val.getValue()) {
             String ap = String.valueOf(obj.getValue());
             builder.append(ap);
             builder.append(", ");
         }
         builder.deleteCharAt(builder.length() - 2);
-        builder.append("]");
+        builder.append(limit2);
         return builder.toString();
     }
     
@@ -95,10 +95,8 @@ public class Print implements Instruction {
                 builder.append(li);
             }
             else {
-                String vec = printVector((Vector)obj);
-                builder.append("[");
+                String vec = printVector((Vector)obj, "(", ")");
                 builder.append(vec);
-                builder.append("]");
             }
             builder.append(", ");
         }

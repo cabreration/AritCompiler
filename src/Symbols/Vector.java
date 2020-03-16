@@ -896,6 +896,11 @@ public class Vector implements Symbol, Value {
     }
     
     @Override
+    public void insertValue2B(Object obj, int i) {
+        Singleton.insertError(new CompileError("Semantico", "no existe definicion para la asignacion [[]] en vectores", 0, 0));
+    }
+    
+    @Override
     public void insertValue(Object obj, int i) {
         Atomic atom = (Atomic)obj;
         ArrayList<Atomic> values = new ArrayList<Atomic>();

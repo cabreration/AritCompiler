@@ -22,4 +22,6 @@ public interface Symbol {
     public void expand(int i);
     
     public void insertValue(Object obj, int i);
+    
+    public void insertValue2B(Object obj, int i);
 }

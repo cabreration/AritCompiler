@@ -9,6 +9,7 @@ import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
 import Symbols.Address;
+import Symbols.List;
 import Symbols.Symbol;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
@@ -58,9 +59,10 @@ public class StructureAsignment implements Instruction {
         
         if (sym instanceof Vector) 
             onVector((Symbol)sym, env);
+        else if (sym instanceof List)
+            onList((List)sym, env);
         
-        /* if (sym instanceof List) {}
-           if (sym instanceof Array) {}
+           /*if (sym instanceof Array) {}
            else {} // matrix
         */
         return null;
@@ -125,7 +127,6 @@ public class StructureAsignment implements Instruction {
         Singleton.insertError(new CompileError("Semantico", "El tipo de acceso [[]] no esta definido para vectores", this.line, this.column));
     }
     
-    
     private Object findIndex(Expression exp, SymbolsTable env) {
         int index = 0;
         Object res = exp.process(env);
@@ -164,4 +165,6 @@ public class StructureAsignment implements Instruction {
                 /* MATRIX, ARRAY, LIST */
         return Integer.valueOf(index);
     }
+    
+    private void onList(List list, SymbolsTable env) {}
 }
