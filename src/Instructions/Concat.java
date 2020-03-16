@@ -8,6 +8,7 @@ package Instructions;
 import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
+import Symbols.List;
 import Symbols.Symbol;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
@@ -40,13 +41,34 @@ public class Concat implements Instruction {
                 return null;
             }
             
+            if (val instanceof Atomic) {
+                if (((Atomic)val).getType() == Atomic.Type.IDENTIFIER) {
+                    String id = String.valueOf(((Atomic)val).getValue());
+                    int line = ((Atomic)val).getLine();
+                    int column = ((Atomic)val).getColumn();
+                    
+                    val = env.getSymbol(id);
+                    if (val == null) {
+                        Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, column));
+                        return null;
+                    }
+                    
+                    //if (val instanceof Matrix) {}
+                    //if (val instanceof Array) {}
+                }
+            }
+            
             elements.add(val);
         }
         int type = determineType(elements, env);
         if (type == 0)
             return null;
         
-        /* if (type == 1) {} */
+        if (type == 1) {
+            elements = castToList(elements);
+            return new List(elements);
+        }
+        
         Vector ret = null;
         if (type == 2) {
             elements = castToVector(elements);
@@ -78,7 +100,8 @@ public class Concat implements Instruction {
         for (Object element : elements) {
             if (element == null)
                 type = type > 3 ? 3 : type;
-            //if (element instanceof List) {}
+            if (element instanceof List)
+                return 1;
             if (element instanceof Vector) 
                 type = type > 2 ? 2 : type;
             else if (element instanceof Atomic) {
@@ -95,7 +118,8 @@ public class Concat implements Instruction {
                     
                     if (sym instanceof Vector)
                         type = type > 2 ? 2 : type;
-                    /* FALTAN LIST, ARRAY Y MATRIX */
+                    if (sym instanceof List)
+                        return 1;
                 }
                 else {
                     if (((Atomic)element).getType() == Atomic.Type.STRING)
@@ -108,6 +132,26 @@ public class Concat implements Instruction {
             }
         }
         return type;
+    }
+    
+    private ArrayList castToList(ArrayList elements) {
+        ArrayList<Object> params = new ArrayList<Object>();
+        for (Object obj : elements) {
+            if (obj instanceof Vector) {
+                for (Atomic atom : (ArrayList<Atomic>)((Vector)obj).getValue()) {
+                        params.add(new Vector(atom));
+                }
+            }
+            else if (obj instanceof List) {
+                for (Object el : (ArrayList)((List)obj).getValue()) {
+                    params.add(el);
+                }
+            }
+            else if (obj instanceof Atomic) {
+                params.add(new Vector((Atomic)obj));
+            }
+        }
+        return params;
     }
     
     private ArrayList<Object> castToVector(ArrayList<Object> elements) {

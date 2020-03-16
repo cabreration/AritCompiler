@@ -52,6 +52,7 @@ public class Singleton {
         switch (name.toLowerCase()) {
             case "print":
             case "c":
+            case "list":
             case "typeof":
             case "length":
             case "ncol":
@@ -62,6 +63,9 @@ public class Singleton {
             case "tolowercase":
             case "trunk":
             case "round":
+            case "mean":
+            case "mode":
+            case "median":
                 return false;
         }
         
@@ -81,7 +85,7 @@ public class Singleton {
     public static void print() {
         StringBuilder builder = new StringBuilder();
         for (String str : console) {
-            builder.append(str);
+            builder.append(str + "\n");
         }
         System.out.println(builder.toString());
     }

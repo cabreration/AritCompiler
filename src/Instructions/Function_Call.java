@@ -9,6 +9,7 @@ import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
 import Symbols.Function;
+import Symbols.List;
 import Symbols.Parameter;
 import Symbols.Symbol;
 import Symbols.SymbolsTable;
@@ -37,7 +38,7 @@ public class Function_Call implements Instruction, Expression {
         this.name = name;
         this.line = line;
         this.column = column;
-        this.params = null;
+        this.params = new ArrayList<Object>();
     }
     
     public String getName() {
@@ -58,6 +59,9 @@ public class Function_Call implements Instruction, Expression {
                 break;
             case "c":
                 retorno = Concat(env);
+                break;
+            case "list":
+                retorno = List(env);
                 break;
             case "length":
                 break;
@@ -102,6 +106,14 @@ public class Function_Call implements Instruction, Expression {
         return retorno;
     }
     
+    private boolean validateNoDefault() {
+        for (Object obj : this.params) {
+            if (String.valueOf(obj).equals("default"))
+                return false;
+        }
+        return true;
+    }
+    
     private Object Print(SymbolsTable env) {
         if (params.size() != 1)
             Singleton.insertError(new CompileError("Semantico", "La funcion print recibe una sola expresion como argumento", this.line, this.column));
@@ -115,23 +127,35 @@ public class Function_Call implements Instruction, Expression {
         return null;
     }
     
-    private boolean validateNoDefault() {
-        for (Object obj : this.params) {
-            if (String.valueOf(obj).equals("default"))
-                return false;
-        }
-        return true;
-    }
-    
     private Symbol Concat(SymbolsTable env) {
         if (!validateNoDefault()) {
             Singleton.insertError(new CompileError("Semantico", "La funcion C no acepta 'default' como parametro", this.line, this.column));
             return null;
         }
         
+        if (params.size() == 0) {
+            Singleton.insertError(new CompileError("Semantico","No puede realizar un funcion de concatenacion sin argumentos", this.line, this.column));
+            return null;
+        }
+        
         Concat concatenator = new Concat(this.params, this.line, this.column);
         Symbol sym = (Symbol)concatenator.process(env);
         return sym;
+    }
+    
+    private Symbol List(SymbolsTable env) {
+        if (!validateNoDefault()) {
+            Singleton.insertError(new CompileError("Semantico", "La funcion C no acepta 'default' como parametro", this.line, this.column));
+            return null;
+        }
+        if (params.size() == 0) {
+            Singleton.insertError(new CompileError("Semantico","No puede realizar un funcion de concatenacion sin argumentos", this.line, this.column));
+            return null;
+        }
+        
+        List_Function listator = new List_Function(this.line, this.column, this.params);
+        List list = (List)listator.process(env);
+        return list;
     }
 
     private Object executeFunction(Function f, SymbolsTable env) {

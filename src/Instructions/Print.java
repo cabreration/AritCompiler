@@ -9,6 +9,7 @@ import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
 import Expressions.StructureAccess;
+import Symbols.List;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
 import aritcompiler.Singleton;
@@ -58,29 +59,52 @@ public class Print implements Instruction {
             return ret + "\n";
         }
         else if (val instanceof Vector)  {
-            if (((Vector)val).getSize() == 1) {
-                Atomic a = ((ArrayList<Atomic>)((Vector)val).getValue()).get(0);
-                return String.valueOf(a.getValue()) + "\n";
-            }
-            StringBuilder builder = new StringBuilder();
-            builder.append("[ ");
-            for (Atomic obj : (ArrayList<Atomic>)((Vector)val).getValue()) {
-                String ap = "";
-                if (obj.getType() == Atomic.Type.STRING)
-                    ap = String.valueOf(obj.getValue());
-                else 
-                    ap = String.valueOf(obj.getValue());
-                builder.append(ap);
-                builder.append(", ");
-            }
-            builder.deleteCharAt(builder.length() - 2);
-            builder.append("]");
-            return builder.toString() + "\n";
+            return printVector((Vector)val);
+        }
+        else if (val instanceof List) {
+            return printList((List)val);
         }
         //else if (val instanceof Matrix) {}
-        //else if (val instanceof List) {}
         // else {} // instance of array
         return "";
+    }
+    
+    private String printVector(Vector val) {
+        /*if (val.getSize() == 1) {
+                Atomic a = ((ArrayList<Atomic>)val.getValue()).get(0);
+                return String.valueOf(a.getValue()) + "\n";
+        }*/
+        StringBuilder builder = new StringBuilder();
+        builder.append("[ ");
+        for (Atomic obj : (ArrayList<Atomic>)val.getValue()) {
+            String ap = String.valueOf(obj.getValue());
+            builder.append(ap);
+            builder.append(", ");
+        }
+        builder.deleteCharAt(builder.length() - 2);
+        builder.append("]");
+        return builder.toString();
+    }
+    
+    private String printList(List val) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("[ ");
+        for (Object obj : (ArrayList)val.getValue()) {
+            if (obj instanceof List) {
+                String li = printList((List)obj);
+                builder.append(li);
+            }
+            else {
+                String vec = printVector((Vector)obj);
+                builder.append("[");
+                builder.append(vec);
+                builder.append("]");
+            }
+            builder.append(", ");
+        }
+        builder.deleteCharAt(builder.length() - 2);
+        builder.append("]");
+        return builder.toString();
     }
     
 }
