@@ -60,7 +60,7 @@ public class StructureAsignment implements Instruction {
         if (sym instanceof Vector) 
             onVector((Symbol)sym, env);
         else if (sym instanceof List)
-            onList((List)sym, env);
+            onList((List)sym, env, 0, this.addresses.length - 1);
         
            /*if (sym instanceof Array) {}
            else {} // matrix
@@ -79,6 +79,11 @@ public class StructureAsignment implements Instruction {
             int i = ((Integer)index).intValue();
                 
             for (int j = 1; j < addresses.length; j++) {
+                if (addresses[j].getType() == 2) {
+                    Singleton.insertError(new CompileError("Semantico", "El tipo de acceso [[]] no esta definido para vectores", this.line, this.column));
+                    return;
+                }
+                
                 Object dex = findIndex(addresses[j].getAddress(), env);
                 if (dex instanceof CompileError) {
                     Singleton.insertError((CompileError)dex);
@@ -143,6 +148,9 @@ public class StructureAsignment implements Instruction {
             }
         }
         
+        while (res instanceof List) 
+            res = ((ArrayList<Object>)(((List)res).getValue())).get(0);
+        
         if (res instanceof Vector) {
             res = ((ArrayList<Atomic>)(((Vector)res).getValue())).get(0);
         }
@@ -161,10 +169,92 @@ public class StructureAsignment implements Instruction {
             }
             else 
                 return new CompileError("Semantico", "Unicamente pueden usarse valores enteros como indices", this.line, this.line);
-            }
-                /* MATRIX, ARRAY, LIST */
+        }
+                /* MATRIX, ARRAY */
         return Integer.valueOf(index);
     }
     
-    private void onList(List list, SymbolsTable env) {}
+    private Object onList(Symbol sym, SymbolsTable env, int pos, int last) {
+        if (sym instanceof Vector) {
+            if (this.addresses[pos].getType() == 2) {
+                Singleton.insertError(new CompileError("Semantico", "El acceso [[]] no esta definido para vectores", this.line, this.column));
+                return null;
+            }
+        }
+        
+        Object index = findIndex(this.addresses[pos].getAddress(), env);
+        if (index instanceof CompileError) {
+            Singleton.insertError((CompileError)index);
+            return null;
+        }
+                
+        int i = ((Integer)index).intValue();
+        i--;
+        sym.expand(i);
+        
+        Object res = null;
+        if (pos == last) {
+            res = expression.process(env);
+            
+            if (res instanceof Atomic) {
+                if (((Atomic)res).getType() == Atomic.Type.IDENTIFIER) {
+                    String ident = String.valueOf(((Atomic)res).getValue());
+                    int line = ((Atomic)res).getLine();
+                    int col = ((Atomic)res).getColumn();
+                    res = env.getSymbol(ident);
+                    
+                    if (res == null) {
+                        Singleton.insertError(new CompileError("Semantico", "La variable '" + ident + "' no existe en el contexto actual", line, col));
+                        return null;
+                    }
+                }
+            }
+            /*Si es matrix o array error*/
+        }
+        
+        if (pos == last) {
+            if (this.addresses[pos].getType() == 1)
+                sym.insertValue(res, i);
+            else 
+                sym.insertValue2B(res, i);
+                
+            return sym;
+        }
+        else {
+            Object nu = null;
+            if (this.addresses[pos].getType() == 1) {
+                nu = sym.getValue(i+1);
+            
+                if (nu instanceof List) {
+                    nu = ((ArrayList<Object>)(((List)nu).getValue())).get(0);
+                    if (nu instanceof Vector)
+                        nu = new List();
+                }
+                
+                if (nu instanceof Vector) {
+                    if (((Vector)nu).getValue() == null) {
+                        nu = new List();
+                    }
+                }
+            }
+            else 
+                nu = sym.getValue2B(i+1);
+            
+            if (nu instanceof CompileError) {
+                Singleton.insertError((CompileError)nu);
+                return null;
+            }
+                
+            Object ject = onList((Symbol)nu, env, pos+1, last);
+            if (ject == null) 
+                return null;
+            else {
+                if (this.addresses[pos+1].getType() == 1)
+                    sym.insertValue(ject, i);
+                else 
+                    sym.insertValue2B(ject, i);
+                return sym;
+            }   
+        }
+    }
 }

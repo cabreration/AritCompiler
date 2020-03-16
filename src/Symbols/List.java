@@ -8,6 +8,7 @@ package Symbols;
 import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Value;
+import aritcompiler.Singleton;
 import java.util.ArrayList;
 
 /**
@@ -16,7 +17,7 @@ import java.util.ArrayList;
  */
 public class List implements Value, Symbol {
 
-    private ArrayList elements;
+    private ArrayList<Object> elements;
 
     public List(ArrayList elements) {
         this.elements = elements;
@@ -25,6 +26,10 @@ public class List implements Value, Symbol {
     public List(Object element) {
         this.elements = new ArrayList();
         this.elements.add(element);
+    }
+    
+    public List() {
+        this.elements = new ArrayList();
     }
     
     public List clonation() {
@@ -160,23 +165,80 @@ public class List implements Value, Symbol {
         }
         else {
             // atom is a list
-            return new CompileError("Semantico", "El elemento en la posicion " + i + " es una lista", 0, 0);
+            return new CompileError("Semantico", "El elemento en la posicion " + i + " es una lista, no es posible acceder a ella con [[]]", 0, 0);
         }
     }
 
     @Override
     public void expand(int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (i < this.elements.size())
+            return;
+        
+        for (int j = this.elements.size(); j <= i; j++) {
+            this.elements.add(new Vector(new Atomic(Atomic.Type.STRING, null)));
+        }
     }
     
     @Override
     public void insertValue2B(Object obj, int i) {
-    
+        if (obj instanceof Atomic) {
+            if (((Atomic)obj).getType() == Atomic.Type.IDENTIFIER) {
+                String id = String.valueOf(((Atomic)obj).getValue());
+                int line = ((Atomic)obj).getLine();
+                int column = ((Atomic)obj).getColumn();
+            
+                if (obj == null) {
+                    Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, column));
+                    return;
+                }
+            }
+        }
+        
+        if (obj instanceof List || obj instanceof Vector) {
+            this.elements.remove(i);
+            this.elements.add(i, obj);
+        }
+        else {
+            this.elements.remove(i);
+            this.elements.add(i, new Vector((Atomic)obj));
+        }
     }
 
     @Override
     public void insertValue(Object obj, int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if (obj instanceof Atomic) {
+            if (((Atomic)obj).getType() == Atomic.Type.IDENTIFIER) {
+                String id = String.valueOf(((Atomic)obj).getValue());
+                int line = ((Atomic)obj).getLine();
+                int column = ((Atomic)obj).getColumn();
+            
+                if (obj == null) {
+                    Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, column));
+                    return;
+                }
+            }
+        }
+        
+        if (obj instanceof List) {
+            if (((List)obj).getSize() > 1) {
+                Singleton.insertError(new CompileError("Semantico", "El tipo de acceso [] en listas solo permite asigaciones de tamanio 1", 0, 0));
+                return;
+            }
+            this.elements.remove(i);
+            this.elements.add(i, obj);
+        }
+        else if (obj instanceof Vector) {
+            if (((Vector)obj).getSize() > 1) {
+                Singleton.insertError(new CompileError("Semantico", "El tipo de acceso [] en listas solo permite asigaciones de tamanio 1", 0, 0));
+                return;
+            }
+            this.elements.remove(i);
+            this.elements.add(i, new List(obj));
+        }
+        else {
+            this.elements.remove(i);
+            this.elements.add(i, new Vector((Atomic)obj));
+        }
     }
     
 }

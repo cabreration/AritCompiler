@@ -67,7 +67,10 @@ public class Vector implements Symbol, Value {
               }
               else {
                   String four = ((String)atom.getValue());
-                  nuContent.add(new Atomic(Atomic.Type.STRING, new String(four)));
+                  if (four == null)
+                    nuContent.add(new Atomic(Atomic.Type.STRING, null));
+                  else
+                    nuContent.add(new Atomic(Atomic.Type.STRING, new String(four)));
               }
           }
           return new Vector(nuContent, tipo);
