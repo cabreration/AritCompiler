@@ -25,7 +25,7 @@ public class Break_Sentence implements Instruction {
     
     @Override
     public Object process(SymbolsTable env) {
-        if (env.getType().contains("loop"))
+        if (env.getType().contains("loop") || env.getType().contains("case") || env.getType().contains("switch"))
             return this;
         
         Singleton.insertError(new CompileError("Semantico", "La sentencia break no tiene sentido dentro del contexto actual", this.line, this.column));

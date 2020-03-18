@@ -8,6 +8,7 @@ package Instructions;
 import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
+import Symbols.List;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
 import aritcompiler.Singleton;
@@ -58,11 +59,14 @@ public class Switch_Sentence implements Instruction {
             }
         }
         
+        while (val instanceof List)
+            val = ((ArrayList<Object>)((List)val).getValue()).get(0);
+        
         if (val instanceof Vector) {
             // Retornamos el primer valor
             val = ((ArrayList<Atomic>)(((Vector)val).getValue())).get(0);
         }
-        /* MATRIX, LIST, ARRAY - all will return the first value */
+        /* MATRIX, ARRAY - all will return the first value */
         
         for (Case_Component kase : this.cases) {
             kase.setOriginal(val);

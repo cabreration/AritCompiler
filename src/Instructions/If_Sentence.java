@@ -8,6 +8,7 @@ package Instructions;
 import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
+import Symbols.List;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
 import aritcompiler.Singleton;
@@ -97,6 +98,9 @@ public class If_Sentence implements Instruction {
                 }
             }
         }
+        
+        while (val instanceof List)
+            val = ((ArrayList<Object>)((List)val).getValue()).get(0);
         
         boolean cond = false;
         if (val instanceof Vector) {

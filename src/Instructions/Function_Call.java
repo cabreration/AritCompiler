@@ -216,6 +216,9 @@ public class Function_Call implements Instruction, Expression {
                         }
                     }
                     
+                    while (value instanceof List)
+                        value = ((ArrayList<Object>)((List)value).getValue()).get(0);
+                    
                     if (value instanceof Vector) {
                         Vector nu = ((Vector)value).clonation();
                         local.updateSymbol(p.getName(), nu);
@@ -225,7 +228,7 @@ public class Function_Call implements Instruction, Expression {
                         Vector nu = new Vector(at);
                         local.updateSymbol(p.getName(), nu);
                     }
-                    /* MATRIX, ARRAY, LIST */
+                    /* MATRIX, ARRAY */
                 }
                 else {
                     Parameter p = f.getParameters().get(i);
@@ -246,6 +249,9 @@ public class Function_Call implements Instruction, Expression {
                                 return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, column);
                         }
                     }
+                    
+                    while (val instanceof List)
+                        val = ((ArrayList<Object>)((List)val).getValue()).get(0);
                     
                     if (val instanceof Vector) {
                         Vector nu = ((Vector)val).clonation();

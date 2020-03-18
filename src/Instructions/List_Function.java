@@ -52,8 +52,8 @@ public class List_Function implements Instruction {
                         return null;
                     }
                     
-                    //if (val instanceof Matrix) {}
-                    //if (val instanceof Array) {}
+                    //if (val instanceof Matrix) {} // Error
+                    //if (val instanceof Array) {} // Error
                 }
                 else {
                     val = new Vector((Atomic)val);

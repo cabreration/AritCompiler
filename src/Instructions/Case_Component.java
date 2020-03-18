@@ -8,6 +8,7 @@ package Instructions;
 import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
+import Symbols.List;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
 import aritcompiler.Singleton;
@@ -79,11 +80,15 @@ public class Case_Component implements Instruction {
             }
         }
         
+        while (val instanceof List) {
+            val = ((ArrayList)((List)val).getValue()).get(0);
+        }
+        
         if (val instanceof Vector) {
             // Retornamos el primer valor
             val = ((ArrayList<Atomic>)(((Vector)val).getValue())).get(0);
         }
-        /* MATRIX, ARRAY, LIST */
+        /* MATRIX, ARRAY */
         
         Atomic one = (Atomic)original;
         Atomic two = (Atomic)val;
@@ -120,9 +125,11 @@ public class Case_Component implements Instruction {
             for (Instruction ins : this.sentences) {
                 Object r = ins.process(env);
                 
-                if (r != null && (r instanceof Break_Sentence || r instanceof Continue_Sentence || r instanceof Return_Sentence)) {
+                if (r != null && (r instanceof Continue_Sentence || r instanceof Return_Sentence)) {
                     return r;     
                 }
+                else if (r != null && r instanceof Break_Sentence)
+                    break;
             }
         }
         return null;

@@ -8,6 +8,7 @@ package Instructions;
 import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
+import Symbols.List;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
 import aritcompiler.Singleton;
@@ -94,6 +95,10 @@ public class DoWhile_Sentence implements Instruction{
             }
         }
         
+        while (val instanceof List) {
+            val = ((ArrayList<Object>)((List)val).getValue()).get(0);
+        }
+        
         if (val instanceof Vector) {
             Atomic bool = ((ArrayList<Atomic>)(((Vector)val).getValue())).get(0);
             if (bool.getType() == Atomic.Type.BOOLEAN)
@@ -110,7 +115,7 @@ public class DoWhile_Sentence implements Instruction{
                 return new CompileError("Semantico", "Las condiciones unicamente pueden ser evaluadas si son de tipo booleano", this.line, this.column);
             }
         }
-        /* MATRIX, LIST, ARRAY */
+        /* MATRIX, ARRAY */
         return Boolean.valueOf(cond);
     }
 }

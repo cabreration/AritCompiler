@@ -53,8 +53,8 @@ public class Concat implements Instruction {
                         return null;
                     }
                     
-                    //if (val instanceof Matrix) {}
-                    //if (val instanceof Array) {}
+                    //if (val instanceof Matrix) {} Error
+                    //if (val instanceof Array) {} Error
                 }
             }
             

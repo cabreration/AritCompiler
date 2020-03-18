@@ -8,8 +8,11 @@ package Instructions;
 import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
+import Symbols.List;
+import Symbols.Symbol;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
+import aritcompiler.Singleton;
 import java.util.ArrayList;
 
 /**
@@ -59,49 +62,77 @@ public class For_Sentence implements Instruction{
             }
         }
         
-        if (val instanceof Vector) {
-            for (Atomic atom : (ArrayList<Atomic>)((Vector)val).getValue()) {
-                String name = "loop";
-                if (env.getType().contains("function"))
-                    name += "-function";
-                SymbolsTable local = new SymbolsTable(name, env);
-                Vector vec = new Vector(atom);
-                local.updateSymbol(i, vec);
-                for (Instruction ins: this.sentences) {
-                    Object r = ins.process(local);
-                    if (r != null) {
-                        if (r instanceof Break_Sentence) { //Falta el return
-                            env.update(local);
-                            return null;
-                        }
-                        else if (r instanceof Continue_Sentence) {
-                            env.update(local);
-                            break;
-                        }
-                        else if (r instanceof Return_Sentence) {
-                            env.update(local);
-                            return r;
-                        }
-                    }
-                }
-                env.update(local);
+        if (val instanceof List) {
+            try { 
+                Object r = forList((List)val, env);
+                return r;
+            }
+            catch (Exception e) {
+                Singleton.insertError(new CompileError("Semantico", "Es imposible modificar un elemento sobre el cual se esta iterando", this.line, this.column));
+                return null;
+            }
+        }
+        else if (val instanceof Vector) {
+            try { 
+                Object r = forVector((Vector)val, env);
+                return r;
+            }
+            catch (Exception e) {
+                Singleton.insertError(new CompileError("Semantico", "Es imposible modificar un elemento sobre el cual se esta iterando", this.line, this.column));
+                return null;
             }
         }
         else if (val instanceof Atomic) {
+            return forAtomic((Atomic)val, env);
+        }
+        /* MATRIX, ARRAY */
+        return null;
+    }
+    
+    private Object forAtomic(Atomic val, SymbolsTable env) {
+        String name = "loop";
+        if (env.getType().contains("function"))
+            name += "-function";
+        SymbolsTable local = new SymbolsTable(name, env);
+        Vector vec = new Vector(val);
+        local.updateSymbol(i, vec);
+        for (Instruction ins: this.sentences) {
+            Object r = ins.process(local);
+            if (r != null) {
+                if (r instanceof Break_Sentence || r instanceof Continue_Sentence) { 
+                    env.update(local);
+                    return null;
+                }
+                if (r instanceof Return_Sentence) {
+                    env.update(local);
+                    return r;
+                }
+            }
+        }
+        env.update(local);
+        return null;
+    }
+    
+    private Object forVector(Vector val, SymbolsTable env) {
+        for (Atomic atom : (ArrayList<Atomic>)val.getValue()) {
             String name = "loop";
             if (env.getType().contains("function"))
                 name += "-function";
             SymbolsTable local = new SymbolsTable(name, env);
-            Vector vec = new Vector((Atomic)val);
+            Vector vec = new Vector(atom);
             local.updateSymbol(i, vec);
             for (Instruction ins: this.sentences) {
                 Object r = ins.process(local);
                 if (r != null) {
-                    if (r instanceof Break_Sentence || r instanceof Continue_Sentence) { //Falta el return
+                    if (r instanceof Break_Sentence) {
                         env.update(local);
                         return null;
                     }
-                    if (r instanceof Return_Sentence) {
+                    else if (r instanceof Continue_Sentence) {
+                        env.update(local);
+                        break;
+                    }
+                    else if (r instanceof Return_Sentence) {
                         env.update(local);
                         return r;
                     }
@@ -109,7 +140,35 @@ public class For_Sentence implements Instruction{
             }
             env.update(local);
         }
-        /* MATRIX, LIST, ARRAY */
+        return null;
+    }
+    
+    private Object forList(List val, SymbolsTable env) {
+        for (Object vecList : (ArrayList<Object>)val.getValue()) {
+            String name = "loop";
+            if (env.getType().contains("function"))
+                name += "-function";
+            SymbolsTable local = new SymbolsTable(name, env);
+            local.updateSymbol(i, (Symbol)vecList);
+            for (Instruction ins: this.sentences) {
+                Object r = ins.process(local);
+                if (r != null) {
+                    if (r instanceof Break_Sentence) {
+                        env.update(local);
+                        return null;
+                    }
+                    else if (r instanceof Continue_Sentence) {
+                        env.update(local);
+                        break;
+                    }
+                    else if (r instanceof Return_Sentence) {
+                        env.update(local);
+                        return r;
+                    }
+                }
+            }
+            env.update(local);
+        }
         return null;
     }
 }

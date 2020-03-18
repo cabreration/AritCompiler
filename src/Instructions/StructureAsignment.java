@@ -120,9 +120,12 @@ public class StructureAsignment implements Instruction {
                 
                 res = ((ArrayList<Atomic>)(((Vector)res).getValue())).get(0);
             }
+            if (res instanceof List) {
+                Singleton.insertError(new CompileError("Semantico", "Un vector no puede contener listas", this.line, this.column));
+                return;
+            }
             /* if (res instanceof Matrix) { Error } */
             /* if (res instanceof Array) { Error } */
-            /* if (res instanceof List) { Error } */
             
             i--;
             ((Vector)sym).expand(i);  

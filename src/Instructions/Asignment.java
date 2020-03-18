@@ -66,6 +66,7 @@ public class Asignment implements Instruction {
                 }
                 
                 env.updateSymbol(this.identifier, (Symbol)exp);
+                return null;
             }
             
             Vector vector = new Vector((Atomic)exp);
