@@ -16,6 +16,7 @@ import Symbols.SymbolsTable;
 import Symbols.Vector;
 import aritcompiler.Singleton;
 import java.util.ArrayList;
+import Symbols.Matrix;
 
 /**
  *
@@ -62,6 +63,9 @@ public class Function_Call implements Instruction, Expression {
                 break;
             case "list":
                 retorno = List(env);
+                break;
+            case "matrix":
+                retorno = Matrix(env);
                 break;
             case "length":
                 break;
@@ -156,6 +160,22 @@ public class Function_Call implements Instruction, Expression {
         List_Function listator = new List_Function(this.line, this.column, this.params);
         List list = (List)listator.process(env);
         return list;
+    }
+    
+    private Matrix Matrix(SymbolsTable env) {
+        if (!validateNoDefault()) {
+            Singleton.insertError(new CompileError("Semantico", "La funcion Matrix no acepta 'default' como parametro", this.line, this.column));
+            return null;
+        }
+        if (params.size() != 3) {
+            Singleton.insertError(new CompileError("Semantico","No puede realizar un funcion de matrix con ese numero de argumentos", this.line, this.column));
+            return null;
+        }
+        
+        Matrix_Function matrixator = new Matrix_Function(this.line, this.column,
+                (Expression)this.params.get(0), (Expression)this.params.get(1), (Expression)this.params.get(2));
+        Matrix matrix = (Matrix)matrixator.process(env);
+        return matrix;
     }
 
     private Object executeFunction(Function f, SymbolsTable env) {

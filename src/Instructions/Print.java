@@ -10,6 +10,7 @@ import Expressions.Atomic;
 import Expressions.Expression;
 import Expressions.StructureAccess;
 import Symbols.List;
+import Symbols.Matrix;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
 import aritcompiler.Singleton;
@@ -64,7 +65,9 @@ public class Print implements Instruction {
         else if (val instanceof List) {
             return printList((List)val);
         }
-        //else if (val instanceof Matrix) {}
+        else if (val instanceof Matrix) {
+            return printMatrix((Matrix)val);
+        }
         // else {} // instance of array
         return "";
     }
@@ -102,6 +105,20 @@ public class Print implements Instruction {
         }
         builder.deleteCharAt(builder.length() - 2);
         builder.append("]");
+        return builder.toString();
+    }
+
+    private Object printMatrix(Matrix matrix) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < matrix.getRows(); i++) {
+            builder.append("| ");
+            for (int j = 0; j < matrix.getColumns(); j++) {
+                Atomic atom = ((Atomic[][])matrix.getValue())[i][j];
+                builder.append(atom.getValue());
+                builder.append(" ");
+            }
+            builder.append("|\n");
+        }
         return builder.toString();
     }
     

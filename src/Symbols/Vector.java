@@ -89,6 +89,21 @@ public class Vector implements Symbol, Value {
     public int type() {
         return this.type;
     }
+    
+    @Override
+    public Object accessBoth(int i, int j) {
+        return new CompileError("Semantico", "El tipo de acceso de dos dimensiones no esta definido para vectores", 0, 0);
+    }
+    
+    @Override
+    public Object accessLeft(int i) {
+        return new CompileError("Semantico", "El tipo de acceso a la izquierda no esta definido para vectores", 0, 0);
+    }
+    
+    @Override
+    public Object accessRight(int j) {
+        return new CompileError("Semantico", "El tipo de acceso a la derecha no esta definido para vectores", 0, 0);
+    }
 
     @Override
     public Object booleanNegation(SymbolsTable env) {

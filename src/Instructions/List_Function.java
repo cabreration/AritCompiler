@@ -9,6 +9,7 @@ import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
 import Symbols.List;
+import Symbols.Matrix;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
 import aritcompiler.Singleton;
@@ -52,7 +53,10 @@ public class List_Function implements Instruction {
                         return null;
                     }
                     
-                    //if (val instanceof Matrix) {} // Error
+                    if (val instanceof Matrix) {
+                        Singleton.insertError(new CompileError("Semantico", "No es posible incluir matrices en listas", line, column));
+                        return null;
+                    }
                     //if (val instanceof Array) {} // Error
                 }
                 else {

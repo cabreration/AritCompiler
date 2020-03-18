@@ -19,6 +19,12 @@ public interface Symbol {
     
     public Object getValue2B(int i);
     
+    public Object accessBoth(int i, int j);
+    
+    public Object accessLeft(int i);
+    
+    public Object accessRight(int j);
+    
     public void expand(int i);
     
     public void insertValue(Object obj, int i);

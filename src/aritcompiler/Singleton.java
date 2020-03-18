@@ -53,6 +53,7 @@ public class Singleton {
             case "print":
             case "c":
             case "list":
+            case "matrix":
             case "typeof":
             case "length":
             case "ncol":

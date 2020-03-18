@@ -46,6 +46,21 @@ public class List implements Value, Symbol {
     }
     
     @Override
+    public Object accessBoth(int i, int j) {
+        return new CompileError("Semantico", "El tipo de acceso de dos dimensiones no esta definido para listas", 0, 0);
+    }
+    
+    @Override
+    public Object accessLeft(int i) {
+        return new CompileError("Semantico", "El tipo de acceso a la izquierda no esta definido para listas", 0, 0);
+    }
+    
+    @Override
+    public Object accessRight(int j) {
+        return new CompileError("Semantico", "El tipo de acceso a la derecha no esta definido para listas", 0, 0);
+    }
+    
+    @Override
     public Object booleanNegation(SymbolsTable env) {
         return new CompileError("Semantico", "No es posible realizar operaciones con listas", 0, 0);
     }
