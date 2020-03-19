@@ -106,8 +106,7 @@ public class Matrix implements Symbol, Value{
 
     @Override
     public void insertValue(Object obj, int i) {
-        i--;
-        if (i >= this.nRows * this.nCols) {
+        if (i > this.nRows * this.nCols) {
             Singleton.insertError(new CompileError("Semantico", "El indice de acceso por lista a matriz se encuentra fuera de rango", 0, 0));
             return;
         }
@@ -161,7 +160,7 @@ public class Matrix implements Symbol, Value{
                 castToNumeric();       
             else if (((Atomic)obj).getType() == Atomic.Type.BOOLEAN) {
                 int doub = ((Boolean)((Atomic)obj).getValue()).booleanValue() ? 1 : 0;
-                obj = new Atomic(Atomic.Type.NUMERIC, Integer.valueOf(doub));
+                obj = new Atomic(Atomic.Type.INTEGER, Integer.valueOf(doub));
             }
         }
         else {
@@ -189,15 +188,15 @@ public class Matrix implements Symbol, Value{
         this.type = 2;
         for (int i = 0; i < this.nRows; i++) {
             for (int j = 0; j < this.nCols; j++) {
-                this.elements[i][j].setType(Atomic.Type.NUMERIC);
                 if (this.elements[i][j].getType() == Atomic.Type.INTEGER) {
                     double doub = ((Integer)this.elements[i][j].getValue()).doubleValue();
                     this.elements[i][j].setValue(Double.valueOf(doub));
                 }
-                else {
+                else if (this.elements[i][j].getType() == Atomic.Type.BOOLEAN) {
                     double doub = ((Boolean)this.elements[i][j].getValue()).booleanValue() ? 1.0 : 0.0;
                     this.elements[i][j].setValue(Double.valueOf(doub));
                 }
+                this.elements[i][j].setType(Atomic.Type.NUMERIC);
             }
         }
     }
@@ -206,7 +205,7 @@ public class Matrix implements Symbol, Value{
         this.type = 1;
         for (int i = 0; i < this.nRows; i++) {
             for (int j = 0; j < this.nCols; j++) {
-                this.elements[i][j].setType(Atomic.Type.NUMERIC);
+                this.elements[i][j].setType(Atomic.Type.INTEGER);
                 int doub = ((Boolean)this.elements[i][j].getValue()).booleanValue() ? 1 : 0;
                 this.elements[i][j].setValue(Integer.valueOf(doub));
             }
@@ -241,7 +240,38 @@ public class Matrix implements Symbol, Value{
         this.elements[i][j] = (Atomic)obj;
     }
     
-    public void insertValueBothVector(Object obj, int i, int j, int[] next) {}
+    public void insertValueBothVector(Object obj, int i, int j, int[] next) {
+        i--;
+        j--;
+        
+        if (i >= this.elements.length) {
+            Singleton.insertError(new CompileError("Semantico", "El indice de las filas se encuentra fuera de rango", 0, 0));
+            return;
+        }
+        
+        if (j >= this.elements[i].length) {
+            Singleton.insertError(new CompileError("Semantico", "El indice de las columnas se encuentra fuera de rango", 0, 0));
+            return;
+        }
+        
+        if (obj instanceof Vector) {
+            if (((Vector)obj).getSize() > 1) {
+                Singleton.insertError(new CompileError("Semantico", "No puede asignar mas que un elemento a una posicion", 0, 0));
+                return;
+            }
+            
+            obj = ((ArrayList<Atomic>)((Vector)obj).getValue()).get(0);
+        }
+
+        for (int k = 0; k < next.length; k++) {
+            if (next[k] != 1) {
+                Singleton.insertError(new CompileError("Semantico", "El indice se encuentra fuera de rango", 0, 0));
+                return;
+            }
+        }
+        obj = cast(obj);
+        this.elements[i][j] = (Atomic)obj;
+    }
     
     @Override 
     public void insertValueLeft(Object obj, int i) {
@@ -254,13 +284,13 @@ public class Matrix implements Symbol, Value{
         if (obj instanceof Vector) {
             if (((Vector)obj).getSize() == this.nCols) {
                 for (int j = 0; j < this.nCols; j++) {
-                    Atomic atom = (Atomic)((Vector)obj).getValue(j);
+                    Atomic atom = ((ArrayList<Atomic>)(((Vector)obj).getValue())).get(j);
                     atom = cast(atom);
                     this.elements[i][j] = atom;
                 }
             }
             else if (((Vector)obj).getSize() == 1) {
-                Atomic atom = (Atomic)((Vector)obj).getValue(0);
+                Atomic atom = ((ArrayList<Atomic>)(((Vector)obj).getValue())).get(0);
                 atom = cast(atom);
                 for (int j = 0; j < this.nCols; j++) {
                     this.elements[i][j] = atom;
@@ -279,7 +309,42 @@ public class Matrix implements Symbol, Value{
         }
     }
     
-    public void insertValueLeftVectors(Object obj, int i, int[] next) {}
+    public void insertValueLeftVectors(Object obj, int i, int[] next) {
+        i--;
+        if (i >= this.nRows) {
+            Singleton.insertError(new CompileError("Semantico", "El indice de acceso por la izquierda se encuentra fuera de rango", 0, 0));
+            return;
+        }
+        
+        if (obj instanceof Vector) {
+            if (((Vector)obj).getSize() > 1) {
+                Singleton.insertError(new CompileError("Semantico", "No puede asignar mas que un elemento a una posicion", 0, 0));
+                return;
+            }
+            
+            obj = ((ArrayList<Atomic>)((Vector)obj).getValue()).get(0);
+        }
+        
+        int j = next[0];
+        j--;
+        
+        if (j >= this.nCols) {
+            Singleton.insertError(new CompileError("Semantico", "El indice de acceso al vector de la matriz se encuentra fuera de rango", 0, 0));
+            return;
+        }
+        
+        if (next.length > 1) {
+            for (int k = 1; k < next.length; k++) {
+                if (next[k] != 1) {
+                    Singleton.insertError(new CompileError("Semantico", "El indice se encuentra fuera de rango para el vector en esa posicion de la matrix", 0, 0));
+                    return;
+                }
+            }
+        }
+        
+        obj = cast(obj);
+        this.elements[i][j] = (Atomic)obj;
+    }
     
     @Override 
     public void insertValueRight(Object obj, int j) {
@@ -293,13 +358,13 @@ public class Matrix implements Symbol, Value{
         if (obj instanceof Vector) {
             if (((Vector)obj).getSize() == this.nRows) {
                 for (int i = 0; i < this.nRows; i++) {
-                    Atomic atom = (Atomic)((Vector)obj).getValue(i);
+                    Atomic atom = ((ArrayList<Atomic>)(((Vector)obj).getValue())).get(i);
                     atom = cast(atom);
                     this.elements[i][j] = atom;
                 }
             }
             else if (((Vector)obj).getSize() == 1) {
-                Atomic atom = (Atomic)((Vector)obj).getValue(0);
+                Atomic atom = ((ArrayList<Atomic>)(((Vector)obj).getValue())).get(0);
                 atom = cast(atom);
                 for (int i = 0; i < this.nRows; i++) {
                     this.elements[i][j] = atom;
@@ -318,7 +383,42 @@ public class Matrix implements Symbol, Value{
         }
     }
     
-    public void insertValueRightVectors(Object obj, int i, int[] next) {}
+    public void insertValueRightVectors(Object obj, int j, int[] next) {
+        j--;
+        if (j >= this.nCols) {
+            Singleton.insertError(new CompileError("Semantico", "El indice de acceso por la izquierda se encuentra fuera de rango", 0, 0));
+            return;
+        }
+        
+        if (obj instanceof Vector) {
+            if (((Vector)obj).getSize() > 1) {
+                Singleton.insertError(new CompileError("Semantico", "No puede asignar mas que un elemento a una posicion", 0, 0));
+                return;
+            }
+            
+            obj = ((ArrayList<Atomic>)((Vector)obj).getValue()).get(0);
+        }
+
+        int i = next[0];
+        i--;
+        
+        if (i >= this.nRows) {
+            Singleton.insertError(new CompileError("Semantico", "El indice de acceso al vector de la matriz se encuentra fuera de rango", 0, 0));
+            return;
+        }
+        
+        if (next.length > 1) {
+            for (int k = 1; k < next.length; k++) {
+                if (next[k] != 1) {
+                    Singleton.insertError(new CompileError("Semantico", "El indice se encuentra fuera de rango para el vector en esa posicion de la matrix", 0, 0));
+                    return;
+                }
+            }
+        }
+        
+        obj = cast(obj);
+        this.elements[i][j] = (Atomic)obj;
+    }
 
     @Override
     public void insertValue2B(Object obj, int i) {

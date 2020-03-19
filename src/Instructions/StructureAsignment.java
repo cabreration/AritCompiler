@@ -10,6 +10,7 @@ import Expressions.Atomic;
 import Expressions.Expression;
 import Symbols.Address;
 import Symbols.List;
+import Symbols.Matrix;
 import Symbols.Symbol;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
@@ -62,10 +63,9 @@ public class StructureAsignment implements Instruction {
             onVector((Symbol)sym, env);
         else if (sym instanceof List)
             onList((List)sym, env, 0, this.addresses.length - 1);
-        
-           /*if (sym instanceof Array) {}
-           else {} // matrix
-        */
+        else if (sym instanceof Matrix)
+            onMatrix((Symbol)sym, env);
+        /*if (sym instanceof Array) {} */
         return null;
     }
     
@@ -125,7 +125,10 @@ public class StructureAsignment implements Instruction {
                 Singleton.insertError(new CompileError("Semantico", "Un vector no puede contener listas", this.line, this.column));
                 return;
             }
-            /* if (res instanceof Matrix) { Error } */
+            if (res instanceof Matrix) {
+                Singleton.insertError(new CompileError("Semantico", "Un vector no puede contener matrices", this.line, this.column));
+                return;
+            } 
             /* if (res instanceof Array) { Error } */
             
             i--;
@@ -152,6 +155,9 @@ public class StructureAsignment implements Instruction {
             }
         }
         
+        if (res instanceof Matrix)
+            res = ((Atomic[][])((Matrix)res).getValue())[0][0];
+        
         while (res instanceof List) 
             res = ((ArrayList<Object>)(((List)res).getValue())).get(0);
         
@@ -174,7 +180,7 @@ public class StructureAsignment implements Instruction {
             else 
                 return new CompileError("Semantico", "Unicamente pueden usarse valores enteros como indices", this.line, this.line);
         }
-                /* MATRIX, ARRAY */
+                /* ARRAY */
         return Integer.valueOf(index);
     }
     
@@ -213,7 +219,11 @@ public class StructureAsignment implements Instruction {
                     }
                 }
             }
-            /*Si es matrix o array error*/
+            if (res instanceof Matrix) {
+                Singleton.insertError(new CompileError("Semantico", "Un vector no puede contener matrices", this.line, this.column));
+                return null;
+            }
+            /*Si es array error*/
         }
         
         if (pos == last) {
@@ -260,5 +270,73 @@ public class StructureAsignment implements Instruction {
                 return sym;
             }   
         }
+    }
+
+    private void onMatrix(Symbol symbol, SymbolsTable env) {
+        if (addresses[0].getType() == 1) {
+            Object index = findIndex(addresses[0].getAddress(), env);
+            if (index instanceof CompileError) {
+                Singleton.insertError((CompileError)index);
+                return;
+            }
+                
+            int i = ((Integer)index).intValue();
+                
+            for (int j = 1; j < addresses.length; j++) {
+                if (addresses[j].getType() == 2) {
+                    Singleton.insertError(new CompileError("Semantico", "El tipo de acceso [[]] no esta definido para matrices", this.line, this.column));
+                    return;
+                }
+                
+                Object dex = findIndex(addresses[j].getAddress(), env);
+                if (dex instanceof CompileError) {
+                    Singleton.insertError((CompileError)dex);
+                    return;
+                }
+                if (((Integer)dex).intValue() != 1) {
+                    Singleton.insertError(new CompileError("Semantico", "La direccion a la que esta intentado acceder en el vector de la matriz no existe", this.line, this.column));
+                    return;
+                }
+                     
+            }
+            
+            Object res = expression.process(env);
+            
+            if (res instanceof Atomic) {
+                if (((Atomic)res).getType() == Atomic.Type.IDENTIFIER) {
+                    String ident = String.valueOf(((Atomic)res).getValue());
+                    int line = ((Atomic)res).getLine();
+                    int col = ((Atomic)res).getColumn();
+                    res = env.getSymbol(ident);
+                    
+                    if (res == null) {
+                        Singleton.insertError(new CompileError("Semantico", "La variable '" + ident + "' no existe en el contexto actual", line, col));
+                        return;
+                    }
+                }
+            }
+            
+            if (res instanceof Vector) {
+                if (((Vector)res).getSize() > 1) {
+                    Singleton.insertError(new CompileError("Semantico", "No se puede asignar mas de un valor a la misma posicion", this.line, this.column));
+                    return;
+                }
+                
+                res = ((ArrayList<Atomic>)(((Vector)res).getValue())).get(0);
+            }
+            if (res instanceof List) {
+                Singleton.insertError(new CompileError("Semantico", "Una matriz no puede contener listas", this.line, this.column));
+                return;
+            }
+            if (res instanceof Matrix) {
+                Singleton.insertError(new CompileError("Semantico", "Un matriz no puede contener matrices", this.line, this.column));
+                return;
+            } 
+            /* if (res instanceof Array) { Error } */
+             
+            ((Matrix)symbol).insertValue(res, i);
+        }
+            
+        Singleton.insertError(new CompileError("Semantico", "El tipo de acceso [[]] no esta definido para Matrices", this.line, this.column));
     }
 }

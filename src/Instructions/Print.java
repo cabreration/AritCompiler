@@ -54,8 +54,8 @@ public class Print implements Instruction {
         
         if (val instanceof Atomic) {
             String ret = String.valueOf(((Atomic)val).getValue());
-            //if (((Atomic)val).getType() == Atomic.Type.STRING && !ret.equals("\n"))
-                //ret = "\"" + String.valueOf(((Atomic)val).getValue()) + "\"";
+            if (((Atomic)val).getType() == Atomic.Type.STRING && !ret.equals("\n"))
+                ret = "\"" + String.valueOf(((Atomic)val).getValue()) + "\"";
            
             return ret + "\n";
         }
@@ -81,7 +81,10 @@ public class Print implements Instruction {
         builder.append(limit + " ");
         for (Atomic obj : (ArrayList<Atomic>)val.getValue()) {
             String ap = String.valueOf(obj.getValue());
-            builder.append(ap);
+            if (obj.getType() == Atomic.Type.STRING)
+                builder.append("\"" + ap + "\"");
+            else
+                builder.append(ap);
             builder.append(", ");
         }
         builder.deleteCharAt(builder.length() - 2);
@@ -113,9 +116,22 @@ public class Print implements Instruction {
         for (int i = 0; i < matrix.getRows(); i++) {
             builder.append("| ");
             for (int j = 0; j < matrix.getColumns(); j++) {
+                int maxLength = 0;
+                for (int k = 0; k < matrix.getRows(); k++) {
+                    String aux = String.valueOf(((Atomic[][])matrix.getValue())[k][j].getValue());
+                    if (aux.length() > maxLength)
+                        maxLength = aux.length();
+                }
                 Atomic atom = ((Atomic[][])matrix.getValue())[i][j];
-                builder.append(atom.getValue());
-                builder.append(" ");
+                String cur = String.valueOf(atom.getValue());
+                if (atom.getType() == Atomic.Type.STRING) {
+                    cur = "\"" + cur + "\"";
+                    maxLength += 2;
+                }
+                builder.append(cur);
+                int spaces = (maxLength - cur.length()) + 1;
+                for (int k = 0; k < spaces; k++) 
+                    builder.append(" ");
             }
             builder.append("|\n");
         }

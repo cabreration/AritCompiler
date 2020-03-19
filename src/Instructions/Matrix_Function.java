@@ -59,9 +59,17 @@ public class Matrix_Function implements Instruction{
         int vecSize = ((Vector)vec).getSize();
         int matSize = filas*columnas;
         
-        if (matSize % vecSize != 0) {
-            Singleton.insertError(new CompileError("Semantico", "La cantidad de elementos en el vector no es multiplo del tamanio del vector", this.line, this.column));
-            return null;
+        if (matSize >= vecSize) {
+            if (matSize % vecSize != 0) {
+                Singleton.insertError(new CompileError("Semantico", "La cantidad de elementos en el vector no es multiplo del tamanio del vector", this.line, this.column));
+                return null;
+            }
+        }
+        else {
+            if (vecSize % matSize != 0) {
+                Singleton.insertError(new CompileError("Semantico", "La cantidad de elementos en el vector no es multiplo del tamanio del vector", this.line, this.column));
+                return null;
+            }
         }
         
         Matrix matrix = new Matrix(filas, columnas, (Vector)vec, ((Vector)vec).type());
