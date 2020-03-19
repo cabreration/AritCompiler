@@ -104,8 +104,73 @@ public class Matrix implements Symbol, Value{
 
     @Override
     public void insertValue(Object obj, int i) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        i--;
+        if (i >= this.nRows * this.nCols) {
+            Singleton.insertError(new CompileError("Semantico", "El indice de acceso por lista a matriz se encuentra fuera de rango", 0, 0));
+            return;
+        }
+        
+        if (this.type == 4) {
+            obj = new Atomic(Atomic.Type.STRING, String.valueOf(((Atomic)obj).getValue()));
+        }
+        else if (this.type == 2) {
+            if (((Atomic)obj).getType() == Atomic.Type.STRING) 
+                castToString();
+            else if (((Atomic)obj).getType() == Atomic.Type.INTEGER) {
+                double doub = ((Integer)((Atomic)obj).getValue()).doubleValue();
+                obj = new Atomic(Atomic.Type.NUMERIC, Double.valueOf(doub));
+            }
+            else if (((Atomic)obj).getType() == Atomic.Type.BOOLEAN) {
+                double doub = ((Boolean)((Atomic)obj).getValue()).booleanValue() ? 1.0 : 0.0;
+                obj = new Atomic(Atomic.Type.NUMERIC, Double.valueOf(doub));
+            }
+        }
+        else if (this.type == 1) {
+            if (((Atomic)obj).getType() == Atomic.Type.STRING) 
+                castToString();
+            else if (((Atomic)obj).getType() == Atomic.Type.NUMERIC) 
+                castToNumeric();       
+            else if (((Atomic)obj).getType() == Atomic.Type.BOOLEAN) {
+                int doub = ((Boolean)((Atomic)obj).getValue()).booleanValue() ? 1 : 0;
+                obj = new Atomic(Atomic.Type.NUMERIC, Integer.valueOf(doub));
+            }
+        }
+        else {
+            if (((Atomic)obj).getType() == Atomic.Type.STRING) 
+                castToString();
+            else if (((Atomic)obj).getType() == Atomic.Type.NUMERIC) 
+                castToNumeric();
+            else if (((Atomic)obj).getType() == Atomic.Type.INTEGER) 
+                castToInteger();
+            
+        }
+        
+        int n = 0;
+        for (int j = 0; j < this.nRows; j++) {
+            for (int k = 0; k < this.nCols; k++) {
+                if (n == i) {
+                    this.elements[i][j] = (Atomic)obj;
+                    break;
+                }
+                n++;
+            }
+        }
     }
+    
+    private void castToString() {}
+    
+    private void castToNumeric() {}
+    
+    private void castToInteger() {}
+    
+    @Override 
+    public void insertValueBoth(Object obj, int i, int j) {}
+    
+    @Override 
+    public void insertValueLeft(Object obj, int i) {}
+    
+    @Override 
+    public void insertValueRight(Object obj, int j) {}
 
     @Override
     public void insertValue2B(Object obj, int i) {

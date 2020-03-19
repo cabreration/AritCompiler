@@ -30,4 +30,10 @@ public interface Symbol {
     public void insertValue(Object obj, int i);
     
     public void insertValue2B(Object obj, int i);
+    
+    public void insertValueBoth(Object obj, int i, int j);
+    
+    public void insertValueLeft(Object obj, int i);
+    
+    public void insertValueRight(Object obj, int j);
 }

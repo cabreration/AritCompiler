@@ -256,4 +256,18 @@ public class List implements Value, Symbol {
         }
     }
     
+    @Override 
+    public void insertValueBoth(Object obj, int i, int j) {
+        Singleton.insertError(new CompileError("Semantico", "Inserciones de tipo [a,b] no estan definidas para listas", 0, 0));
+    }
+    
+    @Override 
+    public void insertValueLeft(Object obj, int i) {
+        Singleton.insertError(new CompileError("Semantico", "Inserciones de tipo [a,] no estan definidas para listas", 0, 0));
+    }
+    
+    @Override 
+    public void insertValueRight(Object obj, int j) {
+        Singleton.insertError(new CompileError("Semantico", "Inserciones de tipo [,b] no estan definidas para listas", 0, 0));
+    }
 }
