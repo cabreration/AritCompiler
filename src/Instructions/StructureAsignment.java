@@ -40,7 +40,8 @@ public class StructureAsignment implements Instruction {
     public Object process(SymbolsTable env) {
         Object sym = env.getSymbol(this.id);
         if (sym == null) {
-            return new CompileError("Semantico", "La variable '" + this.id + "' no existe en el contexto actual", this.line, this.column);
+            Singleton.insertError(new CompileError("Semantico", "La variable '" + this.id + "' no existe en el contexto actual", this.line, this.column));
+            return null;
         }
         
         Object val = expression.process(env);

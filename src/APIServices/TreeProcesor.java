@@ -21,6 +21,7 @@ import Instructions.For_Sentence;
 import Instructions.Function_Call;
 import Instructions.If_Sentence;
 import Instructions.Instruction;
+import Instructions.MatrixAsignment;
 import Instructions.Return_Sentence;
 import Instructions.StructureAsignment;
 import Instructions.Switch_Sentence;
@@ -158,6 +159,8 @@ public class TreeProcesor {
                 return processCall(ins);
             case "structure asignment":
                 return processStructureAsignment(ins.getChildAt(0), ins.getChildAt(1));
+            case "matrix asignment":
+                return processMatrixAsignment(ins);
             case "if sentence":
                 return processIfSentence(ins);
             case "switch sentence":
@@ -340,6 +343,15 @@ public class TreeProcesor {
         }
         
         return new StructureAccess(id, line, column, adds); 
+    }
+    
+    private static MatrixAsignment processMatrixAsignment(Node ins) {
+        int line = ins.getRow();
+        int column = ins.getColumn();
+        MatrixAccess access = processMatrixAccess(ins.getChildAt(0));
+        Expression exp = processExpression(ins.getChildAt(1));
+        
+        return new MatrixAsignment(access, exp, line, column);
     }
     
     private static MatrixAccess processMatrixAccess(Node expression) {

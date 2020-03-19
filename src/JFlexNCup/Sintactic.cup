@@ -298,7 +298,7 @@ ASIGNMENT ::= id:id valAsignment:v LONE_EXPRESSION:exp              {: Node as =
                                                                        RESULT = as;
                                                                     :}
 
-    | MATRIX_ACCESS:mat valAsignment LONE_EXPRESSION:exp            {: Node as = new Node("matrix asignment");
+    | MATRIX_ACCESS:mat valAsignment:v LONE_EXPRESSION:exp          {: Node as = new Node("matrix asignment", vright, vleft, null);
                                                                        as.addChildren(mat);
                                                                        as.addChildren(exp);
                                                                        RESULT = as;

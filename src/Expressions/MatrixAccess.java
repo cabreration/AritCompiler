@@ -78,6 +78,26 @@ public class MatrixAccess implements Expression {
         this.type = 0;
     }
 
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public Expression getLeft() {
+        return left;
+    }
+
+    public Expression getRight() {
+        return right;
+    }
+
+    public Expression[] getVectors() {
+        return vectors;
+    }
+
     @Override
     public Object process(SymbolsTable env) {
         Symbol sym = env.getSymbol(this.identifier);

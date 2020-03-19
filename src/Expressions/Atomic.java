@@ -94,8 +94,14 @@ public class Atomic implements Expression, Value {
     public Object getValue() {
         return value;
     }
-    
-    /* A partir de aqui todos los metodos que sean sobre operaciones - Value interface*/
+
+    public void setType(Type type) {
+        this.type = type;
+    }
+
+    public void setValue(Object value) {
+        this.value = value;
+    }
     
     @Override
     public Object booleanNegation(SymbolsTable env) {
