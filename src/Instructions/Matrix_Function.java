@@ -64,7 +64,7 @@ public class Matrix_Function implements Instruction{
             return null;
         }
         
-        Matrix matrix = new Matrix(filas, columnas, (Vector)vec);
+        Matrix matrix = new Matrix(filas, columnas, (Vector)vec, ((Vector)vec).type());
         return matrix;
     }
     
