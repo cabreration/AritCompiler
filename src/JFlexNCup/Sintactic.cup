@@ -568,21 +568,22 @@ MATRIX_ACCESS ::= id:id MATRIX_ADDRESS:mat                      {: Node access =
                                                                    access.addChildren(ident);
                                                                    access.addChildren(mat);
                                                                    access.addChildren(vecs);
+                                                                   RESULT = access;
                                                                 :}  
 ;
 
-MATRIX_ADDRESS ::= openingBracket LONE_EXPRESSION:exp1 comma:c LONE_EXPRESSION:exp2 closingBracket              {: Node address = new Node("matrix_address", 0, 0, "doubleM");
+MATRIX_ADDRESS ::= openingBracket LONE_EXPRESSION:exp1 comma:c LONE_EXPRESSION:exp2 closingBracket              {: Node address = new Node("matrix_address", 0, 0, "both");
                                                                                                                    address.addChildren(exp1);
                                                                                                                    address.addChildren(exp2);
                                                                                                                    RESULT = address;
                                                                                                                 :}
 
-    | openingBracket LONE_EXPRESSION:exp comma:c closingBracket                                                 {: Node address = new Node("matrix_address", 0, 0, "leftM");
+    | openingBracket LONE_EXPRESSION:exp comma:c closingBracket                                                 {: Node address = new Node("matrix_address", 0, 0, "left");
                                                                                                                    address.addChildren(exp);
                                                                                                                    RESULT = address;
                                                                                                                 :}
 
-    | openingBracket comma:c LONE_EXPRESSION:exp closingBracket                                                 {: Node address = new Node("matrix_address", 0, 0, "rightM");
+    | openingBracket comma:c LONE_EXPRESSION:exp closingBracket                                                 {: Node address = new Node("matrix_address", 0, 0, "right");
                                                                                                                    address.addChildren(exp);
                                                                                                                    RESULT = address;
                                                                                                                 :}
@@ -590,16 +591,12 @@ MATRIX_ADDRESS ::= openingBracket LONE_EXPRESSION:exp1 comma:c LONE_EXPRESSION:e
 
 VECTORS ::= VECTORS:addresses openingBracket LONE_EXPRESSION:exp closingBracket                 {: Node adds = new Node("addresses");
                                                                                                    transferChildren(addresses, adds);
-                                                                                                   Node address = new Node("address", 0, 0, "singleB");
-                                                                                                   address.addChildren(exp);
-                                                                                                   adds.addChildren(address);
+                                                                                                   adds.addChildren(exp);
                                                                                                    RESULT = adds;
                                                                                                 :}
 
     | openingBracket LONE_EXPRESSION:exp closingBracket                                         {: Node addresses = new Node("addresses");
-                                                                                                   Node address = new Node("address", 0, 0, "singleB");
-                                                                                                   address.addChildren(exp);
-                                                                                                   addresses.addChildren(address);
+                                                                                                   addresses.addChildren(exp);
                                                                                                    RESULT = addresses;
                                                                                                 :}
 ;

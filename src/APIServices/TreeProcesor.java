@@ -8,6 +8,7 @@ package APIServices;
 import Expressions.Atomic;
 import Expressions.Binary;
 import Expressions.Expression;
+import Expressions.MatrixAccess;
 import Expressions.StructureAccess;
 import Expressions.Ternary;
 import Expressions.Unary;
@@ -218,6 +219,8 @@ public class TreeProcesor {
                 return processCall(expression);
             case "structure access":
                 return processStructureAccess(expression);
+            case "matrix access":
+                return processMatrixAccess(expression);
             default:
                 return new Atomic(Atomic.Type.IDENTIFIER, expression.getRow(), expression.getColumn(), String.valueOf(expression.getContent()));
         }
@@ -337,6 +340,52 @@ public class TreeProcesor {
         }
         
         return new StructureAccess(id, line, column, adds); 
+    }
+    
+    private static MatrixAccess processMatrixAccess(Node expression) {
+        String id = String.valueOf(expression.getChildAt(0).getContent());
+        int line = expression.getChildAt(0).getRow();
+        int column = expression.getChildAt(0).getColumn();
+        
+        Expression expLeft = null;
+        Expression expRight = null;
+        String type = String.valueOf(expression.getChildAt(1).getContent());
+        if (type.equals("left")) {
+            expLeft = processExpression(expression.getChildAt(1).getChildAt(0));
+            
+            if (expression.getChildrenCount() == 2)
+                return new MatrixAccess(id, line, column, 1, expLeft);
+        }
+        else if (type.equals("right")) {
+            expRight = processExpression(expression.getChildAt(1).getChildAt(0));
+            
+            if (expression.getChildrenCount() == 2)
+                return new MatrixAccess(id, line, column, 2, expRight);
+        }
+        else {
+            expLeft = processExpression(expression.getChildAt(1).getChildAt(0));
+            expRight = processExpression(expression.getChildAt(1).getChildAt(1));
+            
+            if (expression.getChildrenCount() == 2)
+                return new MatrixAccess(id, line, column, expLeft, expRight);
+        }
+        
+        int n = expression.getChildAt(2).getChildrenCount();
+        Expression[] vectors = new Expression[n];
+            
+        int i = 0;
+        for (Node child : expression.getChildAt(2).getChildren()) {
+            Expression nu = processExpression(child);
+            vectors[i] = nu;
+            i++;
+        }
+            
+        if (type.equals("left"))
+            return new MatrixAccess(id, line, column, 1, expLeft, vectors);
+        else if (type.equals("right"))
+            return new MatrixAccess(id, line, column, 2, expRight, vectors);
+        else
+            return new MatrixAccess(id, line, column, expLeft, expRight, vectors);
     }
 
     private static If_Sentence processIfSentence(Node ins) {

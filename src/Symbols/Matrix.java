@@ -80,8 +80,10 @@ public class Matrix implements Symbol, Value{
         Atomic atom = null;
         for (int j = 0; j < this.nRows; j++) {
             for (int k = 0; k < this.nCols; k++) {
-                if (n  == i)
+                if (n == i) {
                     atom = this.elements[i][j];
+                    break;
+                }
                 n++;
             }
         }

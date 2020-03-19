@@ -8,6 +8,7 @@ package Expressions;
 import APIServices.CompileError;
 import Symbols.Address;
 import Symbols.List;
+import Symbols.Matrix;
 import Symbols.Symbol;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
@@ -75,7 +76,10 @@ public class StructureAccess implements Expression {
                 }
             }
             
-            /* FALTAN MATRIX y ARRAY */
+            /* FALTA ARRAY */
+            if (res instanceof Matrix)
+                res = ((Atomic[][])((Matrix)res).getValue())[0][0];
+            
             while (res instanceof List) {
                 res = ((ArrayList)((List)res).getValue()).get(0);
             }
@@ -110,7 +114,7 @@ public class StructureAccess implements Expression {
                 continue;
             }
             
-            /* MATRIX, ARRAY */
+            /* ARRAY */
             
             return new CompileError("Semantico", "Unicamente se aceptan valores enteros como indices", this.line, this.column);
         }
