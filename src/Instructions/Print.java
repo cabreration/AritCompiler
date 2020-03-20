@@ -54,8 +54,8 @@ public class Print implements Instruction {
         
         if (val instanceof Atomic) {
             String ret = String.valueOf(((Atomic)val).getValue());
-            if (((Atomic)val).getType() == Atomic.Type.STRING && !ret.equals("\n"))
-                ret = "\"" + String.valueOf(((Atomic)val).getValue()) + "\"";
+            //if (((Atomic)val).getType() == Atomic.Type.STRING && !ret.equals("\n"))
+                //ret = "\"" + String.valueOf(((Atomic)val).getValue()) + "\"";
            
             return ret + "\n";
         }
@@ -81,9 +81,9 @@ public class Print implements Instruction {
         builder.append(limit + " ");
         for (Atomic obj : (ArrayList<Atomic>)val.getValue()) {
             String ap = String.valueOf(obj.getValue());
-            if (obj.getType() == Atomic.Type.STRING)
-                builder.append("\"" + ap + "\"");
-            else
+            //if (obj.getType() == Atomic.Type.STRING)
+                //builder.append("\"" + ap + "\"");
+            //else
                 builder.append(ap);
             builder.append(", ");
         }
@@ -124,10 +124,10 @@ public class Print implements Instruction {
                 }
                 Atomic atom = ((Atomic[][])matrix.getValue())[i][j];
                 String cur = String.valueOf(atom.getValue());
-                if (atom.getType() == Atomic.Type.STRING) {
-                    cur = "\"" + cur + "\"";
-                    maxLength += 2;
-                }
+                //if (atom.getType() == Atomic.Type.STRING) {
+                   // cur = "\"" + cur + "\"";
+                    //maxLength += 2;
+                //}
                 builder.append(cur);
                 int spaces = (maxLength - cur.length()) + 1;
                 for (int k = 0; k < spaces; k++) 

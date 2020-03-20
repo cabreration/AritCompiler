@@ -43,6 +43,10 @@ public class MatrixAsignment implements Instruction {
             return new CompileError("Semantico", "La variable '" + this.access.getIdentifier() + "' no existe en el contexto actual", this.line, this.column);
         
         Object res = obtainIndex(exp, env, 2);
+        
+        if (res == null)
+            return null;
+        
         if (res instanceof CompileError) {
             Singleton.insertError((CompileError)res);
             return null;

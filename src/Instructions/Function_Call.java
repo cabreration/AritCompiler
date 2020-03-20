@@ -67,6 +67,15 @@ public class Function_Call implements Instruction, Expression {
             case "matrix":
                 retorno = Matrix(env);
                 break;
+            case "mean":
+                retorno = Stat(env, 1);
+                break;
+            case "median":
+                retorno = Stat(env, 2);
+                break;
+            case "mode":
+                retorno = Stat(env, 3);
+                break;
             case "length":
                 break;
             case "ncol":
@@ -84,12 +93,6 @@ public class Function_Call implements Instruction, Expression {
             case "trunk":
                 break;
             case "round":
-                break;
-            case "mean":
-                break;
-            case "median":
-                break;
-            case "mode":
                 break;
             case "barplot":
                 break;
@@ -176,6 +179,42 @@ public class Function_Call implements Instruction, Expression {
                 (Expression)this.params.get(0), (Expression)this.params.get(1), (Expression)this.params.get(2));
         Matrix matrix = (Matrix)matrixator.process(env);
         return matrix;
+    }
+    
+    private Object Stat(SymbolsTable env, int type) { 
+        if (!validateNoDefault()) {
+            Singleton.insertError(new CompileError("Semantico", "La funcion Mean no acepta 'default' como parametro", this.line, this.column));
+            return null;
+        }
+        
+        if (params.size() > 2 || params.size() < 1) {
+            Singleton.insertError(new CompileError("Semantico", "La cantidad de parametros es incorrecta para la funcion Mean", this.line, this.column));
+            return null;
+        }
+        
+        Expression vector = (Expression)params.get(0);
+        Expression trim = null;
+        if (params.size() == 2)
+            trim = (Expression)params.get(1);
+        
+        if (type == 1) {
+            if (trim == null)
+                return new Mean(vector, this.line, this.column);
+            else
+                return new Mean(vector, trim, this.line, this.column);
+        }
+        else if (type == 2) {
+            if (trim == null)
+                return new Median(vector, this.line, this.column);
+            else
+                return new Median(vector, trim, this.line, this.column);
+        }
+        else {
+            if (trim == null)
+                return new Mode(vector, this.line, this.column);
+            else
+                return new Mode(vector, trim, this.line, this.column);
+        }
     }
 
     private Object executeFunction(Function f, SymbolsTable env) {
