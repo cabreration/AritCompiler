@@ -119,6 +119,39 @@ public class Vector implements Symbol, Value {
     public void insertValueRight(Object obj, int j) {
         Singleton.insertError(new CompileError("Semantico", "Inserciones de tipo [,b] no estan definidas para listas", 0, 0));
     }
+    
+    @Override
+    public Atomic typeof(SymbolsTable env) {
+        String type = "vector";
+        if (this.type == 1) 
+            type += "-integer";
+        else if (this.type == 2) 
+            type += "-numeric";
+        else if (this.type == 3) 
+            type += "-boolean";
+        else 
+            type += "-string";
+        
+        return new Atomic(Atomic.Type.STRING, type);
+    }
+    
+    @Override
+    public Atomic length(SymbolsTable env) {
+        int length = this.content.size();
+        return new Atomic(Atomic.Type.INTEGER, Integer.valueOf(length));
+    }
+    
+    @Override
+    public Atomic nRow(SymbolsTable env) {
+        Singleton.insertError(new CompileError("Semantico", "La funcion nRow no puede usarse sobre vectores", 0, 0));
+        return null;
+    }
+    
+    @Override
+    public Atomic nCol(SymbolsTable env) {
+        Singleton.insertError(new CompileError("Semantico", "La funcion nCol no puede usarse sobre vectores", 0, 0));
+        return null;
+    }
 
     @Override
     public Object booleanNegation(SymbolsTable env) {

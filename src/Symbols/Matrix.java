@@ -471,6 +471,37 @@ public class Matrix implements Symbol, Value{
     // Value methods
     
     @Override
+    public Atomic typeof(SymbolsTable env) {
+        String type = "matrix";
+        if (this.type == 1) 
+            type += "-integer";
+        else if (this.type == 2) 
+            type += "-numeric";
+        else if (this.type == 3) 
+            type += "-boolean";
+        else 
+            type += "-string";
+        
+        return new Atomic(Atomic.Type.STRING, type);
+    }
+    
+    @Override
+    public Atomic length(SymbolsTable env) {
+        int length = this.nRows * this.nCols;
+        return new Atomic(Atomic.Type.INTEGER, Integer.valueOf(length));
+    }
+    
+    @Override
+    public Atomic nRow(SymbolsTable env) {
+        return new Atomic(Atomic.Type.INTEGER, Integer.valueOf(this.nRows));
+    }
+    
+    @Override
+    public Atomic nCol(SymbolsTable env) {
+        return new Atomic(Atomic.Type.INTEGER, Integer.valueOf(this.nCols));
+    }
+    
+    @Override
     public Object booleanNegation(SymbolsTable env) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }

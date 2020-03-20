@@ -44,4 +44,12 @@ public interface Value {
     public Object and(SymbolsTable env, Value op);
     
     public Object or(SymbolsTable env, Value op);
+    
+    public Atomic typeof(SymbolsTable env);
+    
+    public Atomic length(SymbolsTable env);
+    
+    public Atomic nCol(SymbolsTable env);
+    
+    public Atomic nRow(SymbolsTable env);
 }

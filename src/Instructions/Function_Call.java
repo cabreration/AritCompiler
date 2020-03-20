@@ -8,6 +8,7 @@ package Instructions;
 import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
+import Expressions.Value;
 import Symbols.Function;
 import Symbols.List;
 import Symbols.Parameter;
@@ -76,23 +77,35 @@ public class Function_Call implements Instruction, Expression {
             case "mode":
                 retorno = Stat(env, 3);
                 break;
+            case "typeof":
+                retorno = nativeOne(env, 1);
+                break;
             case "length":
+                retorno = nativeOne(env, 2);
                 break;
             case "ncol":
+                retorno = nativeOne(env, 3);
                 break;
             case "nrow":
+                retorno = nativeOne(env, 4);
                 break;
             case "stringlength":
+                retorno = stringFunctions(env, 1);
                 break;
             case "remove":
+                retorno = stringFunctions(env, 2);
                 break;
             case "tolowercase":
+                retorno = stringFunctions(env, 3);
                 break;
             case "touppercase":
+                retorno = stringFunctions(env, 4);
                 break;
             case "trunk":
+                retorno = numberFunctions(env, 1);
                 break;
             case "round":
+                retorno = numberFunctions(env, 2);
                 break;
             case "barplot":
                 break;
@@ -183,12 +196,12 @@ public class Function_Call implements Instruction, Expression {
     
     private Object Stat(SymbolsTable env, int type) { 
         if (!validateNoDefault()) {
-            Singleton.insertError(new CompileError("Semantico", "La funcion Mean no acepta 'default' como parametro", this.line, this.column));
+            Singleton.insertError(new CompileError("Semantico", "Las funciones estadisticas no acepta 'default' como parametro", this.line, this.column));
             return null;
         }
         
         if (params.size() > 2 || params.size() < 1) {
-            Singleton.insertError(new CompileError("Semantico", "La cantidad de parametros es incorrecta para la funcion Mean", this.line, this.column));
+            Singleton.insertError(new CompileError("Semantico", "La cantidad de parametros es incorrecta para las funciones estadisticas", this.line, this.column));
             return null;
         }
         
@@ -227,6 +240,77 @@ public class Function_Call implements Instruction, Expression {
                 return mode.process(env);
             }
         }
+    }
+    
+    private Object nativeOne(SymbolsTable env, int type) {
+        if (!validateNoDefault()) {
+            Singleton.insertError(new CompileError("Semantico", "Las funciones nativas no acepta 'default' como parametro", this.line, this.column));
+            return null;
+        }
+        
+        if (params.size() != 1) {
+            Singleton.insertError(new CompileError("Semantico", "La cantidad de parametros es incorrecta para las funciones nativas", this.line, this.column));
+            return null;
+        }
+        
+        Expression exp = (Expression)this.params.get(0);
+        Object sym = exp.process(env);
+        
+        Object ret;
+        if (type == 1)
+            ret = ((Value)sym).typeof(env);
+        else if (type == 2)
+            ret = ((Value)sym).length(env);
+        else if (type == 3)
+            ret = ((Value)sym).nRow(env);
+        else
+            ret = ((Value)sym).nCol(env);
+        
+        return ret;
+    }
+    
+    private Object stringFunctions(SymbolsTable env, int type) {
+        if (!validateNoDefault()) {
+            Singleton.insertError(new CompileError("Semantico", "Las funciones de cadenas no acepta 'default' como parametro", this.line, this.column));
+            return null;
+        }
+        
+        if (type == 2) {
+            if (params.size() != 2) {
+                Singleton.insertError(new CompileError("Semantico", "La cantidad de parametros es incorrecta para las funciones sobre cadenas", this.line, this.column));
+                return null;
+            }
+            
+            Expression str = (Expression)this.params.get(0);
+            Expression regex = (Expression)this.params.get(0);
+            StringFunction strF = new StringFunction(str, regex, this.line, this.column);
+            return strF.process(env);
+        }
+        else {
+            if (params.size() != 1) {
+                Singleton.insertError(new CompileError("Semantico", "La cantidad de parametros es incorrecta para las funciones numericas", this.line, this.column));
+                return null;
+            }
+            
+            Expression str = (Expression)this.params.get(0);
+            StringFunction strF = new StringFunction(type, str, this.line, this.column);
+            return strF.process(env);
+        }
+    }
+    
+    private Object numberFunctions(SymbolsTable env, int type) {
+        if (!validateNoDefault()) {
+            Singleton.insertError(new CompileError("Semantico", "Las funciones numericas no acepta 'default' como parametro", this.line, this.column));
+            return null;
+        }
+        if (params.size() != 1) {
+            Singleton.insertError(new CompileError("Semantico", "La cantidad de parametros es incorrecta para las funciones numericas", this.line, this.column));
+            return null;
+        }
+        
+        Expression number = (Expression)this.params.get(0);
+        NumberFunction numberF = new NumberFunction(number, type, this.line, this.column);
+        return numberF.process(env);
     }
 
     private Object executeFunction(Function f, SymbolsTable env) {

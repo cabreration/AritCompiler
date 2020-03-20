@@ -270,4 +270,27 @@ public class List implements Value, Symbol {
     public void insertValueRight(Object obj, int j) {
         Singleton.insertError(new CompileError("Semantico", "Inserciones de tipo [,b] no estan definidas para listas", 0, 0));
     }
+    
+    @Override
+    public Atomic typeof(SymbolsTable env) {
+        return new Atomic(Atomic.Type.STRING, "list");
+    }
+    
+    @Override
+    public Atomic length(SymbolsTable env) {
+        int length = this.elements.size();
+        return new Atomic(Atomic.Type.INTEGER, Integer.valueOf(length));
+    }
+    
+    @Override
+    public Atomic nRow(SymbolsTable env) {
+        Singleton.insertError(new CompileError("Semantico", "La funcion nRow no puede usarse sobre listas", 0, 0));
+        return null;
+    }
+    
+    @Override
+    public Atomic nCol(SymbolsTable env) {
+        Singleton.insertError(new CompileError("Semantico", "La funcion nCol no puede usarse sobre listas", 0, 0));
+        return null;
+    }
 }

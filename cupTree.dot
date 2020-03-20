@@ -157,4 +157,12 @@ node78[label="params"];
 node76->node78;
 node79[label="identifier: median1"];
 node78->node79;
+node80[label="call"];
+node1->node80;
+node81[label="identifier: print"];
+node80->node81;
+node82[label="params"];
+node80->node82;
+node83[label="identifier: vector"];
+node82->node83;
 }

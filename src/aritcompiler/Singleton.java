@@ -54,6 +54,7 @@ public class Singleton {
             case "c":
             case "list":
             case "matrix":
+            case "array":
             case "typeof":
             case "length":
             case "ncol":
@@ -67,6 +68,10 @@ public class Singleton {
             case "mean":
             case "mode":
             case "median":
+            case "plot":
+            case "pie":
+            case "hist":
+            case "barplot":
                 return false;
         }
         

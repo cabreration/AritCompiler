@@ -9,6 +9,7 @@ import APIServices.CompileError;
 import Symbols.SymbolsTable;
 import Symbols.Symbol;
 import Symbols.Vector;
+import aritcompiler.Singleton;
 
 /**
  *
@@ -101,6 +102,58 @@ public class Atomic implements Expression, Value {
 
     public void setValue(Object value) {
         this.value = value;
+    }
+    
+    @Override
+    public Atomic typeof(SymbolsTable env) {
+        if (this.type == Atomic.Type.STRING) 
+            return new Atomic(Atomic.Type.STRING, "string");
+        else if (this.type == Atomic.Type.INTEGER)
+            return new Atomic(Atomic.Type.STRING, "integer");
+        else if (this.type == Atomic.Type.NUMERIC)
+            return new Atomic(Atomic.Type.STRING, "numeric");
+        else if (this.type == Atomic.Type.BOOLEAN)
+            return new Atomic(Atomic.Type.STRING, "boolean");
+        else {
+            String id = String.valueOf(this.value);
+            Symbol sym = env.getSymbol(id);
+            
+            if (sym == null) {
+                Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", this.line, this.column));
+                return null;
+            }
+            
+            return ((Value)sym).typeof(env);
+        }
+    }
+    
+    @Override
+    public Atomic length(SymbolsTable env) {
+        if (this.type == Atomic.Type.IDENTIFIER) {
+            String id = String.valueOf(this.value);
+            Value sym = env.getValue(id);
+            
+            if (sym == null) {
+                Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", this.line, this.column));
+                return null;
+            }
+            
+            return sym.length(env);
+        }
+        
+        return new Atomic(Atomic.Type.INTEGER, Integer.valueOf(1));
+    }
+    
+    @Override
+    public Atomic nRow(SymbolsTable env) {
+        Singleton.insertError(new CompileError("Semantico", "La funcion nRow no puede usarse sobre valores primitivos", 0, 0));
+        return null;
+    }
+    
+    @Override
+    public Atomic nCol(SymbolsTable env) {
+        Singleton.insertError(new CompileError("Semantico", "La funcion nCol no puede usarse sobre valores primitivos", 0, 0));
+        return null;
     }
     
     @Override
