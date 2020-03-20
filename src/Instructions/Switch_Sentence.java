@@ -9,6 +9,7 @@ import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
 import Symbols.List;
+import Symbols.Matrix;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
 import aritcompiler.Singleton;
@@ -59,6 +60,9 @@ public class Switch_Sentence implements Instruction {
             }
         }
         
+        if (val instanceof Matrix)
+            val = ((Atomic[][])((Matrix)val).getValue())[0][0];
+        
         while (val instanceof List)
             val = ((ArrayList<Object>)((List)val).getValue()).get(0);
         
@@ -66,7 +70,7 @@ public class Switch_Sentence implements Instruction {
             // Retornamos el primer valor
             val = ((ArrayList<Atomic>)(((Vector)val).getValue())).get(0);
         }
-        /* MATRIX, ARRAY - all will return the first value */
+        /* ARRAY - all will return the first value */
         
         for (Case_Component kase : this.cases) {
             kase.setOriginal(val);

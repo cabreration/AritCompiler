@@ -282,7 +282,7 @@ public class Function_Call implements Instruction, Expression {
             }
             
             Expression str = (Expression)this.params.get(0);
-            Expression regex = (Expression)this.params.get(0);
+            Expression regex = (Expression)this.params.get(1);
             StringFunction strF = new StringFunction(str, regex, this.line, this.column);
             return strF.process(env);
         }
@@ -371,10 +371,15 @@ public class Function_Call implements Instruction, Expression {
                         }
                     }
                     
-                    while (value instanceof List)
-                        value = ((ArrayList<Object>)((List)value).getValue()).get(0);
-                    
-                    if (value instanceof Vector) {
+                    if (value instanceof Matrix) {
+                        Matrix nu = ((Matrix)value).clonation();
+                        local.updateSymbol(p.getName(), nu);
+                    } 
+                    else if (value instanceof List) {
+                        List nu = ((List)value).clonation();
+                        local.updateSymbol(p.getName(), nu);
+                    }
+                    else if (value instanceof Vector) {
                         Vector nu = ((Vector)value).clonation();
                         local.updateSymbol(p.getName(), nu);
                     }
@@ -383,7 +388,7 @@ public class Function_Call implements Instruction, Expression {
                         Vector nu = new Vector(at);
                         local.updateSymbol(p.getName(), nu);
                     }
-                    /* MATRIX, ARRAY */
+                    /* ARRAY */
                 }
                 else {
                     Parameter p = f.getParameters().get(i);
@@ -405,10 +410,15 @@ public class Function_Call implements Instruction, Expression {
                         }
                     }
                     
-                    while (val instanceof List)
-                        val = ((ArrayList<Object>)((List)val).getValue()).get(0);
-                    
-                    if (val instanceof Vector) {
+                    if (val instanceof Matrix) {
+                        Matrix nu = ((Matrix)val).clonation();
+                        local.updateSymbol(p.getName(), nu);
+                    } 
+                    else if (val instanceof List) {
+                        List nu = ((List)val).clonation();
+                        local.updateSymbol(p.getName(), nu);
+                    }
+                    else if (val instanceof Vector) {
                         Vector nu = ((Vector)val).clonation();
                         local.updateSymbol(p.getName(), nu);
                     }
@@ -417,7 +427,7 @@ public class Function_Call implements Instruction, Expression {
                         Vector nu = new Vector(at);
                         local.updateSymbol(p.getName(), nu);
                     }
-                    /* MATRIX, ARRAY, LIST */
+                    /* ARRAY */
                 }
             }
             

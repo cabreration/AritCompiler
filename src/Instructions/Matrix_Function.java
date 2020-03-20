@@ -98,6 +98,9 @@ public class Matrix_Function implements Instruction{
             }
         }
         
+        if (obj instanceof Matrix)
+            obj = ((Atomic[][])((Matrix)obj).getValue())[0][0];
+        
         while (obj instanceof List) {
             obj = ((ArrayList<Object>)((List)obj).getValue()).get(0);
         }

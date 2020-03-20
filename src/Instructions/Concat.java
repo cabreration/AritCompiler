@@ -9,6 +9,7 @@ import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
 import Symbols.List;
+import Symbols.Matrix;
 import Symbols.Symbol;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
@@ -53,7 +54,10 @@ public class Concat implements Instruction {
                         return null;
                     }
                     
-                    //if (val instanceof Matrix) {} Error
+                    if (val instanceof Matrix) {
+                        Singleton.insertError(new CompileError("Semantico", "No es posible concatenar matrices", this.line, this.column));
+                        return null;
+                    } 
                     //if (val instanceof Array) {} Error
                 }
             }

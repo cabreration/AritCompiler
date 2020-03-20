@@ -9,6 +9,7 @@ import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
 import Symbols.List;
+import Symbols.Matrix;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
 import aritcompiler.Singleton;
@@ -48,11 +49,11 @@ public class Case_Component implements Instruction {
     public Object process(SymbolsTable env) {
         if (this.kase == null) {
             for (Instruction ins : this.sentences) {
-                SymbolsTable local = new SymbolsTable("case", env);
-                Object r = ins.process(local);
+                Object r = ins.process(env);
                 
-                if (r != null && r instanceof Break_Sentence)
+                if (r != null && (r instanceof Continue_Sentence || r instanceof Return_Sentence || r instanceof Break_Sentence)) {
                     return r;     
+                }  
             }
             return null;
         }
@@ -79,6 +80,9 @@ public class Case_Component implements Instruction {
                     return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col);
             }
         }
+        
+        if (val instanceof Matrix)
+            val = ((Atomic[][])((Matrix)val).getValue())[0][0];
         
         while (val instanceof List) {
             val = ((ArrayList)((List)val).getValue()).get(0);
@@ -125,11 +129,9 @@ public class Case_Component implements Instruction {
             for (Instruction ins : this.sentences) {
                 Object r = ins.process(env);
                 
-                if (r != null && (r instanceof Continue_Sentence || r instanceof Return_Sentence)) {
+                if (r != null && (r instanceof Continue_Sentence || r instanceof Return_Sentence) || r instanceof Break_Sentence) {
                     return r;     
                 }
-                else if (r != null && r instanceof Break_Sentence)
-                    break;
             }
         }
         return null;

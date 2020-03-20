@@ -85,6 +85,10 @@ public class Singleton {
     }
     
     public static void insertPrint(String str) {
+        if (str == null)
+            return;
+        if (str.equals(""))
+            return;
         console.add(str);
     }
     

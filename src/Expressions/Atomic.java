@@ -6,6 +6,8 @@
 package Expressions;
 
 import APIServices.CompileError;
+import Symbols.List;
+import Symbols.Matrix;
 import Symbols.SymbolsTable;
 import Symbols.Symbol;
 import Symbols.Vector;
@@ -146,12 +148,36 @@ public class Atomic implements Expression, Value {
     
     @Override
     public Atomic nRow(SymbolsTable env) {
+        if (this.type == Atomic.Type.IDENTIFIER) {
+            String id = String.valueOf(this.value);
+            Value sym = env.getValue(id);
+            
+            if (sym == null) {
+                Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", this.line, this.column));
+                return null;
+            }
+            
+            return sym.nRow(env);
+        }
+        
         Singleton.insertError(new CompileError("Semantico", "La funcion nRow no puede usarse sobre valores primitivos", 0, 0));
         return null;
     }
     
     @Override
     public Atomic nCol(SymbolsTable env) {
+        if (this.type == Atomic.Type.IDENTIFIER) {
+            String id = String.valueOf(this.value);
+            Value sym = env.getValue(id);
+            
+            if (sym == null) {
+                Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", this.line, this.column));
+                return null;
+            }
+            
+            return sym.nCol(env);
+        }
+        
         Singleton.insertError(new CompileError("Semantico", "La funcion nCol no puede usarse sobre valores primitivos", 0, 0));
         return null;
     }
@@ -226,7 +252,7 @@ public class Atomic implements Expression, Value {
             }
         }
         
-        if (op instanceof Vector) {
+        if (op instanceof Vector || op instanceof Matrix || op instanceof List) {
             if (operator.equals("-"))
                 return op.minus(env, this, 2);
             else if (operator.equals("+"))
@@ -425,7 +451,7 @@ public class Atomic implements Expression, Value {
             }
         }
         
-        if (op instanceof Vector) {
+        if (op instanceof Vector || op instanceof Matrix || op instanceof List) {
             if (operator.equals("<"))
                 return op.lesser(env, this, 2);
             else if (operator.equals(">"))
@@ -615,7 +641,7 @@ public class Atomic implements Expression, Value {
         if (this.type != Type.BOOLEAN)
             return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", this.line, this.column);
         
-        if (op instanceof Vector) {
+        if (op instanceof Vector || op instanceof Matrix || op instanceof List) {
             if (operator.equals("&"))
                 return op.and(env, this);
             else 

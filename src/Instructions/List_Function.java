@@ -36,8 +36,16 @@ public class List_Function implements Instruction {
         for (Object param : this.params) {
             Object val = ((Expression)param).process(env);
             
+            if (val == null)
+                return null;
+            
             if (val instanceof CompileError) {
                 Singleton.insertError((CompileError)val);
+                return null;
+            }
+            
+            if (val instanceof Matrix) {
+                Singleton.insertError(new CompileError("Semantico", "Las listas no pueden incluir matrices", this.line, this.column));
                 return null;
             }
             

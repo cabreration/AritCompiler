@@ -9,6 +9,7 @@ import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
 import Symbols.List;
+import Symbols.Matrix;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
 import aritcompiler.Singleton;
@@ -101,6 +102,9 @@ public class While_Sentence implements Instruction {
                 }
             }
         }
+        
+        if (val instanceof Matrix)
+            val = ((Atomic[][])((Matrix)val).getValue())[0][0];
         
         while (val instanceof List)
             val = ((ArrayList<Object>)((List)val).getValue()).get(0);

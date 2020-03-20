@@ -9,6 +9,7 @@ import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
 import Symbols.List;
+import Symbols.Matrix;
 import Symbols.Symbol;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
@@ -62,6 +63,17 @@ public class For_Sentence implements Instruction{
             }
         }
         
+        
+        if (val instanceof Matrix) {
+            try {
+                Object r = forMatrix((Matrix)val, env);
+                return r;
+            }
+            catch (Exception e) {
+                Singleton.insertError(new CompileError("Semantico", "Es imposible modificar un elemento sobre el cual se esta iterando", this.line, this.column));
+                return null;
+            }
+        }
         if (val instanceof List) {
             try { 
                 Object r = forList((List)val, env);
@@ -85,7 +97,7 @@ public class For_Sentence implements Instruction{
         else if (val instanceof Atomic) {
             return forAtomic((Atomic)val, env);
         }
-        /* MATRIX, ARRAY */
+        /* ARRAY */
         return null;
     }
     
@@ -168,6 +180,38 @@ public class For_Sentence implements Instruction{
                 }
             }
             env.update(local);
+        }
+        return null;
+    }
+    
+    private Object forMatrix(Matrix val, SymbolsTable env) {
+        for (Atomic[] row : ((Atomic[][])(val.getValue()))) {
+            for (Atomic atom : row) {
+                String name = "loop";
+                if (env.getType().contains("function"))
+                    name += "-function";
+                SymbolsTable local = new SymbolsTable(name, env);
+                Vector vec = new Vector(atom);
+                local.updateSymbol(i, vec);
+                for (Instruction ins: this.sentences) {
+                    Object r = ins.process(local);
+                    if (r != null) {
+                        if (r instanceof Break_Sentence) {
+                            env.update(local);
+                            return null;
+                        }
+                        else if (r instanceof Continue_Sentence) {
+                            env.update(local);
+                            break;
+                        }
+                        else if (r instanceof Return_Sentence) {
+                            env.update(local);
+                            return r;
+                        }
+                    }
+                }
+                env.update(local);
+            }
         }
         return null;
     }

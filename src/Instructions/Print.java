@@ -57,7 +57,7 @@ public class Print implements Instruction {
             //if (((Atomic)val).getType() == Atomic.Type.STRING && !ret.equals("\n"))
                 //ret = "\"" + String.valueOf(((Atomic)val).getValue()) + "\"";
            
-            return ret + "\n";
+            return ret;// + "\n";
         }
         else if (val instanceof Vector)  {
             return printVector((Vector)val, "[", "]");
