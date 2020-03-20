@@ -13,6 +13,8 @@ import Symbols.Matrix;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
 import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Set;
 
 /**
  *
@@ -128,8 +130,47 @@ public class Mode implements Instruction {
         return null;
     }
 
-    private Object calculateMode(Vector vector, int i, boolean b) {
-        return null;
+    private Object calculateMode(Vector vector, double trim, boolean shouldI) {
+        ArrayList<Atomic> elements = (ArrayList<Atomic>)vector.getValue();
+        
+        if (shouldI) {
+            ArrayList<Atomic> nu = new ArrayList<Atomic>();
+            for (Atomic atom : elements) {
+                if (((Number)atom.getValue()).doubleValue() >= trim) 
+                    nu.add(atom);
+            }
+            
+            if (nu.size() > 0)
+                elements = nu;
+        }
+        
+        Hashtable<String, Integer> counter = new Hashtable<String, Integer>(); 
+        for (Atomic atom : elements) {
+            String val = String.valueOf(atom.getValue());
+            
+            if (counter.containsKey(val)) {
+                Integer aux = counter.get(val);
+                aux++;
+                counter.put(val, aux);
+            }
+            else {
+                counter.put(val, Integer.valueOf(1));
+            }
+        }
+        
+        double mode = ((Number)(elements.get(0).getValue())).doubleValue();
+        int max = 1;
+        Set<String> numbers = counter.keySet();
+        
+        for (String number : numbers) {
+            Integer cur = counter.get(number);
+            if (cur.intValue() > max) {
+                max = cur.intValue();
+                mode = Double.parseDouble(number);
+            }
+        }
+        
+        return new Atomic(Atomic.Type.NUMERIC, Double.valueOf(mode));
     }
     
 }

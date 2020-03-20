@@ -198,22 +198,34 @@ public class Function_Call implements Instruction, Expression {
             trim = (Expression)params.get(1);
         
         if (type == 1) {
-            if (trim == null)
-                return new Mean(vector, this.line, this.column);
-            else
-                return new Mean(vector, trim, this.line, this.column);
+            if (trim == null) {
+                Mean mean = new Mean(vector, this.line, this.column);
+                return mean.process(env);
+            }
+            else {
+                Mean mean = new Mean(vector, trim, this.line, this.column);
+                return mean.process(env);
+            }
         }
         else if (type == 2) {
-            if (trim == null)
-                return new Median(vector, this.line, this.column);
-            else
-                return new Median(vector, trim, this.line, this.column);
+            if (trim == null) {
+                Median median = new Median(vector, this.line, this.column);
+                return median.process(env);
+            }
+            else {
+                Median median = new Median(vector, trim, this.line, this.column);
+                return median.process(env);
+            }
         }
         else {
-            if (trim == null)
-                return new Mode(vector, this.line, this.column);
-            else
-                return new Mode(vector, trim, this.line, this.column);
+            if (trim == null) {
+                Mode mode = new Mode(vector, this.line, this.column);
+                return mode.process(env);
+            }
+            else {
+                Mode mode = new Mode(vector, trim, this.line, this.column);
+                return mode.process(env);
+            }
         }
     }
 

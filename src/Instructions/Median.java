@@ -13,6 +13,7 @@ import Symbols.Matrix;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  *
@@ -128,8 +129,38 @@ public class Median implements Instruction {
         return null;
     }
 
-    private Object calculateMedian(Vector vector, double trimmer, boolean b) {
-        return null;
+    private Object calculateMedian(Vector vector, double trim, boolean shouldI) {
+        ArrayList<Atomic> elements = (ArrayList<Atomic>)vector.getValue();
+        
+        if (shouldI) {
+            ArrayList<Atomic> nu = new ArrayList<Atomic>();
+            for (Atomic atom : elements) {
+                if (((Number)atom.getValue()).doubleValue() >= trim) 
+                    nu.add(atom);
+            }
+            
+            if (nu.size() > 0)
+                elements = nu;
+        }
+        
+        double[] sorter = new double[elements.size()];
+        int i = 0;
+        for (Atomic atom : elements) {
+            double doub = ((Number)(atom.getValue())).doubleValue();
+            sorter[i] = doub;
+            i++;
+        }
+        Arrays.sort(sorter);
+        
+        double median = 0;
+        if (sorter.length % 2 == 1) {
+            int pos = sorter.length/2;
+            median = sorter[pos];
+        }
+        else {
+            median = (sorter[sorter.length/2] + sorter[sorter.length/2 - 1]) / 2;
+        }
+        return new Atomic(Atomic.Type.NUMERIC, Double.valueOf(median));
     }
     
 }
