@@ -13,9 +13,14 @@ import Symbols.Matrix;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
 import aritcompiler.Singleton;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
+import org.knowm.xchart.BitmapEncoder;
+import org.knowm.xchart.BitmapEncoder.BitmapFormat;
 import org.knowm.xchart.PieChart;
 import org.knowm.xchart.PieChartBuilder;
 import org.knowm.xchart.SwingWrapper;
@@ -178,5 +183,11 @@ public class Pie implements Instruction {
         
         JFrame pie = new SwingWrapper(chart).displayChart();
         pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        
+        try {
+            BitmapEncoder.saveBitmap(chart, "./images/pie/" + titler, BitmapFormat.PNG);
+        } catch (IOException ex) {
+            Logger.getLogger(Pie.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

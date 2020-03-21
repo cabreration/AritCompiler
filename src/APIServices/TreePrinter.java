@@ -59,7 +59,7 @@ public class TreePrinter {
         String dot = GetDot(root);
         
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("cupTree.dot"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("./reports/tree/cupTree.dot"));
             writer.write(dot);
             writer.close();
             
@@ -67,7 +67,7 @@ public class TreePrinter {
             System.out.println(directory);
             Runtime rt = Runtime.getRuntime();
             //rt.exec("cd " + "\""+directory+"\"");
-            rt.exec(new String[] {"dot", "-Tpng", "cupTree.dot", "-o", "cupTree.png"});
+            rt.exec(new String[] {"dot", "-Tpng", "./reports/tree/cupTree.dot", "-o", "./reports/tree/cupTree.png"});
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
