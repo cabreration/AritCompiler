@@ -19,6 +19,11 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java_cup.runtime.Symbol;
+import org.knowm.xchart.PieChart;
+import org.knowm.xchart.PieChartBuilder;
+import org.knowm.xchart.SwingWrapper;
+import org.knowm.xchart.style.PieStyler.AnnotationType;
+import org.knowm.xchart.style.Styler.ChartTheme;
 
 /**
  *
@@ -31,6 +36,8 @@ public class AritCompiler {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        TextEditor txtE = new TextEditor();
+        txtE.setVisible(true);
         Node root = cupTry();
         if (root != null) {
             TreeProcesor.processFunctions(root);
