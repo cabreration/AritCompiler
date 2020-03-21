@@ -60,6 +60,10 @@ public class Matrix implements Symbol, Value{
         return this.nCols;
     }
     
+    public int getType() {
+        return this.type;
+    }
+    
     @Override
     public Object getValue() {
         return this.elements;

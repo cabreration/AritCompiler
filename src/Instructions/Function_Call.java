@@ -108,6 +108,7 @@ public class Function_Call implements Instruction, Expression {
                 retorno = numberFunctions(env, 2);
                 break;
             case "barplot":
+                Barplot(env);
                 break;
             case "pie":
                 Pie(env);
@@ -471,5 +472,25 @@ public class Function_Call implements Instruction, Expression {
         Expression title = (Expression)this.params.get(2);
         Pie pie = new Pie(vector, labels, title, this.line, this.column);
         pie.process(env);
+    }
+
+    private void Barplot(SymbolsTable env) {
+        if (!validateNoDefault()) {
+            Singleton.insertError(new CompileError("Semantico", "La funcion pie no acepta valores por defecto", this.line, this.column));
+            return;
+        }
+        
+        if (this.params.size() != 5) {
+            Singleton.insertError(new CompileError("Semantico", "Cantidad incorrecta de parametros para la funcion pie", this.line, this.column));
+            return;
+        }
+        
+        Expression h = (Expression)this.params.get(0);
+        Expression x = (Expression)this.params.get(1);
+        Expression y = (Expression)this.params.get(2);
+        Expression main = (Expression)this.params.get(3);
+        Expression names = (Expression)this.params.get(4);
+        Barplot barplot = new Barplot(h, x, y, main, names, this.line, this.column);
+        barplot.process(env);
     }
 }

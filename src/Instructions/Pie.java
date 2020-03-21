@@ -79,11 +79,9 @@ public class Pie implements Instruction {
         
         if (((Vector)vals).getSize() > ((Vector)labs).getSize()) {
             Singleton.insertError(new CompileError("Semantico", "No hay suficientes etiquetas para los valores del pie", this.line, this.column));
-            int n = 1;
             int index = ((Vector)labs).getSize();
             for (int i = index; i < ((Vector)vals).getSize(); i++) {
                 ((ArrayList<Atomic>)((Vector)labs).getValue()).add(new Atomic(Atomic.Type.STRING, "Desconocido #"));
-                n++;
             }
         }
         
