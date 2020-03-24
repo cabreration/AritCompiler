@@ -182,8 +182,9 @@ public class Dispersion implements Instruction {
         series.setLineColor(Color.white);
         series.setLineStyle(SeriesLines.NONE);
         
-        JFrame pie = new SwingWrapper(chart).displayChart();
-        pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        SwingWrapper disp = new SwingWrapper(chart);
+        Singleton.insertFigure(disp);
+        //pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         
         try {
             BitmapEncoder.saveBitmap(chart, "./images/dispersion/" + naame, BitmapEncoder.BitmapFormat.PNG);

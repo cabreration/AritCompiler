@@ -24,10 +24,7 @@ import javax.swing.WindowConstants;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.CategoryChart;
 import org.knowm.xchart.CategoryChartBuilder;
-import org.knowm.xchart.PieChart;
-import org.knowm.xchart.PieChartBuilder;
 import org.knowm.xchart.SwingWrapper;
-import org.knowm.xchart.style.PieStyler;
 import org.knowm.xchart.style.Styler;
 
 /**
@@ -221,8 +218,10 @@ public class Barplot implements Instruction {
         }
         chart.addSeries(".", Arrays.asList(names), Arrays.asList(numbers), Arrays.asList(ceros));
         
-        JFrame pie = new SwingWrapper(chart).displayChart();
-        pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        SwingWrapper pie = new SwingWrapper(chart);
+        Singleton.insertFigure(pie);
+        //JFrame frame = pie.displayChart();
+        //frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         
         try {
             BitmapEncoder.saveBitmap(chart, "./images/barplot/" + titler, BitmapEncoder.BitmapFormat.PNG);

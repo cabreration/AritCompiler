@@ -9,6 +9,9 @@ import APIServices.CompileError;
 import Symbols.Function;
 import java.util.ArrayList;
 import java.util.Hashtable;
+import javax.swing.JFrame;
+import javax.swing.WindowConstants;
+import org.knowm.xchart.SwingWrapper;
 
 /**
  *
@@ -19,6 +22,7 @@ public class Singleton {
     private static Hashtable<String, Function> functions = new Hashtable<String, Function>();
     private static ArrayList<CompileError> errors = new ArrayList<CompileError>();
     private static ArrayList<String> console = new ArrayList<String>();
+    private static ArrayList<SwingWrapper> figures = new ArrayList<SwingWrapper>();
     
     private Singleton() {}
     
@@ -82,6 +86,7 @@ public class Singleton {
     
     public static void newCompilation() {
         console = new ArrayList<String>();
+        figures = new ArrayList<SwingWrapper>();
     }
     
     public static void insertPrint(String str) {
@@ -98,5 +103,23 @@ public class Singleton {
             builder.append(str + "\n");
         }
         System.out.println(builder.toString());
+    }
+    
+    public static void insertFigure(SwingWrapper figure) {
+        if (figure == null)
+            return;
+        figures.add(figure);
+    }
+    
+    public static void showFigure(int i) {
+        JFrame frame = figures.get(i).displayChart();
+        frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+    }
+    
+    public static void showFigures() {
+        for (SwingWrapper wrapper : figures) {
+            JFrame frame = wrapper.displayChart();
+            frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        }
     }
 }

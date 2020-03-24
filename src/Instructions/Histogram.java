@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
-import javax.swing.WindowConstants;
 import org.knowm.xchart.BitmapEncoder;
 import org.knowm.xchart.CategoryChart;
 import org.knowm.xchart.CategoryChartBuilder;
@@ -209,10 +208,11 @@ public class Histogram implements Instruction {
         for (int i = 0; i < ceros.length; i++) {
             ceros[i] = Double.valueOf(0);
         }
-        chart.addSeries("barplot", Arrays.asList(labels), Arrays.asList(count), Arrays.asList(ceros));
+        chart.addSeries(".", Arrays.asList(labels), Arrays.asList(count), Arrays.asList(ceros));
         
-        JFrame pie = new SwingWrapper(chart).displayChart();
-        pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        SwingWrapper hist = new SwingWrapper(chart);
+        Singleton.insertFigure(hist);
+        //pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         
         try {
             BitmapEncoder.saveBitmap(chart, "./images/histogram/" + naame, BitmapEncoder.BitmapFormat.PNG);

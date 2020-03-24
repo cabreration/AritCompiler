@@ -192,8 +192,9 @@ public class Plot implements Instruction {
         }
         
         
-        JFrame pie = new SwingWrapper(chart).displayChart();
-        pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        SwingWrapper plot = new SwingWrapper(chart);
+        Singleton.insertFigure(plot);
+        //pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         
         try {
             BitmapEncoder.saveBitmap(chart, "./images/plot/" + naame, BitmapEncoder.BitmapFormat.PNG);
