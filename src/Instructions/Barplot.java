@@ -219,7 +219,7 @@ public class Barplot implements Instruction {
         for (int i = 0; i < ceros.length; i++) {
             ceros[i] = Double.valueOf(0);
         }
-        chart.addSeries("barplot", Arrays.asList(names), Arrays.asList(numbers), Arrays.asList(ceros));
+        chart.addSeries(".", Arrays.asList(names), Arrays.asList(numbers), Arrays.asList(ceros));
         
         JFrame pie = new SwingWrapper(chart).displayChart();
         pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);

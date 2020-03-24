@@ -525,12 +525,59 @@ public class Function_Call implements Instruction, Expression {
             return;
         }
         
-        Expression mat = (Expression)this.params.get(0);
-        Expression x = (Expression)this.params.get(1);
-        Expression y = (Expression)this.params.get(2);
-        Expression main = (Expression)this.params.get(3);
-        Expression lim = (Expression)this.params.get(4);
-        Dispersion dispersion = new Dispersion(mat, x, y, main, lim, this.line, this.column);
-        dispersion.process(env);
+        Expression one = (Expression)this.params.get(0);
+        Expression two = (Expression)this.params.get(1);
+        Expression three = (Expression)this.params.get(2);
+        Expression four = (Expression)this.params.get(3);
+        Expression five = (Expression)this.params.get(4);
+        
+        Object decider = five.process(env);
+        if (decider == null)
+            return;
+        if (decider instanceof CompileError) {
+            Singleton.insertError((CompileError)decider);
+            return;
+        }
+        
+        if (decider instanceof Atomic) {
+            if (((Atomic)decider).getType() == Atomic.Type.IDENTIFIER) {
+                String id = String.valueOf(((Atomic)decider).getValue());
+                int line = ((Atomic)decider).getLine();
+                int col = ((Atomic)decider).getColumn();
+                
+                decider = env.getSymbol(id);
+                
+                if (decider == null) {
+                    Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col));
+                    return;
+                }
+            }
+        }
+        
+        if (decider instanceof Matrix) {
+            decider = ((Atomic[][])((Matrix)decider).getValue())[0][0];
+        }
+        
+        while (decider instanceof List) {
+            decider = ((ArrayList<Object>)((List)decider).getValue()).get(0);
+        }
+        
+        if (decider instanceof Vector)
+            decider = ((ArrayList<Atomic>)((Vector)decider).getValue()).get(0);
+        
+        boolean flag = false;
+        if (((Atomic)decider).getType() == Atomic.Type.STRING || ((Atomic)decider).getType() == Atomic.Type.BOOLEAN)
+            flag = false;
+        else 
+            flag = true;
+        
+        if (flag) {
+            Dispersion dispersion = new Dispersion(one, two, three, four, five, this.line, this.column);
+            dispersion.process(env);
+        }
+        else {
+            Plot plot = new Plot(one, two, three, four, five, this.line, this.column);
+            plot.process(env);
+        }
     }
 }
