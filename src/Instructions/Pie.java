@@ -116,6 +116,13 @@ public class Pie implements Instruction {
                 continue;
             desc++;
         }
+        
+        for (int i = 0; i < numbers.length; i++) {
+            if (numbers[i] < 0) {
+                Singleton.insertError(new CompileError("Semantico", "la funcion pie no admite valores negativos", this.line, this.column));
+                return null;
+            }
+        }
         generatePie(titler, numbers, names);
         return null;
     }

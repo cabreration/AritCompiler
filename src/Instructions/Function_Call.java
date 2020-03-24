@@ -114,7 +114,8 @@ public class Function_Call implements Instruction, Expression {
                 Pie(env);
                 return null;
             case "plot":
-                break;
+                Plot(env);
+                return null;
             case "hist":
                 Histogram(env);
                 return null;
@@ -477,12 +478,12 @@ public class Function_Call implements Instruction, Expression {
 
     private void Barplot(SymbolsTable env) {
         if (!validateNoDefault()) {
-            Singleton.insertError(new CompileError("Semantico", "La funcion pie no acepta valores por defecto", this.line, this.column));
+            Singleton.insertError(new CompileError("Semantico", "La funcion barplot no acepta valores por defecto", this.line, this.column));
             return;
         }
         
         if (this.params.size() != 5) {
-            Singleton.insertError(new CompileError("Semantico", "Cantidad incorrecta de parametros para la funcion pie", this.line, this.column));
+            Singleton.insertError(new CompileError("Semantico", "Cantidad incorrecta de parametros para la funcion barplot", this.line, this.column));
             return;
         }
         
@@ -497,12 +498,12 @@ public class Function_Call implements Instruction, Expression {
     
     private void Histogram(SymbolsTable env) {
         if (!validateNoDefault()) {
-            Singleton.insertError(new CompileError("Semantico", "La funcion pie no acepta valores por defecto", this.line, this.column));
+            Singleton.insertError(new CompileError("Semantico", "La funcion hist no acepta valores por defecto", this.line, this.column));
             return;
         }
         
         if (this.params.size() != 3) {
-            Singleton.insertError(new CompileError("Semantico", "Cantidad incorrecta de parametros para la funcion pie", this.line, this.column));
+            Singleton.insertError(new CompileError("Semantico", "Cantidad incorrecta de parametros para la funcion hist", this.line, this.column));
             return;
         }
         
@@ -511,5 +512,25 @@ public class Function_Call implements Instruction, Expression {
         Expression y = (Expression)this.params.get(2);
         Histogram hist = new Histogram(h, x, y, this.line, this.column);
         hist.process(env);
+    }
+    
+    private void Plot(SymbolsTable env) {
+        if (!validateNoDefault()) {
+            Singleton.insertError(new CompileError("Semantico", "La funcion plot no acepta valores por defecto", this.line, this.column));
+            return;
+        }
+        
+        if (this.params.size() != 5) {
+            Singleton.insertError(new CompileError("Semantico", "Cantidad incorrecta de parametros para la funcion plot", this.line, this.column));
+            return;
+        }
+        
+        Expression mat = (Expression)this.params.get(0);
+        Expression x = (Expression)this.params.get(1);
+        Expression y = (Expression)this.params.get(2);
+        Expression main = (Expression)this.params.get(3);
+        Expression lim = (Expression)this.params.get(4);
+        Dispersion dispersion = new Dispersion(mat, x, y, main, lim, this.line, this.column);
+        dispersion.process(env);
     }
 }
