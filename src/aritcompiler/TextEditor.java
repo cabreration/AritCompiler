@@ -5,9 +5,30 @@
  */
 package aritcompiler;
 
+import APIServices.Node;
+import APIServices.TreePrinter;
+import APIServices.TreeProcesor;
+import Instructions.Instruction;
+import JFlexNCup.Parser;
+import JFlexNCup.Scanner;
+import Symbols.SymbolsTable;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java_cup.runtime.Symbol;
 import javax.swing.JFileChooser;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
+import javax.swing.JViewport;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.text.BadLocationException;
 
 /**
  *
@@ -18,11 +39,15 @@ public class TextEditor extends javax.swing.JFrame {
     /**
      * Creates new form TextEditor
      */
-    ArrayList<String> direcciones;
+    ArrayList<String> paths;
+    int line;
+    int col;
     
     public TextEditor() {
         initComponents();
-        direcciones = new ArrayList<String>();
+        paths = new ArrayList<String>();
+        line = 1;
+        col = 1;
     }
 
     /**
@@ -36,8 +61,8 @@ public class TextEditor extends javax.swing.JFrame {
 
         tabs = new javax.swing.JTabbedPane();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
-        jLabel1 = new javax.swing.JLabel();
+        console = new javax.swing.JTextArea();
+        cursorInfo = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -58,12 +83,12 @@ public class TextEditor extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jTextArea1.setEditable(false);
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        console.setEditable(false);
+        console.setColumns(20);
+        console.setRows(5);
+        jScrollPane1.setViewportView(console);
 
-        jLabel1.setText("Línea: - Columna: ");
+        cursorInfo.setText("Línea: - Columna: ");
 
         jMenu1.setText("Archivo");
 
@@ -83,6 +108,7 @@ public class TextEditor extends javax.swing.JFrame {
         });
         jMenu1.add(jMenuItem2);
 
+        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem3.setText("Guardar");
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -108,10 +134,22 @@ public class TextEditor extends javax.swing.JFrame {
 
         jMenu3.setText("Ejecución");
 
+        jMenuItem7.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_J, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem7.setText("Ejecución javacc");
+        jMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem7ActionPerformed(evt);
+            }
+        });
         jMenu3.add(jMenuItem7);
 
+        jMenuItem8.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItem8.setText("Ejecución jflex & cup");
+        jMenuItem8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem8ActionPerformed(evt);
+            }
+        });
         jMenu3.add(jMenuItem8);
 
         jMenuBar1.add(jMenu3);
@@ -119,6 +157,11 @@ public class TextEditor extends javax.swing.JFrame {
         jMenu4.setText("Gráficas");
 
         jMenuItem9.setText("Mostrar Todas");
+        jMenuItem9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem9ActionPerformed(evt);
+            }
+        });
         jMenu4.add(jMenuItem9);
 
         jMenuBar1.add(jMenu4);
@@ -126,9 +169,19 @@ public class TextEditor extends javax.swing.JFrame {
         jMenu5.setText("Pestañas");
 
         jMenuItem10.setText("Nueva Pestaña");
+        jMenuItem10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem10ActionPerformed(evt);
+            }
+        });
         jMenu5.add(jMenuItem10);
 
         jMenuItem11.setText("Cerrar Pestaña");
+        jMenuItem11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem11ActionPerformed(evt);
+            }
+        });
         jMenu5.add(jMenuItem11);
 
         jMenuBar1.add(jMenu5);
@@ -141,17 +194,17 @@ public class TextEditor extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(tabs)
             .addComponent(jScrollPane1)
-            .addGroup(layout.createSequentialGroup()
-                .addGap(483, 483, 483)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 107, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(482, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(468, Short.MAX_VALUE)
+                .addComponent(cursorInfo, javax.swing.GroupLayout.PREFERRED_SIZE, 173, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(431, 431, 431))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addComponent(tabs, javax.swing.GroupLayout.PREFERRED_SIZE, 346, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 16, Short.MAX_VALUE)
-                .addComponent(jLabel1)
+                .addComponent(cursorInfo)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -165,18 +218,184 @@ public class TextEditor extends javax.swing.JFrame {
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             File selectedFile = fileChooser.getSelectedFile();
-            System.out.println(selectedFile.getName());
-            System.out.println(selectedFile.getAbsolutePath());
+            String path = selectedFile.getAbsolutePath();
+            String content = readFile(path);
+            if (content == null)
+                return;
+            
+            // open a new tab
+            paths.add(path);
+            tabs.addTab(selectedFile.getName(), createTab(content));
+            cursorInfo.setText("Linea: 0 - Columna: 0");
+            tabs.setSelectedIndex(tabs.getTabCount()-1);
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
+    private String readFile(String path) {
+        BufferedReader bufferedReader;
+        try {
+            bufferedReader = new BufferedReader(new FileReader(path));
+            String parcial;
+            StringBuilder complete = new StringBuilder();
+            parcial = bufferedReader.readLine();
+            while (parcial != null) 
+            {
+                complete.append(parcial + "\n");
+                parcial = bufferedReader.readLine();
+            }
+            
+            bufferedReader.close();
+            return complete.toString();
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+    
+    private JScrollPane createTab(String text) {
+        JTextArea tab = new JTextArea(text);
+        tab.addCaretListener(new CaretListener() {
+            public void caretUpdate(CaretEvent e) {
+                JTextArea editArea = (JTextArea)e.getSource();
+                int caret = editArea.getCaretPosition();
+                try {
+                    line = editArea.getLineOfOffset(caret);
+                    col = caret - editArea.getLineStartOffset(line);
+                    cursorInfo.setText("Linea: " + line + " - Columna: " + col);
+                } catch (BadLocationException ex) {
+                    Logger.getLogger(TextEditor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+        });
+        JScrollPane scroll = new JScrollPane(tab);
+        return scroll;
+    }
+    
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         // Guardar como
+        saveAs();
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
+    private void saveAs() {
+        int currentIndex = tabs.getSelectedIndex();
+        JScrollPane scroll = (JScrollPane)tabs.getComponentAt(currentIndex);
+        JTextArea area = (JTextArea)(scroll.getViewport().getView());
+        String text = area.getText();
+        
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showSaveDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            try {
+                FileWriter writer = new FileWriter(fileChooser.getSelectedFile());
+                writer.write(text);
+                writer.close();
+                paths.set(currentIndex, fileChooser.getSelectedFile().getAbsolutePath());
+                tabs.setTitleAt(currentIndex, fileChooser.getSelectedFile().getName());
+            }
+            catch (Exception e) {
+                System.err.println(e.getMessage());
+            }
+        }
+    }
+    
+    private void save(String path, String content) {
+        File file = new File(path);
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter(file);
+            writer.write(content);
+            writer.close();
+        }
+        catch(Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
+    
     private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
         // Guardar
+        try {
+            int currentIndex = tabs.getSelectedIndex();
+            if (paths.get(currentIndex).equals("@#$%")) {
+                saveAs();
+            }
+            else {
+                String path = paths.get(currentIndex);
+                JScrollPane scroll = (JScrollPane)tabs.getComponentAt(currentIndex);
+                JTextArea area = (JTextArea)(scroll.getViewport().getView());
+                String text = area.getText();
+                save(path, text);
+            }
+        }
+        catch(Exception e) {
+            System.err.println(e.getMessage());
+        }
     }//GEN-LAST:event_jMenuItem3ActionPerformed
+
+    private void jMenuItem10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem10ActionPerformed
+        // Nueva Pesta;a
+        tabs.add("nuevo", createTab(""));
+        cursorInfo.setText("Linea: 0 - Columna: 0");
+        tabs.setSelectedIndex(tabs.getTabCount()-1);
+        paths.add("@#$%");
+    }//GEN-LAST:event_jMenuItem10ActionPerformed
+
+    private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
+        // Cerrar Pesta;a actual
+        int currentIndex = tabs.getSelectedIndex();
+        paths.remove(currentIndex);
+        tabs.remove(currentIndex);
+    }//GEN-LAST:event_jMenuItem11ActionPerformed
+
+    private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
+        // Mostrar todas las graficas
+        Singleton.showFigures();
+    }//GEN-LAST:event_jMenuItem9ActionPerformed
+
+    private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
+        // Ejecucion jflex & cup
+        int currentIndex = tabs.getSelectedIndex();
+        JScrollPane scroll = (JScrollPane)tabs.getComponentAt(currentIndex);
+        JTextArea area = (JTextArea)(scroll.getViewport().getView());
+        String code = area.getText();
+        
+        Reader reader = new StringReader(code); 
+        Scanner scanner = new Scanner(reader);
+        Parser parser = new Parser(scanner);
+        Symbol parse_tree = null;
+            
+        try {
+            //parse_tree = parser.debug_parse();
+            parse_tree = parser.parse();
+            Node root = parser.root;
+            TreePrinter.printTree(root, "cupTree");
+            execute(root);
+        }
+        catch (Exception e) {
+            System.out.println(e.getMessage());
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jMenuItem8ActionPerformed
+
+    private void execute(Node root) {
+        Singleton.newCompilation();
+        if (root != null) {
+            TreeProcesor.processFunctions(root);
+            ArrayList<Instruction> sentences = TreeProcesor.processTree(root);
+            SymbolsTable env = new SymbolsTable("global");
+            for (Instruction ins : sentences) {
+                if (ins != null)
+                    ins.process(env);
+            }
+            String output = Singleton.print();
+            this.console.setText(output);
+        }
+    }
+    
+    private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
+        // Ejecucion javacc
+        System.out.println("La ejecucion con javacc no es soportada todavia");
+    }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -214,7 +433,8 @@ public class TextEditor extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JTextArea console;
+    private javax.swing.JLabel cursorInfo;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
@@ -233,7 +453,6 @@ public class TextEditor extends javax.swing.JFrame {
     private javax.swing.JMenuItem jMenuItem8;
     private javax.swing.JMenuItem jMenuItem9;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTextArea jTextArea1;
     private javax.swing.JTabbedPane tabs;
     // End of variables declaration//GEN-END:variables
 }

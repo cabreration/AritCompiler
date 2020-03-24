@@ -55,11 +55,11 @@ public class TreePrinter {
             return buffer;
     }
     
-    public static void printTree(Node root) {
+    public static void printTree(Node root, String type) {
         String dot = GetDot(root);
         
         try {
-            BufferedWriter writer = new BufferedWriter(new FileWriter("./reports/tree/cupTree.dot"));
+            BufferedWriter writer = new BufferedWriter(new FileWriter("./reports/tree/" + type + ".dot"));
             writer.write(dot);
             writer.close();
             
@@ -67,7 +67,7 @@ public class TreePrinter {
             System.out.println(directory);
             Runtime rt = Runtime.getRuntime();
             //rt.exec("cd " + "\""+directory+"\"");
-            rt.exec(new String[] {"dot", "-Tpng", "./reports/tree/cupTree.dot", "-o", "./reports/tree/cupTree.png"});
+            rt.exec(new String[] {"dot", "-Tpng", "./reports/tree/" + type +".dot", "-o", "./reports/tree/" + type + ".png"});
         }
         catch (Exception e) {
             System.out.println(e.getMessage());

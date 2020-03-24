@@ -72,7 +72,7 @@ public class AritCompiler {
                 //parse_tree = parser.debug_parse();
                 parse_tree = parser.parse();
                 Node root = parser.root;
-                TreePrinter.printTree(root);
+                TreePrinter.printTree(root, "cupTree");
                 return root;
             }
             catch (Exception e) {
@@ -93,7 +93,7 @@ public class AritCompiler {
             String name = "C:\\Users\\jacab\\Documents\\Compi 2\\R-it\\Pruebas\\tree.arit";
             Grammar parser = new Grammar(new BufferedReader(new FileReader(name)));
             Node root = parser.Root();
-            TreePrinter.printTree(root);
+            TreePrinter.printTree(root, "javaccTree");
         }
         catch (Exception e) {
             System.err.println(e.getMessage());

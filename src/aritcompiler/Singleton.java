@@ -97,12 +97,13 @@ public class Singleton {
         console.add(str);
     }
     
-    public static void print() {
+    public static String print() {
         StringBuilder builder = new StringBuilder();
         for (String str : console) {
             builder.append(str + "\n");
         }
-        System.out.println(builder.toString());
+        return builder.toString();
+        //System.out.println(builder.toString());
     }
     
     public static void insertFigure(SwingWrapper figure) {
