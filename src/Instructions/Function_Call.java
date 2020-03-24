@@ -58,7 +58,7 @@ public class Function_Call implements Instruction, Expression {
         switch (name.toLowerCase()) {
             case "print":
                 Print(env);
-                break;
+                return null;
             case "c":
                 retorno = Concat(env);
                 break;
@@ -109,14 +109,15 @@ public class Function_Call implements Instruction, Expression {
                 break;
             case "barplot":
                 Barplot(env);
-                break;
+                return null;
             case "pie":
                 Pie(env);
-                break;
+                return null;
             case "plot":
                 break;
             case "hist":
-                break;
+                Histogram(env);
+                return null;
         }
         
         Function f = Singleton.getFunction(this.name);
@@ -492,5 +493,23 @@ public class Function_Call implements Instruction, Expression {
         Expression names = (Expression)this.params.get(4);
         Barplot barplot = new Barplot(h, x, y, main, names, this.line, this.column);
         barplot.process(env);
+    }
+    
+    private void Histogram(SymbolsTable env) {
+        if (!validateNoDefault()) {
+            Singleton.insertError(new CompileError("Semantico", "La funcion pie no acepta valores por defecto", this.line, this.column));
+            return;
+        }
+        
+        if (this.params.size() != 3) {
+            Singleton.insertError(new CompileError("Semantico", "Cantidad incorrecta de parametros para la funcion pie", this.line, this.column));
+            return;
+        }
+        
+        Expression h = (Expression)this.params.get(0);
+        Expression x = (Expression)this.params.get(1);
+        Expression y = (Expression)this.params.get(2);
+        Histogram hist = new Histogram(h, x, y, this.line, this.column);
+        hist.process(env);
     }
 }
