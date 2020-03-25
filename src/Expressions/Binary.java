@@ -7,6 +7,8 @@ package Expressions;
 
 import APIServices.CompileError;
 import Symbols.SymbolsTable;
+import Symbols.Vector;
+import java.util.ArrayList;
 
 /**
  *
@@ -96,6 +98,18 @@ public class Binary implements Expression {
     }
     
     private Object operations(SymbolsTable env, Value op1, Value op2) {
+        Value aux = op1;
+        Value aux2 = op2;
+        if (op1 instanceof Vector) {
+            if (((Vector)op1).getSize() == 1) {
+                op1 = ((ArrayList<Atomic>)((Vector)op1).getValue()).get(0);
+            }
+        }
+        if (op2 instanceof Vector) {
+            if (((Vector)op2).getSize() == 1) {
+                op2 = ((ArrayList<Atomic>)((Vector)op2).getValue()).get(0);
+            }
+        }
         
         Object res = null;
         switch (this.operator) {

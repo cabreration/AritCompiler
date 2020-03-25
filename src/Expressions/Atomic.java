@@ -12,6 +12,7 @@ import Symbols.SymbolsTable;
 import Symbols.Symbol;
 import Symbols.Vector;
 import aritcompiler.Singleton;
+import java.util.ArrayList;
 
 /**
  *
@@ -234,6 +235,12 @@ public class Atomic implements Expression, Value {
             if (v == null)
                 return new CompileError("Semantico", "La variable '" + String.valueOf(this.value) + "' no ha sido declarada", this.line, this.column);
             
+            if (v instanceof Vector) {
+                if (((Vector)v).getSize() == 1) {
+                    v = ((ArrayList<Atomic>)((Vector)v).getValue()).get(0);
+                }
+            }
+            
             if (operator.equals("-")) // en esta el orden si importa, tengo que arreglarlo
                 return v.minus(env, op, 1); 
             else if (operator.equals("+"))
@@ -255,6 +262,12 @@ public class Atomic implements Expression, Value {
                 
                 if (op == null)
                     return new CompileError("Semantico", "La variable '" + id + " no existe en el contexto actual", this.line, this.column);
+            
+                if (op instanceof Vector) {
+                    if (((Vector)op).getSize() == 1) {
+                        op = ((ArrayList<Atomic>)((Vector)op).getValue()).get(0);
+                    }
+                }
             }
         }
         
@@ -449,6 +462,12 @@ public class Atomic implements Expression, Value {
             if (v == null)
                 return new CompileError("Semantico", "La variable '" + String.valueOf(this.value) + "' no ha sido declarada", this.line, this.column);
             
+            if (v instanceof Vector) {
+                if (((Vector)v).getSize() == 1) {
+                    v = ((ArrayList<Atomic>)((Vector)v).getValue()).get(0);
+                }
+            }
+            
             if (operator.equals("<")) // en esta el orden si importa, tengo que arreglarlo
                 return v.lesser(env, op, 1); 
             else if (operator.equals(">"))
@@ -470,6 +489,12 @@ public class Atomic implements Expression, Value {
                 
                 if (op == null)
                     return new CompileError("Semantico", "La variable '" + id + " no existe en el contexto actual", this.line, this.column);
+            
+                if (op instanceof Vector) {
+                    if (((Vector)op).getSize() == 1) {
+                        op = ((ArrayList<Atomic>)((Vector)op).getValue()).get(0);
+                    }
+                }
             }
         }
         
@@ -644,6 +669,12 @@ public class Atomic implements Expression, Value {
             if (v == null)
                 return new CompileError("Semantico", "La variable '" + String.valueOf(this.value) + "' no ha sido declarada", this.line, this.column);
             
+            if (v instanceof Vector) {
+                if (((Vector)v).getSize() == 1) {
+                    v = ((ArrayList<Atomic>)((Vector)v).getValue()).get(0);
+                }
+            }
+            
             if (operator.equals("&"))
                 return v.and(env, op); 
             else 
@@ -657,6 +688,12 @@ public class Atomic implements Expression, Value {
                 
                 if (op == null)
                     return new CompileError("Semantico", "La variable '" + id + " no existe en el contexto actual", this.line, this.column);
+                
+                if (op instanceof Vector) {
+                    if (((Vector)op).getSize() == 1) {
+                        op = ((ArrayList<Atomic>)((Vector)op).getValue()).get(0);
+                    }
+                }
             }
         }
         
@@ -677,8 +714,6 @@ public class Atomic implements Expression, Value {
             
             return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
         }
-        
-        //if (op instanceof Matrix) {}
         
         //op instance of array or list
         return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
