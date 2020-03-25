@@ -371,6 +371,7 @@ public class TextEditor extends javax.swing.JFrame {
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
         // Ejecucion jflex & cup
+        Singleton.newCompilation();
         int currentIndex = tabs.getSelectedIndex();
         JScrollPane scroll = (JScrollPane)tabs.getComponentAt(currentIndex);
         JTextArea area = (JTextArea)(scroll.getViewport().getView());
@@ -385,7 +386,8 @@ public class TextEditor extends javax.swing.JFrame {
             //parse_tree = parser.debug_parse();
             parse_tree = parser.parse();
             Node root = parser.root;
-            TreePrinter.printTree(root, "cupTree");
+            if (root != null)
+                TreePrinter.printTree(root, "cupTree");
             execute(root);
         }
         catch (Exception e) {
@@ -395,7 +397,6 @@ public class TextEditor extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuItem8ActionPerformed
 
     private void execute(Node root) {
-        Singleton.newCompilation();
         if (root != null) {
             TreeProcesor.processFunctions(root);
             ArrayList<Instruction> sentences = TreeProcesor.processTree(root);
@@ -413,6 +414,7 @@ public class TextEditor extends javax.swing.JFrame {
     
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         // Ejecucion javacc
+        Singleton.newCompilation();
         System.out.println("La ejecucion con javacc no es soportada todavia");
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 

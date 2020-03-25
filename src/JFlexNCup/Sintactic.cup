@@ -3,6 +3,8 @@ package JFlexNCup;
 import java_cup.runtime.Symbol;
 import java.util.ArrayList;
 import APIServices.Node;
+import aritcompiler.Singleton;
+import APIServices.CompileError;
 
 parser code
 {:
@@ -11,27 +13,30 @@ parser code
 
     public void syntax_error(Symbol s)
     {
-        System.out.println("LLegue a un error");
-        System.out.println(String.valueOf(s));
-        System.out.println(s.right);
-        System.out.println(s.left);
+        if (s == null) {
+            System.err.println("venia vacio");
+            return;
+        }
+        System.err.println(s.value.toString() + " " + s.right + " "+ s.left);
+        Singleton.insertError(new CompileError("Sintactico", "No se esperaba el token " + s.value.toString(), s.right, s.left));
     }
 
     public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception
     {
         System.out.println("El error es " + s.value.toString() + " " + s.right + " " + s.left);
-        /*if (s == null)
+        if (s == null)
         {
-            errores.add(new ErrorC("Error Sintactico", "null", 0, 0, "ultimo token de finalizacion perdido"));
+            Singleton.insertError( new CompileError("Sintactico", "fin de archivo no encontrado", 0, 0));
             System.out.println("Gramatica irreducible");
             return;
         }
 
         String lexema = s.value.toString();
-        int fila = s.right + 1;
-        int columna = s.left + 1;
+        int fila = s.right;
+        int columna = s.left;
+        System.err.println(lexema + " - " + fila + "  - "+ columna);
 
-        errores.add(new ErrorC("Error Sintactico", lexema, fila, columna, "Error No Recuperable"));*/
+        Singleton.insertError(new CompileError("Error Sintactico", "No se esperaba el token " + lexema, fila, columna));
     }
 
 :}
@@ -83,6 +88,13 @@ ROOT ::= SENTENCES_LIST:root    {: Node rut = new Node("root");
                                    //System.out.println("Si estoy llegando a la raiz");
                                    RESULT = rut;
                                 :}
+
+|                               {: Node sentences = new Node("sentences");
+                                   Node rut = new Node("root");
+                                   rut.addChildren(sentences);
+                                   parser.root = rut;
+                                   RESULT = rut;
+                                :}
 ;
 
 SENTENCES_LIST ::= SENTENCES_LIST:sent SENTENCE:sent2           {: Node sentences = new Node("sentences");
@@ -100,6 +112,8 @@ SENTENCES_LIST ::= SENTENCES_LIST:sent SENTENCE:sent2           {: Node sentence
 SENTENCES_BLOCK ::= openingCurly closingCurly                   {: RESULT = new Node("sentences"); :}
 
     | openingCurly SENTENCES_LIST:list closingCurly             {: RESULT = list; :}
+
+    | openingCurly error closingCurly                           {: RESULT = new Node("sentences"); :}
 ;
 
 SENTENCE ::= ASIGNMENT:sent                                 {: RESULT = sent; :}
@@ -133,6 +147,8 @@ SENTENCE ::= ASIGNMENT:sent                                 {: RESULT = sent; :}
     | CONTINUE_SENTENCE:c                                   {: RESULT = c; :}
 
     | CONTINUE_SENTENCE:c semicolon                         {: RESULT = c; :}
+
+    | error SENTENCE:s                                      {: RESULT = s; :}
 ;
 
 LONE_EXPRESSION ::= LONE_EXPRESSION:exp1 ternary:ter LONE_EXPRESSION:exp2 colon:col LONE_EXPRESSION:exp3   {: Node res = new Node("ternary expression");
