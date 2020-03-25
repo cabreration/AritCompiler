@@ -250,7 +250,7 @@ public class Vector implements Symbol, Value {
                         if (vec.type == 4) {
                             Vector thor = baldorVectors(this.content, (ArrayList<Atomic>)vec.getValue(), 4, "+");
                             if (thor == null)
-                                return new CompileError("Semantico", "Las operaciones de division y modulo sobre 0 no estan definidas", 0, 0);
+                                return new CompileError("Semantico", "Operacion invalida, no es posible realizar operaciones con el valor null", 0, 0);
                             
                             return thor;
                         }
@@ -300,8 +300,15 @@ public class Vector implements Symbol, Value {
             
             if (this.type == 1) {
                 if (((Atomic)op).getType() == Atomic.Type.INTEGER) {
-                    int val = ((Integer)(((Atomic)op).getValue())).intValue();
-                    Vector thor = baldorVector(this.content, val, operator, order);
+                    Vector thor;
+                    if (operator.equals("^")) {
+                        double val = ((Integer)(((Atomic)op).getValue())).doubleValue();
+                        thor = baldorVector(this.content, val, operator, order);
+                    }
+                    else {
+                        int val = ((Integer)(((Atomic)op).getValue())).intValue();
+                        thor = baldorVector(this.content, val, operator, order);
+                    }
                     if (thor == null)
                         return new CompileError("Semantico", "Las operaciones de division y modulo sobre 0 no estan definidas", 0, 0);
                             
@@ -452,7 +459,7 @@ public class Vector implements Symbol, Value {
                 r = order == 1 ? doub % val : val % doub;
             }
             else 
-                r = Math.pow(doub, val);
+                r = order == 1 ? Math.pow(doub, val) : Math.pow(val, doub);
                     
             res.add(new Atomic(Atomic.Type.NUMERIC, Double.valueOf(r)));
         }
@@ -561,6 +568,9 @@ public class Vector implements Symbol, Value {
         
         if (op instanceof Vector) {
             Vector vec = (Vector)op;
+            if (this.getSize() != vec.getSize())
+                return new CompileError("Semantico", "No es posible operar vectores de distintos tamanios", 0, 0);
+                
             if (this.type == 1 || this.type == 2) {
                 if (vec.type == 1 || vec.type == 2){
                     return relationalVectors(this.content, (ArrayList<Atomic>)vec.getValue(), 2, operator);
