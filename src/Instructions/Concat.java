@@ -48,7 +48,7 @@ public class Concat implements Instruction {
                     int line = ((Atomic)val).getLine();
                     int column = ((Atomic)val).getColumn();
                     
-                    val = env.getSymbol(id);
+                    val = env.getSymbol(id, line);
                     if (val == null) {
                         Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, column));
                         return null;
@@ -113,7 +113,7 @@ public class Concat implements Instruction {
                     String id = String.valueOf(((Atomic)element).getValue());
                     int lin = ((Atomic)element).getLine();
                     int col = ((Atomic)element).getColumn();
-                    Symbol sym = env.getSymbol(id);
+                    Symbol sym = env.getSymbol(id, lin);
                     
                     if (sym == null) {
                         Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no ha sido declarada", lin, col));

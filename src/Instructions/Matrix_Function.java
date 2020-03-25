@@ -90,7 +90,7 @@ public class Matrix_Function implements Instruction{
                 int line = ((Atomic)obj).getLine();
                 int col = ((Atomic)obj).getColumn();
                 
-                obj = env.getSymbol(id);
+                obj = env.getSymbol(id, line);
                 if (obj == null) {
                     Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col));
                     return null;

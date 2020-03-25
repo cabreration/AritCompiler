@@ -75,7 +75,7 @@ public class Case_Component implements Instruction {
                 int line = ((Atomic)val).getLine();
                 int col = ((Atomic)val).getColumn();
                 
-                val = env.getSymbol(id);
+                val = env.getSymbol(id, line);
                 if (val == null)
                     return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col);
             }

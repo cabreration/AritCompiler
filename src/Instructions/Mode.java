@@ -97,7 +97,7 @@ public class Mode implements Instruction {
                 int line = ((Atomic)res).getLine();
                 int column = ((Atomic)res).getColumn();
                 
-                res = env.getSymbol(id);
+                res = env.getSymbol(id, line);
                 if (res == null) {
                     CompileError error = new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, column);
                     return error;

@@ -191,7 +191,7 @@ public class Vector implements Symbol, Value {
                 String name = String.valueOf(((Atomic)op).getValue());
                 int l = ((Atomic)op).getLine();
                 int c = ((Atomic)op).getColumn();
-                op = env.getValue(String.valueOf(((Atomic)op).getValue()));
+                op = env.getValue(String.valueOf(((Atomic)op).getValue()), l);
                 
                 if (op == null)
                     return new CompileError("Semantico", "La variable '" + name + "' no ha sido declarada", l, c);
@@ -552,7 +552,7 @@ public class Vector implements Symbol, Value {
                 String name = String.valueOf(((Atomic)op).getValue());
                 int l = ((Atomic)op).getLine();
                 int c = ((Atomic)op).getColumn();
-                op = env.getValue(String.valueOf(((Atomic)op).getValue()));
+                op = env.getValue(String.valueOf(((Atomic)op).getValue()), l);
                 
                 if (op == null)
                     return new CompileError("Semantico", "La variable '" + name + "' no ha sido declarada", l, c);
@@ -845,7 +845,7 @@ public class Vector implements Symbol, Value {
                 String name = String.valueOf(((Atomic)op).getValue());
                 int l = ((Atomic)op).getLine();
                 int c = ((Atomic)op).getColumn();
-                op = env.getValue(String.valueOf(((Atomic)op).getValue()));
+                op = env.getValue(String.valueOf(((Atomic)op).getValue()), l);
                 
                 if (op == null)
                     return new CompileError("Semantico", "La variable '" + name + "' no ha sido declarada", l, c);

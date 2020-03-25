@@ -79,7 +79,7 @@ public class Atomic implements Expression, Value {
      * @return Either a Vector, List, Matrix or Array; Returns null if the Symbol doesnt exist
     */
     public Symbol findInTable(SymbolsTable env) {
-        return env.getSymbol(String.valueOf(this.value));
+        return env.getSymbol(String.valueOf(this.value), this.line);
     }
 
     public Type getType() {
@@ -118,7 +118,7 @@ public class Atomic implements Expression, Value {
             return new Atomic(Atomic.Type.STRING, "boolean");
         else {
             String id = String.valueOf(this.value);
-            Symbol sym = env.getSymbol(id);
+            Symbol sym = env.getSymbol(id, this.line);
             
             if (sym == null) {
                 Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", this.line, this.column));
@@ -133,7 +133,7 @@ public class Atomic implements Expression, Value {
     public Atomic length(SymbolsTable env) {
         if (this.type == Atomic.Type.IDENTIFIER) {
             String id = String.valueOf(this.value);
-            Value sym = env.getValue(id);
+            Value sym = env.getValue(id, this.line);
             
             if (sym == null) {
                 Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", this.line, this.column));
@@ -150,7 +150,7 @@ public class Atomic implements Expression, Value {
     public Atomic nRow(SymbolsTable env) {
         if (this.type == Atomic.Type.IDENTIFIER) {
             String id = String.valueOf(this.value);
-            Value sym = env.getValue(id);
+            Value sym = env.getValue(id, this.line);
             
             if (sym == null) {
                 Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", this.line, this.column));
@@ -168,7 +168,7 @@ public class Atomic implements Expression, Value {
     public Atomic nCol(SymbolsTable env) {
         if (this.type == Atomic.Type.IDENTIFIER) {
             String id = String.valueOf(this.value);
-            Value sym = env.getValue(id);
+            Value sym = env.getValue(id, this.line);
             
             if (sym == null) {
                 Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", this.line, this.column));
@@ -191,7 +191,10 @@ public class Atomic implements Expression, Value {
         }
         
         if (type == Type.IDENTIFIER) {
-            Value compound = env.getValue(String.valueOf(this.value));
+            Value compound = env.getValue(String.valueOf(this.value), this.line);
+            if (compound == null) {
+                return new CompileError("Semantico", "La variable '" + String.valueOf(this.value) + "' no existe en el contexto actual", this.line, this.column);
+            }
             return compound.booleanNegation(env);
         }
         
@@ -212,7 +215,10 @@ public class Atomic implements Expression, Value {
         }
         
         if (type == Type.IDENTIFIER) {
-            Value compound = env.getValue(String.valueOf(this.value));
+            Value compound = env.getValue(String.valueOf(this.value), this.line);
+            if (compound == null) {
+                return new CompileError("Semantico", "La variable '" + String.valueOf(this.value) + "' no existe en el contexto actual", this.line, this.column);
+            }
             return compound.aritmeticNegation(env);
         }
         
@@ -223,7 +229,7 @@ public class Atomic implements Expression, Value {
     private Object validateBaldor(SymbolsTable env, Value op, String operator) {
         
         if (this.type == Type.IDENTIFIER) {
-            Value v = env.getValue(String.valueOf(this.value));
+            Value v = env.getValue(String.valueOf(this.value), this.line);
             
             if (v == null)
                 return new CompileError("Semantico", "La variable '" + String.valueOf(this.value) + "' no ha sido declarada", this.line, this.column);
@@ -245,7 +251,7 @@ public class Atomic implements Expression, Value {
         if (op instanceof Atomic) {
             if (((Atomic)op).getType() == Atomic.Type.IDENTIFIER) {
                 String id = String.valueOf(((Atomic)op).getValue());
-                op = env.getValue(String.valueOf(((Atomic)op).getValue()));
+                op = env.getValue(String.valueOf(((Atomic)op).getValue()), this.line);
                 
                 if (op == null)
                     return new CompileError("Semantico", "La variable '" + id + " no existe en el contexto actual", this.line, this.column);
@@ -438,7 +444,7 @@ public class Atomic implements Expression, Value {
     /* Operaciones relacionales */
     private Object validateRelational(SymbolsTable env, Value op, String operator) {
         if (this.type == Type.IDENTIFIER) {
-            Value v = env.getValue(String.valueOf(this.value));
+            Value v = env.getValue(String.valueOf(this.value), this.line);
             
             if (v == null)
                 return new CompileError("Semantico", "La variable '" + String.valueOf(this.value) + "' no ha sido declarada", this.line, this.column);
@@ -460,7 +466,7 @@ public class Atomic implements Expression, Value {
         if (op instanceof Atomic) {
             if (((Atomic)op).getType() == Atomic.Type.IDENTIFIER) {
                 String id = String.valueOf(((Atomic)op).getValue());
-                op = env.getValue(String.valueOf(((Atomic)op).getValue()));
+                op = env.getValue(String.valueOf(((Atomic)op).getValue()), this.line);
                 
                 if (op == null)
                     return new CompileError("Semantico", "La variable '" + id + " no existe en el contexto actual", this.line, this.column);
@@ -633,7 +639,7 @@ public class Atomic implements Expression, Value {
     
     private Object validateBoolean(SymbolsTable env, Value op, String operator) { 
         if (this.type == Type.IDENTIFIER) {
-            Value v = env.getValue(String.valueOf(this.value));
+            Value v = env.getValue(String.valueOf(this.value), this.line);
             
             if (v == null)
                 return new CompileError("Semantico", "La variable '" + String.valueOf(this.value) + "' no ha sido declarada", this.line, this.column);
@@ -647,7 +653,7 @@ public class Atomic implements Expression, Value {
         if (op instanceof Atomic) {
             if (((Atomic)op).getType() == Atomic.Type.IDENTIFIER) {
                 String id = String.valueOf(((Atomic)op).getValue());
-                op = env.getValue(String.valueOf(((Atomic)op).getValue()));
+                op = env.getValue(String.valueOf(((Atomic)op).getValue()), this.line);
                 
                 if (op == null)
                     return new CompileError("Semantico", "La variable '" + id + " no existe en el contexto actual", this.line, this.column);

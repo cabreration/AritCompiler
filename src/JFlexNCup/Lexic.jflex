@@ -3,6 +3,7 @@ package JFlexNCup;
 import java_cup.runtime.*;
 import APIServices.CompileError;
 import java.util.ArrayList;
+import aritcompiler.Singleton;
 
 %%
 
@@ -108,7 +109,7 @@ multiLineComment   = "#*" [^*] ~"*#" | "#*" "*"+ "#"
 <STRING> \\                           { string.append('\\'); }
 
 <YYINITIAL> {WhiteSpace}              {}
-<YYINITIAL> {simpleComment}           { System.out.println("encontre un comentario simple"); }
-<YYINITIAL> {multiLineComment}        { System.out.println("encontre un comentario multilinea"); }
+<YYINITIAL> {simpleComment}           { }
+<YYINITIAL> {multiLineComment}        { }
 
-<YYINITIAL> .                         { errors.add(new CompileError("Lexico", yytext() + " no pertenece al lenguaje Arit", yyline, yycolumn)); } 
+<YYINITIAL> .                         { Singleton.insertError(new CompileError("Lexico", yytext() + " no pertenece al lenguaje Arit", yyline, yycolumn)); } 

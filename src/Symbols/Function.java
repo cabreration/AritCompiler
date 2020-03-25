@@ -19,6 +19,7 @@ public class Function {
     private ArrayList<Instruction> sentences;
     private int line;
     private int column;
+    private String references;
 
     public Function(String name, ArrayList<Parameter> parameters, ArrayList<Instruction> sentences, int line, int column) {
         this.name = name;
@@ -26,6 +27,7 @@ public class Function {
         this.sentences = sentences;
         this.line = line;
         this.column = column;
+        this.references = "";
     }
 
     public Function(String name, ArrayList<Instruction> sentences, int line, int column) {
@@ -33,6 +35,7 @@ public class Function {
         this.sentences = sentences;
         this.line = line;
         this.column = column;
+        this.references = "";
     }
     
     public String getName() {
@@ -45,5 +48,26 @@ public class Function {
 
     public ArrayList<Instruction> getSentences() {
         return sentences;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
+    public String getReferences() {
+        return references;
+    }
+    
+    public void addReference(String ref) {
+        if (this.references == null || this.references.equals(""))
+            this.references += ref;
+        else {
+            if (!this.references.contains(ref))
+                this.references += "," + ref;
+        }
     }
 }

@@ -121,11 +121,16 @@ public class Function_Call implements Instruction, Expression {
                 return null;
         }
         
+        if (retorno != null)
+            return retorno;
+        
         Function f = Singleton.getFunction(this.name);
         if (f == null)
             Singleton.insertError(new CompileError("Semantico", "La funcion '" + this.name + "' no existe", this.line, this.column));
-        else 
+        else {
+            f.addReference(String.valueOf(this.line));
             retorno = executeFunction(f, env);
+        }
         
         return retorno;
     }
@@ -355,6 +360,9 @@ public class Function_Call implements Instruction, Expression {
                         return new CompileError("Semantico", "El parametro no tiene un valor por defecto definido", this.line, this.column);
                     
                     Object value = p.getDefaultValue().process(env);
+                    
+                    if (value == null)
+                        return null;
                     if (value instanceof CompileError) {
                         if (((CompileError)value).getRow() == 0 && ((CompileError)value).getColumn() == 0) {
                             ((CompileError)value).setRow(this.line);
@@ -369,7 +377,7 @@ public class Function_Call implements Instruction, Expression {
                             int line = ((Atomic)value).getLine();
                             int column = ((Atomic)value).getColumn();
                             
-                            value = env.getSymbol(id);
+                            value = env.getSymbol(id, line);
                             if (value == null)
                                 return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, column);
                         }
@@ -398,6 +406,9 @@ public class Function_Call implements Instruction, Expression {
                     Parameter p = f.getParameters().get(i);
                     Expression exp = (Expression)param;
                     Object val = exp.process(env);
+                    
+                    if (val == null)
+                        return null;
                     if (val instanceof CompileError) {
                         return val;
                     }
@@ -408,7 +419,7 @@ public class Function_Call implements Instruction, Expression {
                             int line = ((Atomic)val).getLine();
                             int column = ((Atomic)val).getColumn();
                             
-                            val = env.getSymbol(id);
+                            val = env.getSymbol(id, line);
                             if (val == null)
                                 return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, column);
                         }
@@ -545,7 +556,7 @@ public class Function_Call implements Instruction, Expression {
                 int line = ((Atomic)decider).getLine();
                 int col = ((Atomic)decider).getColumn();
                 
-                decider = env.getSymbol(id);
+                decider = env.getSymbol(id, -1);
                 
                 if (decider == null) {
                     Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col));

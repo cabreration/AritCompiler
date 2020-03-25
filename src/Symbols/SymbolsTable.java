@@ -6,6 +6,7 @@
 package Symbols;
 
 import Expressions.Value;
+import aritcompiler.Singleton;
 import java.util.Hashtable;
 import java.util.Set;
 
@@ -29,7 +30,7 @@ public class SymbolsTable {
         
         Set<String> keys = vader.getSymbols().keySet();
         for (String key : keys) {
-            Symbol sym = vader.getSymbol(key);
+            Symbol sym = vader.getSymbol(key, -1);
             this.symbols.put(key, sym);
         }
     }
@@ -60,20 +61,26 @@ public class SymbolsTable {
         symbols.put(name, symbol);
     }
     
-    public Symbol getSymbol(String name) {
+    public Symbol getSymbol(String name, int line) {
         boolean exists = symbols.containsKey(name);
         if (!exists)
             return null;
         
+        if ( line > -1) {
+            Singleton.addRef(name, line);
+        }
         return symbols.get(name);
     }
     
-    public Value getValue(String name) {
+    public Value getValue(String name, int line) {
         boolean exists = symbols.containsKey(name);
         
         if (!exists)
             return null;
         
+        if ( line > -1) {
+            Singleton.addRef(name, line);
+        }
         return (Value)(symbols.get(name));
     }
     

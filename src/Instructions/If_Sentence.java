@@ -91,7 +91,7 @@ public class If_Sentence implements Instruction {
                 String id = String.valueOf(((Atomic)val).getValue());
                 int line = ((Atomic)val).getLine();
                 int col = ((Atomic)val).getColumn();
-                val = env.getSymbol(id);
+                val = env.getSymbol(id, line);
                 
                 if (val == null) {
                     Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col));

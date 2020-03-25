@@ -39,7 +39,7 @@ public class StructureAsignment implements Instruction {
     
     @Override
     public Object process(SymbolsTable env) {
-        Object sym = env.getSymbol(this.id);
+        Object sym = env.getSymbol(this.id, this.line);
         if (sym == null) {
             Singleton.insertError(new CompileError("Semantico", "La variable '" + this.id + "' no existe en el contexto actual", this.line, this.column));
             return null;
@@ -104,7 +104,7 @@ public class StructureAsignment implements Instruction {
                     String ident = String.valueOf(((Atomic)res).getValue());
                     int line = ((Atomic)res).getLine();
                     int col = ((Atomic)res).getColumn();
-                    res = env.getSymbol(ident);
+                    res = env.getSymbol(ident, line);
                     
                     if (res == null) {
                         Singleton.insertError(new CompileError("Semantico", "La variable '" + ident + "' no existe en el contexto actual", line, col));
@@ -149,7 +149,7 @@ public class StructureAsignment implements Instruction {
                 int line = ((Atomic)res).getLine();
                 int col = ((Atomic)res).getColumn();
                 
-                res = env.getSymbol(id);
+                res = env.getSymbol(id, line);
                 if (res == null)
                     return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col);
             }
@@ -211,7 +211,7 @@ public class StructureAsignment implements Instruction {
                     String ident = String.valueOf(((Atomic)res).getValue());
                     int line = ((Atomic)res).getLine();
                     int col = ((Atomic)res).getColumn();
-                    res = env.getSymbol(ident);
+                    res = env.getSymbol(ident, line);
                     
                     if (res == null) {
                         Singleton.insertError(new CompileError("Semantico", "La variable '" + ident + "' no existe en el contexto actual", line, col));
@@ -307,7 +307,7 @@ public class StructureAsignment implements Instruction {
                     String ident = String.valueOf(((Atomic)res).getValue());
                     int line = ((Atomic)res).getLine();
                     int col = ((Atomic)res).getColumn();
-                    res = env.getSymbol(ident);
+                    res = env.getSymbol(ident, line);
                     
                     if (res == null) {
                         Singleton.insertError(new CompileError("Semantico", "La variable '" + ident + "' no existe en el contexto actual", line, col));

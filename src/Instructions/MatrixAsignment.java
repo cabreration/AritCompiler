@@ -37,7 +37,7 @@ public class MatrixAsignment implements Instruction {
     
     @Override
     public Object process(SymbolsTable env) {
-        Symbol sym = env.getSymbol(this.access.getIdentifier());
+        Symbol sym = env.getSymbol(this.access.getIdentifier(), this.line);
         
         if (sym == null)
             return new CompileError("Semantico", "La variable '" + this.access.getIdentifier() + "' no existe en el contexto actual", this.line, this.column);
@@ -166,7 +166,7 @@ public class MatrixAsignment implements Instruction {
                 int line = ((Atomic)index).getLine();
                 int col = ((Atomic)index).getColumn();
                 
-                index = env.getSymbol(id);
+                index = env.getSymbol(id, line);
                 if (index == null)
                     return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col);
             }

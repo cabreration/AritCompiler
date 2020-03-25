@@ -43,7 +43,7 @@ public class Print implements Instruction {
                 int line = ((Atomic)val).getLine();
                 int column = ((Atomic)val).getColumn();
                 
-                val = env.getValue(id);
+                val = env.getValue(id, line);
                 if (val == null) {
                     CompileError error = new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, column);
                     Singleton.insertError(error);

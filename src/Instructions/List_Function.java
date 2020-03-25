@@ -55,7 +55,7 @@ public class List_Function implements Instruction {
                     int line = ((Atomic)val).getLine();
                     int column = ((Atomic)val).getColumn();
                     
-                    val = env.getSymbol(id);
+                    val = env.getSymbol(id, line);
                     if (val == null) {
                         Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, column));
                         return null;

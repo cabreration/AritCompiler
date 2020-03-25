@@ -120,7 +120,7 @@ public class Plot implements Instruction {
                 int line = ((Atomic)res).getLine();
                 int col = ((Atomic)res).getColumn();
                 
-                res = env.getSymbol(id);
+                res = env.getSymbol(id, line);
                 
                 if (res == null) {
                     Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col));

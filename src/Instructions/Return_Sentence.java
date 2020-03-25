@@ -54,7 +54,7 @@ public class Return_Sentence implements Instruction {
         if (this.processedValue instanceof Atomic) {
             if (((Atomic)this.processedValue).getType() == Atomic.Type.IDENTIFIER) {
                 String id = String.valueOf(((Atomic)this.processedValue).getValue());
-                this.processedValue = env.getSymbol(id);
+                this.processedValue = env.getSymbol(id, this.line);
                 
                 if (this.processedValue == null) {
                     Singleton.insertError(new CompileError("Semantico", "La variable '" +  id + "' no existe en el contexto actual", this.line, this.column));

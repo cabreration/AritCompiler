@@ -49,7 +49,7 @@ public class StructureAccess implements Expression {
     
     @Override
     public Object process(SymbolsTable env) {
-        Object sym = env.getSymbol(this.identifier);
+        Object sym = env.getSymbol(this.identifier, this.line);
         if (sym == null) {
             return new CompileError("Semantico", "La variable '" + this.identifier + "' no existe en el contexto actual", this.line, this.column);
         }
@@ -70,7 +70,7 @@ public class StructureAccess implements Expression {
                     int line = ((Atomic)res).getLine();
                     int col = ((Atomic)res).getColumn();
                 
-                    res = env.getSymbol(id);
+                    res = env.getSymbol(id, this.line);
                     if (res == null)
                         return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col);
                 }

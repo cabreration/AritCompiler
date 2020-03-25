@@ -22,8 +22,6 @@ import java.util.logging.Logger;
 import javax.swing.JFrame;
 import javax.swing.WindowConstants;
 import org.knowm.xchart.BitmapEncoder;
-import org.knowm.xchart.CategoryChart;
-import org.knowm.xchart.CategoryChartBuilder;
 import org.knowm.xchart.SwingWrapper;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYChartBuilder;
@@ -122,7 +120,7 @@ public class Dispersion implements Instruction {
                 int line = ((Atomic)res).getLine();
                 int col = ((Atomic)res).getColumn();
                 
-                res = env.getSymbol(id);
+                res = env.getSymbol(id, line);
                 
                 if (res == null) {
                     Singleton.insertError(new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col));

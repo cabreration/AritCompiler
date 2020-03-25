@@ -12,7 +12,6 @@ import Symbols.List;
 import Symbols.Matrix;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
-import aritcompiler.Singleton;
 import java.util.ArrayList;
 
 /**
@@ -96,7 +95,7 @@ public class Mean implements Instruction {
                 int line = ((Atomic)res).getLine();
                 int column = ((Atomic)res).getColumn();
                 
-                res = env.getSymbol(id);
+                res = env.getSymbol(id, line);
                 if (res == null) {
                     CompileError error = new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, column);
                     return error;

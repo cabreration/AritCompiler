@@ -100,7 +100,7 @@ public class MatrixAccess implements Expression {
 
     @Override
     public Object process(SymbolsTable env) {
-        Symbol sym = env.getSymbol(this.identifier);
+        Symbol sym = env.getSymbol(this.identifier, this.line);
         
         if (sym == null)
             return new CompileError("Semantico", "La variable '" + this.identifier + "' no existe en el contexto actual", this.line, this.column);
@@ -191,7 +191,7 @@ public class MatrixAccess implements Expression {
                 int line = ((Atomic)index).getLine();
                 int col = ((Atomic)index).getColumn();
                 
-                index = env.getSymbol(id);
+                index = env.getSymbol(id, this.line);
                 if (index == null)
                     return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, col);
             }

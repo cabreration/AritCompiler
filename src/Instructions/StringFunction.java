@@ -87,7 +87,7 @@ public class StringFunction implements Instruction {
                 int line = ((Atomic)original).getLine();
                 int column = ((Atomic)original).getColumn();
                 
-                original = env.getSymbol(id);
+                original = env.getSymbol(id, line);
                 if (original == null)
                     return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, column);
             }

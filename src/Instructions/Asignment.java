@@ -8,7 +8,9 @@ package Instructions;
 import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
+import Expressions.Value;
 import Symbols.Symbol;
+import Symbols.SymbolRef;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
 import aritcompiler.Singleton;
@@ -58,10 +60,12 @@ public class Asignment implements Instruction {
         if (exp instanceof Atomic) {
             if (((Atomic)exp).getType() == Atomic.Type.IDENTIFIER) {
                 String id = (String.valueOf((((Atomic)exp).getValue())));
-                exp = env.getSymbol(String.valueOf((((Atomic)exp).getValue())));
+                int line = ((Atomic)exp).getLine();
+                int col = ((Atomic)exp).getColumn();
+                exp = env.getSymbol(String.valueOf((((Atomic)exp).getValue())), this.line);
                 
                 if (exp == null) {
-                    CompileError error = new CompileError("Semantico", "La variable " + id + " no existe", 0, 0);
+                    CompileError error = new CompileError("Semantico", "La variable " + id + " no existe en el contexto actual", line, col);
                     Singleton.insertError(error);
                 }
                 
@@ -70,11 +74,17 @@ public class Asignment implements Instruction {
             }
             
             Vector vector = new Vector((Atomic)exp);
+            String type = String.valueOf(((Value)vector).typeof(env).getValue());
+            SymbolRef ref = new SymbolRef(this.identifier, type, this.line, this.column);
+            Singleton.insertRef(ref);
             env.updateSymbol(this.identifier, vector);
             return null;
         }   
         
         // if it is a vector, array, matrix or list
+        String type = String.valueOf(((Value)exp).typeof(env).getValue());
+        SymbolRef ref = new SymbolRef(this.identifier, type, this.line, this.column);
+        Singleton.insertRef(ref);
         env.updateSymbol(this.identifier, (Symbol)exp);
         return null;
     }
