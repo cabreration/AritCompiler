@@ -12,10 +12,12 @@ import Instructions.Instruction;
 import JFlexNCup.Parser;
 import JFlexNCup.Scanner;
 import Symbols.SymbolsTable;
+import java.awt.Desktop;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -122,12 +124,22 @@ public class TextEditor extends javax.swing.JFrame {
         jMenu2.setText("Reportes");
 
         jMenuItem4.setText("Reporte de Errores");
+        jMenuItem4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem4ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem4);
 
         jMenuItem5.setText("Reporte de TS");
         jMenu2.add(jMenuItem5);
 
         jMenuItem6.setText("Reporte AST");
+        jMenuItem6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem6ActionPerformed(evt);
+            }
+        });
         jMenu2.add(jMenuItem6);
 
         jMenuBar1.add(jMenu2);
@@ -389,6 +401,7 @@ public class TextEditor extends javax.swing.JFrame {
             }
             String output = Singleton.print();
             this.console.setText(output);
+            Singleton.reportErrors();
         }
     }
     
@@ -396,6 +409,37 @@ public class TextEditor extends javax.swing.JFrame {
         // Ejecucion javacc
         System.out.println("La ejecucion con javacc no es soportada todavia");
     }//GEN-LAST:event_jMenuItem7ActionPerformed
+
+    private void openTree(String type) throws IOException {
+        String path = "./reports/tree/" + type + ".png";
+        File file = new File(path);
+        Desktop dt = Desktop.getDesktop();
+        dt.open(file);
+    }
+    
+    private void jMenuItem6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem6ActionPerformed
+        // TODO add your handling code here:
+        try {
+            openTree("cupTree");
+            //openTree("javaccTree");
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jMenuItem6ActionPerformed
+
+    private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
+        // Reporte de errores
+        try {
+            String path = "./reports/errors/errors.html";
+            File file = new File(path);
+            Desktop dt = Desktop.getDesktop();
+            dt.open(file);
+        }
+        catch(Exception e) {
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
 
     /**
      * @param args the command line arguments

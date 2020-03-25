@@ -336,9 +336,17 @@ public class Atomic implements Expression, Value {
                     r = o * t;
                     break;
                 case "/":
+                    if (t == 0) {
+                        Singleton.insertError(new CompileError("Semantico", "No es posible dividor sobre 0", this.line, this.column));
+                        return null;
+                    }
                     r = o / t;
                     break;
                 case "%":
+                    if (t == 0) {
+                        Singleton.insertError(new CompileError("Semantico", "No es posible dividor sobre 0", this.line, this.column));
+                        return null;
+                    }
                     r = o % t;
                     break;
             }
@@ -364,9 +372,17 @@ public class Atomic implements Expression, Value {
                     r = first * second;
                     break;
                 case "/":
+                    if (second == 0) {
+                        Singleton.insertError(new CompileError("Semantico", "No es posible dividor sobre 0", this.line, this.column));
+                        return null;
+                    }
                     r = first / second;
                     break;
                 case "%":
+                    if (second == 0) {
+                        Singleton.insertError(new CompileError("Semantico", "No es posible dividor sobre 0", this.line, this.column));
+                        return null;
+                    }
                     r = first % second;
                     break;
                 case "^":

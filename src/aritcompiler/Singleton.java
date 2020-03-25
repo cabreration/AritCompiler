@@ -7,6 +7,8 @@ package aritcompiler;
 
 import APIServices.CompileError;
 import Symbols.Function;
+import java.io.File;
+import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import javax.swing.JFrame;
@@ -122,5 +124,58 @@ public class Singleton {
             JFrame frame = wrapper.displayChart();
             frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         }
+    }
+    
+    public static void reportErrors() {
+        StringBuilder builder = new StringBuilder();
+        builder.append("<!DOCTYPE html>\n");
+        builder.append("\t<html>\n");
+        builder.append("\t\t<head>\n");
+        builder.append("<link rel=\"stylesheet\" href=\"https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css\" integrity=\"sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh\" crossorigin=\"anonymous\">");
+        builder.append("\t\n</head>\n");
+        builder.append("\t\t<body>\n");
+        // Build the table here
+        builder.append("\t\t\t<table class=\"table table-striped table-dark\"\n");
+        builder.append("\t\t\t\t<thead>\n");
+        builder.append("\t\t\t\t\t<th scope=\"col\">#</th>\n");
+        builder.append("\t\t\t\t\t<th scope=\"col\">Tipo</th>\n");
+        builder.append("\t\t\t\t\t<th scope=\"col\">Descripcion</th>\n");
+        builder.append("\t\t\t\t\t<th scope=\"col\">Fila</th>\n");
+        builder.append("\t\t\t\t\t<th scope=\"col\">Columna</th>\n");
+        builder.append("\t\t\t\t</thead>\n");
+        builder.append("\t\t\t\t<tbody>\n");
+        builder.append(buildRows());
+        builder.append("\t\t\t\t</tbody>\n");
+        builder.append("\t\t\t</table>\n");
+        // Build table here
+        builder.append("\t\t</body>\n");
+        builder.append("\t</html>\n");
+        
+        File file = new File("./reports/errors/errors.html");
+        FileWriter writer = null;
+        try {
+            writer = new FileWriter(file);
+            writer.write(builder.toString());
+            writer.close();
+        }
+        catch(Exception e) {
+            System.err.println(e.getMessage());
+        }
+    }
+    
+    private static String buildRows() {
+        StringBuilder builder = new StringBuilder();
+        int i = 1;
+        for (CompileError error: errors) {
+            builder.append("\t\t\t\t\t<tr>\n");
+            builder.append("\t\t\t\t\t\t<th scope=\"row\">" + i + "</th>\n");
+            builder.append("\t\t\t\t\t\t<td scope=\"row\">" + error.getType() + "</td>\n");
+            builder.append("\t\t\t\t\t\t<td scope=\"row\">" + error.getDescription() + "</td>\n");
+            builder.append("\t\t\t\t\t\t<td scope=\"row\">" + error.getRow() + "</td>\n");
+            builder.append("\t\t\t\t\t\t<td scope=\"row\">" + error.getColumn() + "</td>\n");
+            builder.append("\t\t\t\t\t</tr>\n");
+            i++;
+        }
+        return builder.toString();
     }
 }
