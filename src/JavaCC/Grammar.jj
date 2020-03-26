@@ -91,7 +91,8 @@ TOKEN: {
 TOKEN: {
         <#DIGIT: ["0"-"9"] >
     |   <FRACTIONAL_DIGITS: "." ( <DIGIT> )+ >
-    |   <NUMBER_VALUE: ( <DIGIT> )+ | ( <DIGIT> )+ <FRACTIONAL_DIGITS> >
+    |   <NUMERIC_VALUE: ( <DIGIT> )+ <FRACTIONAL_DIGITS> >
+    |   <INTEGER_VALUE: ( <DIGIT> )+ >
     |   <STRING_VALUE: "\"" (~["\""])* "\"" >
     |   <#LETTER: ["a" - "z", "A" - "Z", "ñ", "Ñ"] >
     |   <IDENTIFIER: <LETTER> ( <LETTER> | <DIGIT> | "." | "_")* | "." (( <LETTER> | "." | "_" ) ( <LETTER> | "." | "_" | <DIGIT> )*)? >
@@ -116,6 +117,7 @@ Node Sentences_Block() :
 Node Sentence() :
 { Node instruction; }
 {
+        LOOKAHEAD(2)
         instruction = Asignment() ( <SEMICOLON> )? { return instruction; }
     |
         instruction = If() { return instruction; }
@@ -124,7 +126,18 @@ Node Sentence() :
     |
         instruction = While() { return instruction; }
     |
-        instruction = Do_While() { return instruction; }
+        instruction = Do_While() ( <SEMICOLON> )? { return instruction; }
+    | 
+        instruction = For() { return instruction; }
+    | 
+        instruction = Return() ( <SEMICOLON> )? { return instruction; }
+    |
+        instruction = Break() ( <SEMICOLON> )? { return instruction; }
+    |
+        instruction = Continue() ( <SEMICOLON> )? { return instruction; }
+    |
+        LOOKAHEAD(2)
+        instruction = Function_Call() ( <SEMICOLON> )? { return instruction; }
 }
 
 Node First_Expression() : 
@@ -335,25 +348,39 @@ Node Value() :
     | 
         tok = <TRUE_VALUE>                                          { return new Node("bool value", tok.beginLine, tok.beginColumn, true); }
     |
-        tok = <NUMBER_VALUE>                                        { return new Node("number value", tok.beginLine, tok.beginColumn, Double.parseDouble(tok.image)); }
+        tok = <NUMERIC_VALUE>                                       { return new Node("numeric value", tok.beginLine, tok.beginColumn, Double.parseDouble(tok.image)); }
     |
+        tok = <INTEGER_VALUE>                                       { return new Node("integer value", tok.beginLine, tok.beginColumn, Integer.parseInt(tok.image)); }
+    | 
         tok = <STRING_VALUE>                                        { return new Node("string value", tok.beginLine, tok.beginColumn, tok.image); }
     |
-        tok = <IDENTIFIER>                                          { return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image); }
+        LOOKAHEAD(2)
+        aux = Function_Call()                                       { return aux; }
     |
         <OPENING_P> aux = First_Expression() <CLOSING_P>            { return aux; }
+    |
+        tok = <IDENTIFIER>                                          { return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image); }
 }
 
 Node Asignment() : 
-{ Node previous; Token id; Token v;}
+{ Node previous; Token id; Token v; Node vec; }
 {
-    id = <IDENTIFIER> v = <VALUE_ASIGNMENT> previous = Asignment_Options()  {   
-                                                                                Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image);
-                                                                                previous.addChildrenAt(0, identifier);
-                                                                                previous.setRow(v.beginLine);
-                                                                                previous.setColumn(v.beginColumn);
-                                                                                return previous; 
-                                                                            }
+        LOOKAHEAD(2)
+        id = <IDENTIFIER> v = <VALUE_ASIGNMENT> previous = Asignment_Options()      {   
+                                                                                        Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                                                        previous.addChildrenAt(0, identifier);
+                                                                                        previous.setRow(v.beginLine);
+                                                                                        previous.setColumn(v.beginColumn);
+                                                                                        return previous; 
+                                                                                    }
+    |
+        LOOKAHEAD(2)
+        vec = Vector_Access() v = <VALUE_ASIGNMENT> previous = First_Expression()   {   
+                                                                                        Node as = new Node("structure asignment");
+                                                                                        as.addChildren(vec);
+                                                                                        as.addChildren(previous);
+                                                                                        return as;
+                                                                                    }
 }
 
 Node Asignment_Options() :
@@ -457,7 +484,7 @@ Node Else() :
                                                                         return elseNode;
                                                                     }
     |
-        LOOKAHEAD(1)
+        LOOKAHEAD(2)
         e = <ELSE_KEYWORD> ifNode = If()                            {
                                                                         Node elseNode = new Node("else sentence", e.beginLine, e.beginColumn, null);
                                                                         for (Node child : ifNode.getChildren()) 
@@ -549,5 +576,137 @@ Node Do_While() :
                                                             doNode.addChildren(condition);
                                                             return doNode;
                                                         }
+}
+
+Node For() : 
+{ Token f; Token id; Node exp; Node actions; }
+{
+    f = <FOR_KEYWORD> <OPENING_P>
+    id = <IDENTIFIER> <IN_KEYWORD>
+    exp = First_Expression() <CLOSING_P>
+    actions = Sentences_Block()                         {
+                                                            Node forNode = new Node("for sentence", f.beginLine, f.beginColumn, null);
+                                                            Node idNode = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                            forNode.addChildren(idNode);
+                                                            Node condition = new Node("condition");
+                                                            condition.addChildren(exp);
+                                                            forNode.addChildren(condition);
+                                                            forNode.addChildren(actions);
+                                                            return forNode;
+                                                        }
+}
+
+
+Node Return() : 
+{ Token r; boolean flag = false; Node exp = null; }
+{
+    r = <RETURN_KEYWORD> 
+    ( <OPENING_P> ( exp = First_Expression() { flag = true; } )? <CLOSING_P> )?     {
+                                                                                        Node ret = new Node("return sentence", r.beginLine, r.beginColumn, null);
+                                                                                        if (flag) {
+                                                                                            ret.addChildren(exp);
+                                                                                        }
+                                                                                        return ret;
+                                                                                    }
+}
+
+Node Break() : 
+{ Token b; }
+{
+    b = <BREAK_KEYWORD>     { return new Node("break sentence", b.beginLine, b.beginColumn, null); }
+}
+
+Node Continue() :
+{ Token c; }
+{
+    c = <CONTINUE_KEYWORD>  { return new Node("continue sentence", c.beginLine, c.beginColumn, null); }
+}
+
+Node Function_Call() : 
+{ Token id; boolean flag = false; Node param; Node params = new Node("params"); }
+{
+    id = <IDENTIFIER> <OPENING_P> 
+    ( param = Params() { params.addChildren(param); flag = true; } ( <COMMA> param = Params() { params.addChildren(param); } )* )?
+    <CLOSING_P>
+                                                                        {
+                                                                            Node call = new Node("call");
+                                                                            Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                                            call.addChildren(identifier);
+                                                                            if (flag)
+                                                                                call.addChildren(params);
+                                                                            return call;
+                                                                        }
+}
+
+Node Params() : 
+{ Token d; Node exp; }
+{
+        d = <DEFAULT_KEYWORD>           { return new Node("default", d.beginLine, d.beginColumn, null); }       
+    |
+        exp = First_Expression()        { return exp; }
+}
+
+Node Vector_Access() : 
+{ Token id; Node addresses = new Node("addresses"); Node address; }
+{
+    id = <IDENTIFIER> 
+    ( address = Address() { addresses.addChildren(address); } )+                {
+                                                                                    Node res = new Node("structure access");
+                                                                                    Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                                                    res.addChildren(identifier);
+                                                                                    res.addChildren(addresses);
+                                                                                    return res;
+                                                                                }
+}
+
+Node Address() : 
+{ Node exp; boolean one = false; }
+{
+    <OPENING_B> ( exp = First_Expression() { one = true; }
+    | <OPENING_B> exp = First_Expression() <CLOSING_B> )
+    <CLOSING_B>                                                                 {
+                                                                                    if (one) {
+                                                                                        Node address = new Node("address", 0, 0, "singleB");
+                                                                                        address.addChildren(exp);
+                                                                                        return address;
+                                                                                    }
+                                                                                    else {
+                                                                                        Node address = new Node("address", 0, 0, "doubleB");
+                                                                                        address.addChildren(exp);
+                                                                                        return address;
+                                                                                    }
+                                                                                }
+}
+
+Node Matrix_Access() : 
+{ Token id; Node mat; boolean flag = false; Node adds = new Node("addresses"); Node aux; }
+{
+    id = <IDENTIFIER> mat = Matrix_Address()
+    ( <OPENING_B> aux = First_Expression() <CLOSING_B> { adds.addChildren(aux); flag = true; } )*
+}
+
+Node Matrix_Address() : 
+{ Node exp1 = null; Node exp2 = null; int type = 0; }
+{
+    <OPENING_B> ( exp1 = First_Expression() <COMMA> { type = 2; }
+    ( exp2 = First_Expression() { type = 1; } )? 
+    | <COMMA> exp2 = First_Expression() { type = 3; } ) <CLOSING_B>             {
+                                                                                    if (type == 1) {
+                                                                                        Node address = new Node("matrix_address", 0, 0, "both");
+                                                                                        address.addChildren(exp1);
+                                                                                        address.addChildren(exp2);
+                                                                                        return address;
+                                                                                    }
+                                                                                    else if (type == 2) {
+                                                                                        Node address = new Node("matrix_address", 0, 0, "left");
+                                                                                        address.addChildren(exp1);
+                                                                                        return address;
+                                                                                    }
+                                                                                    else if (type == 3) {
+                                                                                        Node address = new Node("matrix_address", 0, 0, "right");
+                                                                                        address.addChildren(exp2);
+                                                                                        return address;
+                                                                                    }
+                                                                                }
 }
 

@@ -421,7 +421,7 @@ EXPRESSIONS_LIST ::= EXPRESSIONS_LIST:list comma PARAMS:param                   
                                                                                 :}
 ;
 
-PARAMS ::= defaultKeyword:def               {: System.out.println("default"); RESULT = new Node("default", defright, defleft, null); :}
+PARAMS ::= defaultKeyword:def               {: RESULT = new Node("default", defright, defleft, null); :}
 
     | LONE_EXPRESSION:exp                {: RESULT = exp; :}
 ;
@@ -529,6 +529,8 @@ FOR_SENTENCE ::= forKeyword:f openingPar id:id inKeyword LONE_EXPRESSION:exp clo
 
 RETURN_SENTENCE ::= returnKeyword:r                                               {: RESULT = new Node("return sentence", rright, rleft, null); :}
 
+    | returnKeyword:r openingPar closingPar                                       {: RESULT = new Node("return sentence", rright, rleft, null); :}
+
     | returnKeyword:r openingPar LONE_EXPRESSION:exp closingPar                   {: Node retNode = new Node("return sentence", rright, rleft, null);
                                                                                      retNode.addChildren(exp);
                                                                                      RESULT = retNode;
@@ -578,14 +580,14 @@ MATRIX_ACCESS ::= id:id MATRIX_ADDRESS:mat                      {: Node access =
                                                                    access.addChildren(mat);
                                                                    RESULT = access;
                                                                 :}
-    
+
     | id:id MATRIX_ADDRESS:mat VECTORS:vecs                     {: Node access = new Node("matrix access");
                                                                    Node ident = new Node("identifier", idright, idleft, String.valueOf(id));
                                                                    access.addChildren(ident);
                                                                    access.addChildren(mat);
                                                                    access.addChildren(vecs);
                                                                    RESULT = access;
-                                                                :}  
+                                                                :}
 ;
 
 MATRIX_ADDRESS ::= openingBracket LONE_EXPRESSION:exp1 comma:c LONE_EXPRESSION:exp2 closingBracket              {: Node address = new Node("matrix_address", 0, 0, "both");

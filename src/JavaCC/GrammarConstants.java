@@ -101,13 +101,15 @@ public interface GrammarConstants {
   /** RegularExpression Id. */
   int FRACTIONAL_DIGITS = 54;
   /** RegularExpression Id. */
-  int NUMBER_VALUE = 55;
+  int NUMERIC_VALUE = 55;
   /** RegularExpression Id. */
-  int STRING_VALUE = 56;
+  int INTEGER_VALUE = 56;
   /** RegularExpression Id. */
-  int LETTER = 57;
+  int STRING_VALUE = 57;
   /** RegularExpression Id. */
-  int IDENTIFIER = 58;
+  int LETTER = 58;
+  /** RegularExpression Id. */
+  int IDENTIFIER = 59;
 
   /** Lexical state. */
   int DEFAULT = 0;
@@ -171,7 +173,8 @@ public interface GrammarConstants {
     "\"true\"",
     "<DIGIT>",
     "<FRACTIONAL_DIGITS>",
-    "<NUMBER_VALUE>",
+    "<NUMERIC_VALUE>",
+    "<INTEGER_VALUE>",
     "<STRING_VALUE>",
     "<LETTER>",
     "<IDENTIFIER>",
