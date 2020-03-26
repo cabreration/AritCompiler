@@ -53,6 +53,14 @@ public class Node {
     public int getColumn() {
         return column;
     }
+
+    public void setRow(int row) {
+        this.row = row;
+    }
+
+    public void setColumn(int column) {
+        this.column = column;
+    }
     
     public Node getChildAt(int i) {
         return children.get(i);

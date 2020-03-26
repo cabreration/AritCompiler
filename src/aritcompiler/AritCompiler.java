@@ -31,21 +31,30 @@ public class AritCompiler {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        TextEditor txtE = new TextEditor();
-        txtE.setVisible(true);
+        //TextEditor txtE = new TextEditor();
+        //txtE.setVisible(true);
+        javaccTry();
     }
     
     public static void javaccTry() {
         
+        Node root = null;
         try {
             String name = "C:\\Users\\jacab\\Documents\\Compi 2\\R-it\\Pruebas\\tree.arit";
             Grammar parser = new Grammar(new BufferedReader(new FileReader(name)));
-            Node root = parser.Root();
-            TreePrinter.printTree(root, "javaccTree");
+            root = parser.Root();
+            if (root == null) {
+                System.err.println("Raiz nula");
+                return;
+            }
+            
         }
         catch (Exception e) {
             System.err.println(e.getMessage());
         }
+        
+        if (root != null)
+        TreePrinter.printTree(root, "javaccTree");
     }
     
 }

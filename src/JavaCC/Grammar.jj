@@ -115,7 +115,9 @@ Node Sentences_Block() :
 Node Sentence() :
 { Node instruction; }
 {
-    instruction = Asignment() ( <SEMICOLON> )? { return instruction; }
+        instruction = Asignment() ( <SEMICOLON> )? { return instruction; }
+    |
+        instruction = If() { return instruction; }
 }
 
 Node First_Expression() : 
@@ -335,41 +337,94 @@ Node Value() :
         <OPENING_P> aux = First_Expression() <CLOSING_P>            { return aux; }
 }
 
-Node Asignment() :
-{ Token id;  Node exp; Node param; Node params = new Node("parameters"); Node ident; Node res; Node sent; }
+Node Asignment() : 
+{ Node previous; Token id; Token v;}
 {
-        id = <IDENTIFIER> <VALUE_ASIGNMENT> exp = First_Expression()            { 
-                                                                                    res = new Node("asignment");
-                                                                                    ident = new Node("identifier", id.beginLine, id.beginColumn, id.image);
-                                                                                    res.addChildren(ident);
-                                                                                    res.addChildren(exp);
+    id = <IDENTIFIER> v = <VALUE_ASIGNMENT> previous = Asignment_Options()  {   
+                                                                                Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                                                previous.addChildrenAt(0, identifier);
+                                                                                previous.setRow(v.beginLine);
+                                                                                previous.setColumn(v.beginColumn);
+                                                                                return previous; 
+                                                                            }
+}
+
+Node Asignment_Options() :
+{ Node exp; Node param = null; Node params = null; Node sent; boolean flag = false; }
+{
+        LOOKAHEAD(4) 
+        <OPENING_P> ( param = Parameter() { flag = true; })? 
+        <CLOSING_P> <ARROW> sent = Sentences_Block()                            { 
+                                                                                    Node res = new Node("asignment");
+                                                                                    Node arr = new Node("arrow def");
+                                                                                    if (flag) {
+                                                                                        params = new Node("parameters");
+                                                                                        params.addChildren(param);
+                                                                                        arr.addChildren(params);
+                                                                                    }
+                                                                                    arr.addChildren(sent);
+                                                                                    res.addChildren(arr);
                                                                                     return res;
                                                                                 }
     |
         LOOKAHEAD(3)
-        id = <IDENTIFIER> <VALUE_ASIGNMENT> <FUNCTION_KEYWORD>
-         <OPENING_P> ( param = Parameter() { params.addChildren(param); } )* 
-         <CLOSING_P> sent = Sentences_Block()                                   {
-                                                                                    res = new Node("function");
-                                                                                    ident = new Node("identifier", id.beginLine, id.beginColumn, id.image);
-                                                                                    res.addChildren(ident);
-                                                                                    res.addChildren(params);
+        <OPENING_P> param = Parameter() <COMMA>
+        params = Parameters_List() <CLOSING_P> 
+        <ARROW> sent = Sentences_Block()                                        {
+                                                                                    Node res = new Node("arrow function");
+                                                                                    Node arr = new Node("arrow def");
+                                                                                    params.addChildrenAt(0, param);
+                                                                                    arr.addChildren(params);
+                                                                                    arr.addChildren(sent);
+                                                                                    res.addChildren(arr);
+                                                                                    return res;
+                                                                                }
+    |
+        <FUNCTION_KEYWORD> <OPENING_P>
+        ( params = Parameters_List() )? 
+        <CLOSING_P> sent = Sentences_Block()                                    {
+                                                                                    Node res = new Node("function");
+                                                                                    if (params != null) 
+                                                                                        res.addChildren(params);
                                                                                     res.addChildren(sent);
+                                                                                    return res;
+                                                                                }
+    |
+        exp = First_Expression()                                                { 
+                                                                                    res = new Node("asignment");
+                                                                                    res.addChildren(exp);
                                                                                     return res;
                                                                                 }
 }
 
-Node Parameter() : 
-{ Token tok; Node res; Node id; Node exp; }
+
+
+Node Parameters_List() : 
+{ Node params = new Node("parameters"); Node aux;}
 {
-        tok = <IDENTIFIER>                                                      { return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image); }
-    |
-        LOOKAHEAD(2)
-        tok = <IDENTIFIER> <VALUE_ASIGNMENT> exp = First_Expression()           { 
-                                                                                    res = new Node("asignment"); 
-                                                                                    id = new Node("identifier", tok.beginLine, tok.beginColumn, tok.image);
-                                                                                    res.addChildren(id);
-                                                                                    res.addChildren(exp);
-                                                                                    return res;
-                                                                                }
+    aux = Parameter() { params.addChildren(aux); } ( <COMMA> aux = Parameter() { params.addChildren(aux); } )* { return params;}            
+}
+
+Node Parameter() : 
+{ Token tok; Node res; Node id; Node exp = null; boolean flag = false;}
+{
+        tok = <IDENTIFIER> ( <VALUE_ASIGNMENT> exp = First_Expression() { flag = true; } )? 
+        { 
+            if (!flag) {
+                return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image); 
+            }
+            else {
+                res = new Node("asignment");
+                id = new Node("identifier", tok.beginLine, tok.beginColumn, tok.image);
+                res.addChildren(id);
+                res.addChildren(exp);
+                return res;
+            }
+        }
+}
+
+Node If() :
+{}
+{
+    <IF_KEYWORD> { return null; }
 }
