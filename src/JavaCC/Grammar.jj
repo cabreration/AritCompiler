@@ -22,7 +22,8 @@ SKIP : {
     |   "\f"
     |   "\n"
     |   < "#" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
-    |   "#*": MULTILINE_COMMENT
+    |   <"#*" (~["*"])* "*" (~["*", "#"] (~["*"])* "*" | "*")* "#">
+    //|   "#*": MULTILINE_COMMENT
 }
 
 /* comments that take more than one line */
@@ -118,6 +119,12 @@ Node Sentence() :
         instruction = Asignment() ( <SEMICOLON> )? { return instruction; }
     |
         instruction = If() { return instruction; }
+    |
+        instruction = Switch() { return instruction; }
+    |
+        instruction = While() { return instruction; }
+    |
+        instruction = Do_While() { return instruction; }
 }
 
 Node First_Expression() : 
@@ -424,7 +431,123 @@ Node Parameter() :
 }
 
 Node If() :
-{}
+{ Token i; Node elseNode = null; boolean flag = false; Node sentences; Node condition; }
 {
-    <IF_KEYWORD> { return null; }
+    i = <IF_KEYWORD> <OPENING_P> condition = First_Expression()
+    <CLOSING_P> sentences = Sentences_Block()
+    ( elseNode = Else() { flag = true; } )?                         { 
+                                                                        Node ifNode = new Node("if sentence", i.beginLine, i.beginColumn, null);
+                                                                        Node cond = new Node("condition");
+                                                                        cond.addChildren(condition);
+                                                                        ifNode.addChildren(cond);
+                                                                        ifNode.addChildren(sentences);
+                                                                        if (flag) 
+                                                                            ifNode.addChildren(elseNode);
+                                                                        return ifNode;
+                                                                    }
 }
+
+Node Else() :
+{ Token e; Node ifNode = null; Node sentences = null;}
+{
+        LOOKAHEAD(2)
+        e = <ELSE_KEYWORD> sentences = Sentences_Block()            { 
+                                                                        Node elseNode = new Node("else sentence", e.beginLine, e.beginColumn, null); 
+                                                                        elseNode.addChildren(sentences);
+                                                                        return elseNode;
+                                                                    }
+    |
+        LOOKAHEAD(1)
+        e = <ELSE_KEYWORD> ifNode = If()                            {
+                                                                        Node elseNode = new Node("else sentence", e.beginLine, e.beginColumn, null);
+                                                                        for (Node child : ifNode.getChildren()) 
+                                                                            elseNode.addChildren(child);
+                                                                        return elseNode;
+                                                                    }
+}
+
+Node Switch() : 
+{Token s; Node val; Node body; }
+{
+    s = <SWITCH_KEYWORD> <OPENING_P> val = First_Expression()
+    <CLOSING_P> <OPENING_C> body = Switch_Body() <CLOSING_C>                    {
+                                                                                    Node switchNode = new Node("switch sentence", s.beginLine, s.beginColumn, null);
+                                                                                    Node condition = new Node("condition");
+                                                                                    condition.addChildren(val);
+                                                                                    switchNode.addChildren(condition);
+                                                                                    switchNode.addChildren(body);
+                                                                                    return switchNode;
+                                                                                }
+}
+
+Node Switch_Body() : 
+{ Node cases; Node def = null; boolean flag = false; }
+{
+    cases = Cases_List() ( def = Default_Case() { flag = true; } )?             {
+                                                                                    if (flag)
+                                                                                        cases.addChildren(def);
+                                                                                    return cases;
+                                                                                }
+}
+
+Node Cases_List() :
+{ Node casesNode = new Node("cases_list"); Node single; }
+{
+    ( single = Single_Case() { casesNode.addChildren(single); } )+              { return casesNode; }
+}
+
+Node Single_Case() :
+{ Token c; Node exp; Node sentences = new Node("sentences"); Node sentence; }
+{
+    c = <CASE_KEYWORD> exp = First_Expression() <COLON>
+    ( sentence = Sentence() { sentences.addChildren(sentence); } )*             {
+                                                                                    Node single = new Node("case", c.beginLine, c.beginColumn, null);
+                                                                                    Node condition = new Node("value");
+                                                                                    condition.addChildren(exp);
+                                                                                    single.addChildren(condition);
+                                                                                    single.addChildren(sentences);
+                                                                                    return single;
+                                                                                }
+}
+
+Node Default_Case() : 
+{ Token d; Node sentences = new Node("sentences"); Node sentence; }
+{
+    d = <DEFAULT_KEYWORD> <COLON>
+    ( sentence = Sentence() { sentences.addChildren(sentence); } )*             {
+                                                                                    Node defaultNode = new Node("default", d.beginLine, d.beginColumn, null);
+                                                                                    defaultNode.addChildren(sentences);
+                                                                                    return defaultNode;
+                                                                                }
+}
+
+Node While() : 
+{ Token w; Node exp; Node actions; }
+{
+    w = <WHILE_KEYWORD> <OPENING_P>
+    exp = First_Expression() <CLOSING_P>
+    actions = Sentences_Block()                     {
+                                                        Node whileNode = new Node("while sentence", w.beginLine, w.beginColumn, null);
+                                                        Node condition = new Node("condition");
+                                                        condition.addChildren(exp);
+                                                        whileNode.addChildren(condition);
+                                                        whileNode.addChildren(actions);
+                                                        return whileNode;
+                                                    }
+}
+
+Node Do_While() :
+{ Token d; Node actions; Node exp; }
+{
+    d = <DO_KEYWORD> actions = Sentences_Block()
+    <WHILE_KEYWORD> <OPENING_P> 
+    exp = First_Expression() <CLOSING_P>                {
+                                                            Node doNode = new Node("do while sentence", d.beginLine, d.beginColumn, null);
+                                                            Node condition = new Node("condition");
+                                                            condition.addChildren(exp);
+                                                            doNode.addChildren(actions);
+                                                            doNode.addChildren(condition);
+                                                            return doNode;
+                                                        }
+}
+

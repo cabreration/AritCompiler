@@ -123,7 +123,7 @@ public interface GrammarConstants {
     "\"\\f\"",
     "\"\\n\"",
     "<token of kind 6>",
-    "\"#*\"",
+    "<token of kind 7>",
     "\"*#\"",
     "<token of kind 9>",
     "\"%%\"",
