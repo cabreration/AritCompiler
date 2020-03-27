@@ -54,6 +54,9 @@ public class SymbolsTable {
     
     public void updateSymbol(String name, Symbol symbol) {
         
+        if (symbol == null)
+            return;
+        
         boolean exists = symbols.containsKey(name);
         if (exists)
             symbols.remove(name);

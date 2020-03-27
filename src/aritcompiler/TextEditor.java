@@ -471,7 +471,7 @@ public class TextEditor extends javax.swing.JFrame {
         // TODO add your handling code here:
         try {
             openTree("cupTree");
-            //openTree("javaccTree");
+            openTree("javaccTree");
         }
         catch(Exception e) {
             e.printStackTrace();

@@ -6,6 +6,7 @@
 package Expressions;
 
 import APIServices.CompileError;
+import Symbols.Symbol;
 import Symbols.SymbolsTable;
 import Symbols.Vector;
 import java.util.ArrayList;
@@ -139,7 +140,7 @@ public class Binary implements Expression {
                 break;
                 
             case ASIGNMENT:
-                /* ESTE ES DIFERENTE A TODOS LOS DEMAS */
+                res = asign(op1, op2, env);
                 break;
                 
             case EQUALS:
@@ -182,5 +183,39 @@ public class Binary implements Expression {
             }
         }
         return res;
+    }
+    
+    private Object asign(Value op1, Value op2, SymbolsTable env) {
+        // first one needs to be an id
+        if (!(op1 instanceof Atomic))
+            return new CompileError("Semantico", "No es posible asignar un valor otro valor", this.line, this.column);
+        
+        if (((Atomic)op1).getType() != Atomic.Type.IDENTIFIER)
+            return new CompileError("Semantico", "No es posible asignar un valor a otro valor", this.line, this.column);
+        
+        String id = String.valueOf(((Atomic)op1).getValue());
+        
+        Symbol sym;
+        if (op2 instanceof Atomic) {
+            if (((Atomic)op1).getType() == Atomic.Type.IDENTIFIER) {
+                String name = String.valueOf(((Atomic)op2).getValue());
+                int line = ((Atomic)op2).getLine();
+                int col = ((Atomic)op2).getColumn();
+                
+                sym = env.getSymbol(name, line);
+                if (sym == null)
+                    return new CompileError("Semantico", "La variable '" + name + "' no existe en el contexto actual", line, col);
+            }
+            else {
+                sym = new Vector(((Atomic)op2).clonation());
+                env.updateSymbol(id, sym);
+                return op2;
+            }
+        }
+        else {
+            sym = (Symbol)op2;
+        }
+        env.updateSymbol(id, sym);
+        return sym;
     }
 }
