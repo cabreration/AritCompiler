@@ -165,7 +165,7 @@ public class Grammar implements GrammarConstants {
 
   final public Node First_Expression() throws ParseException {
   Node exp1; Node exp;
-    exp1 = Third_Expression();
+    exp1 = Second_Expression();
     exp = PFirst_Expression(exp1);
       {if (true) return exp;}
     throw new Error("Missing return statement in function");
@@ -176,7 +176,7 @@ public class Grammar implements GrammarConstants {
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case VALUE_ASIGNMENT:
       v = jj_consume_token(VALUE_ASIGNMENT);
-      exp1 = Third_Expression();
+      exp1 = Second_Expression();
                                                         bin = new Node("binary expression");
                                                         op = new Node("=", v.beginLine, v.beginColumn, null);
                                                         op.addChildren(inherited);
@@ -185,6 +185,41 @@ public class Grammar implements GrammarConstants {
       break;
     default:
       jj_la1[9] = jj_gen;
+          {if (true) return inherited;}
+    }
+    throw new Error("Missing return statement in function");
+  }
+
+  final public Node Second_Expression() throws ParseException {
+  Node exp1; Node exp2;
+    exp1 = Third_Expression();
+    exp2 = PSecond_Expression(exp1);
+                                                                 {if (true) return exp2;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public Node PSecond_Expression(Node inherited) throws ParseException {
+  Node exp1; Node exp2; Node op1; Node op2; Token v1; Token v2; Node res1; Node res2; Node ter;
+    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+    case TERNARY:
+      v1 = jj_consume_token(TERNARY);
+      exp1 = Third_Expression();
+                                                            ter = new Node("ternary expression");
+                                                            op1 = new Node("?", v1.beginLine, v1.beginColumn, null);
+                                                            op1.addChildren(inherited);
+      res1 = PSecond_Expression(exp1);
+      v2 = jj_consume_token(COLON);
+      exp2 = Third_Expression();
+                                                            op2 = new Node(":", v2.beginLine, v2.beginColumn, null);
+                                                            op2.addChildren(res1);
+      res2 = PSecond_Expression(exp2);
+                                                            op2.addChildren(res2);
+                                                            ter.addChildren(op1);
+                                                            ter.addChildren(op2);
+                                                            {if (true) return ter;}
+      break;
+    default:
+      jj_la1[10] = jj_gen;
           {if (true) return inherited;}
     }
     throw new Error("Missing return statement in function");
@@ -211,7 +246,7 @@ public class Grammar implements GrammarConstants {
                                                                                 op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
       break;
     default:
-      jj_la1[10] = jj_gen;
+      jj_la1[11] = jj_gen;
           {if (true) return inherited;}
     }
     throw new Error("Missing return statement in function");
@@ -238,7 +273,7 @@ public class Grammar implements GrammarConstants {
                                                                              op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
       break;
     default:
-      jj_la1[11] = jj_gen;
+      jj_la1[12] = jj_gen;
           {if (true) return inherited;}
     }
     throw new Error("Missing return statement in function");
@@ -274,7 +309,7 @@ public class Grammar implements GrammarConstants {
                                                                                         op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
       break;
     default:
-      jj_la1[12] = jj_gen;
+      jj_la1[13] = jj_gen;
           {if (true) return inherited;}
     }
     throw new Error("Missing return statement in function");
@@ -328,7 +363,7 @@ public class Grammar implements GrammarConstants {
                                                                                                 op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
       break;
     default:
-      jj_la1[13] = jj_gen;
+      jj_la1[14] = jj_gen;
           {if (true) return inherited;}
     }
     throw new Error("Missing return statement in function");
@@ -364,7 +399,7 @@ public class Grammar implements GrammarConstants {
                                                                                           op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
       break;
     default:
-      jj_la1[14] = jj_gen;
+      jj_la1[15] = jj_gen;
           {if (true) return inherited;}
     }
     throw new Error("Missing return statement in function");
@@ -409,7 +444,7 @@ public class Grammar implements GrammarConstants {
                                                                                     op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
       break;
     default:
-      jj_la1[15] = jj_gen;
+      jj_la1[16] = jj_gen;
           {if (true) return inherited;}
     }
     throw new Error("Missing return statement in function");
@@ -448,7 +483,7 @@ public class Grammar implements GrammarConstants {
                         {if (true) return res;}
       break;
     default:
-      jj_la1[16] = jj_gen;
+      jj_la1[17] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -483,8 +518,14 @@ public class Grammar implements GrammarConstants {
                                                                       {if (true) return new Node("string value", tok.beginLine, tok.beginColumn, tok.image);}
       break;
     default:
-      jj_la1[17] = jj_gen;
-      if (jj_2_3(2)) {
+      jj_la1[18] = jj_gen;
+      if (jj_2_3(4)) {
+        aux = Matrix_Access();
+                                                                      {if (true) return aux;}
+      } else if (jj_2_4(2)) {
+        aux = Vector_Access();
+                                                                      {if (true) return aux;}
+      } else if (jj_2_5(2)) {
         aux = Function_Call();
                                                                       {if (true) return aux;}
       } else {
@@ -500,7 +541,7 @@ public class Grammar implements GrammarConstants {
                                                                       {if (true) return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image);}
           break;
         default:
-          jj_la1[18] = jj_gen;
+          jj_la1[19] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -510,8 +551,8 @@ public class Grammar implements GrammarConstants {
   }
 
   final public Node Asignment() throws ParseException {
-  Node previous; Token id; Token v; Node vec;
-    if (jj_2_4(2)) {
+  Node previous; Token id; Token v; Node vec; Node mat;
+    if (jj_2_6(2)) {
       id = jj_consume_token(IDENTIFIER);
       v = jj_consume_token(VALUE_ASIGNMENT);
       previous = Asignment_Options();
@@ -520,7 +561,15 @@ public class Grammar implements GrammarConstants {
                                                                                         previous.setRow(v.beginLine);
                                                                                         previous.setColumn(v.beginColumn);
                                                                                         {if (true) return previous;}
-    } else if (jj_2_5(2)) {
+    } else if (jj_2_7(4)) {
+      mat = Matrix_Access();
+      v = jj_consume_token(VALUE_ASIGNMENT);
+      previous = First_Expression();
+                                                                                        Node as = new Node("matrix asignment", v.beginLine, v.beginColumn, null);
+                                                                                        as.addChildren(mat);
+                                                                                        as.addChildren(previous);
+                                                                                        {if (true) return as;}
+    } else if (jj_2_8(2)) {
       vec = Vector_Access();
       v = jj_consume_token(VALUE_ASIGNMENT);
       previous = First_Expression();
@@ -537,7 +586,7 @@ public class Grammar implements GrammarConstants {
 
   final public Node Asignment_Options() throws ParseException {
   Node exp; Node param = null; Node params = null; Node sent; boolean flag = false;
-    if (jj_2_6(4)) {
+    if (jj_2_9(4)) {
       jj_consume_token(OPENING_P);
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case IDENTIFIER:
@@ -545,7 +594,7 @@ public class Grammar implements GrammarConstants {
                                             flag = true;
         break;
       default:
-        jj_la1[19] = jj_gen;
+        jj_la1[20] = jj_gen;
         ;
       }
       jj_consume_token(CLOSING_P);
@@ -561,7 +610,7 @@ public class Grammar implements GrammarConstants {
                                                                                     arr.addChildren(sent);
                                                                                     res.addChildren(arr);
                                                                                     {if (true) return res;}
-    } else if (jj_2_7(3)) {
+    } else if (jj_2_10(3)) {
       jj_consume_token(OPENING_P);
       param = Parameter();
       jj_consume_token(COMMA);
@@ -586,7 +635,7 @@ public class Grammar implements GrammarConstants {
           params = Parameters_List();
           break;
         default:
-          jj_la1[20] = jj_gen;
+          jj_la1[21] = jj_gen;
           ;
         }
         jj_consume_token(CLOSING_P);
@@ -613,7 +662,7 @@ public class Grammar implements GrammarConstants {
                                                                                     {if (true) return res;}
         break;
       default:
-        jj_la1[21] = jj_gen;
+        jj_la1[22] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -632,7 +681,7 @@ public class Grammar implements GrammarConstants {
         ;
         break;
       default:
-        jj_la1[22] = jj_gen;
+        jj_la1[23] = jj_gen;
         break label_3;
       }
       jj_consume_token(COMMA);
@@ -653,7 +702,7 @@ public class Grammar implements GrammarConstants {
                                                                           flag = true;
       break;
     default:
-      jj_la1[23] = jj_gen;
+      jj_la1[24] = jj_gen;
       ;
     }
             if (!flag) {
@@ -682,7 +731,7 @@ public class Grammar implements GrammarConstants {
                           flag = true;
       break;
     default:
-      jj_la1[24] = jj_gen;
+      jj_la1[25] = jj_gen;
       ;
     }
                                                                         Node ifNode = new Node("if sentence", i.beginLine, i.beginColumn, null);
@@ -698,13 +747,13 @@ public class Grammar implements GrammarConstants {
 
   final public Node Else() throws ParseException {
   Token e; Node ifNode = null; Node sentences = null;
-    if (jj_2_8(2)) {
+    if (jj_2_11(2)) {
       e = jj_consume_token(ELSE_KEYWORD);
       sentences = Sentences_Block();
                                                                         Node elseNode = new Node("else sentence", e.beginLine, e.beginColumn, null);
                                                                         elseNode.addChildren(sentences);
                                                                         {if (true) return elseNode;}
-    } else if (jj_2_9(2)) {
+    } else if (jj_2_12(2)) {
       e = jj_consume_token(ELSE_KEYWORD);
       ifNode = If();
                                                                         Node elseNode = new Node("else sentence", e.beginLine, e.beginColumn, null);
@@ -745,7 +794,7 @@ public class Grammar implements GrammarConstants {
                                                   flag = true;
       break;
     default:
-      jj_la1[25] = jj_gen;
+      jj_la1[26] = jj_gen;
       ;
     }
                                                                                     if (flag)
@@ -765,7 +814,7 @@ public class Grammar implements GrammarConstants {
         ;
         break;
       default:
-        jj_la1[26] = jj_gen;
+        jj_la1[27] = jj_gen;
         break label_4;
       }
     }
@@ -793,7 +842,7 @@ public class Grammar implements GrammarConstants {
         ;
         break;
       default:
-        jj_la1[27] = jj_gen;
+        jj_la1[28] = jj_gen;
         break label_5;
       }
       sentence = Sentence();
@@ -827,7 +876,7 @@ public class Grammar implements GrammarConstants {
         ;
         break;
       default:
-        jj_la1[28] = jj_gen;
+        jj_la1[29] = jj_gen;
         break label_6;
       }
       sentence = Sentence();
@@ -913,13 +962,13 @@ public class Grammar implements GrammarConstants {
                                                flag = true;
         break;
       default:
-        jj_la1[29] = jj_gen;
+        jj_la1[30] = jj_gen;
         ;
       }
       jj_consume_token(CLOSING_P);
       break;
     default:
-      jj_la1[30] = jj_gen;
+      jj_la1[31] = jj_gen;
       ;
     }
                                                                                         Node ret = new Node("return sentence", r.beginLine, r.beginColumn, null);
@@ -969,7 +1018,7 @@ public class Grammar implements GrammarConstants {
           ;
           break;
         default:
-          jj_la1[31] = jj_gen;
+          jj_la1[32] = jj_gen;
           break label_7;
         }
         jj_consume_token(COMMA);
@@ -978,7 +1027,7 @@ public class Grammar implements GrammarConstants {
       }
       break;
     default:
-      jj_la1[32] = jj_gen;
+      jj_la1[33] = jj_gen;
       ;
     }
     jj_consume_token(CLOSING_P);
@@ -1012,7 +1061,7 @@ public class Grammar implements GrammarConstants {
                                           {if (true) return exp;}
       break;
     default:
-      jj_la1[33] = jj_gen;
+      jj_la1[34] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1031,7 +1080,7 @@ public class Grammar implements GrammarConstants {
         ;
         break;
       default:
-        jj_la1[34] = jj_gen;
+        jj_la1[35] = jj_gen;
         break label_8;
       }
     }
@@ -1066,7 +1115,7 @@ public class Grammar implements GrammarConstants {
       jj_consume_token(CLOSING_B);
       break;
     default:
-      jj_la1[35] = jj_gen;
+      jj_la1[36] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1087,7 +1136,9 @@ public class Grammar implements GrammarConstants {
   final public Node Matrix_Access() throws ParseException {
   Token id; Node mat; boolean flag = false; Node adds = new Node("addresses"); Node aux;
     id = jj_consume_token(IDENTIFIER);
+    jj_consume_token(OPENING_B);
     mat = Matrix_Address();
+    jj_consume_token(CLOSING_B);
     label_9:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
@@ -1095,7 +1146,7 @@ public class Grammar implements GrammarConstants {
         ;
         break;
       default:
-        jj_la1[36] = jj_gen;
+        jj_la1[37] = jj_gen;
         break label_9;
       }
       jj_consume_token(OPENING_B);
@@ -1103,25 +1154,27 @@ public class Grammar implements GrammarConstants {
       jj_consume_token(CLOSING_B);
                                                          adds.addChildren(aux); flag = true;
     }
+                                                                                    Node access = new Node("matrix access");
+                                                                                    Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                                                    access.addChildren(identifier);
+                                                                                    access.addChildren(mat);
+                                                                                    if (flag)
+                                                                                        access.addChildren(adds);
+                                                                                    {if (true) return access;}
+    throw new Error("Missing return statement in function");
   }
 
   final public Node Matrix_Address() throws ParseException {
   Node exp1 = null; Node exp2 = null; int type = 0;
-    jj_consume_token(OPENING_B);
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case OPENING_P:
-    case MINUS:
-    case NOT:
-    case NULL_VALUE:
-    case FALSE_VALUE:
-    case TRUE_VALUE:
-    case NUMERIC_VALUE:
-    case INTEGER_VALUE:
-    case STRING_VALUE:
-    case IDENTIFIER:
+    if (jj_2_13(3)) {
       exp1 = First_Expression();
       jj_consume_token(COMMA);
-                                                      type = 2;
+      exp2 = First_Expression();
+                                                                                    Node address = new Node("matrix_address", 0, 0, "both");
+                                                                                    address.addChildren(exp1);
+                                                                                    address.addChildren(exp2);
+                                                                                    {if (true) return address;}
+    } else {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case OPENING_P:
       case MINUS:
@@ -1133,41 +1186,25 @@ public class Grammar implements GrammarConstants {
       case INTEGER_VALUE:
       case STRING_VALUE:
       case IDENTIFIER:
+        exp1 = First_Expression();
+        jj_consume_token(COMMA);
+                                                                                    Node address = new Node("matrix_address", 0, 0, "left");
+                                                                                    address.addChildren(exp1);
+                                                                                    {if (true) return address;}
+        break;
+      case COMMA:
+        jj_consume_token(COMMA);
         exp2 = First_Expression();
-                                  type = 1;
+                                                                                    Node address2 = new Node("matrix_address", 0, 0, "right");
+                                                                                    address2.addChildren(exp2);
+                                                                                    {if (true) return address2;}
         break;
       default:
-        jj_la1[37] = jj_gen;
-        ;
+        jj_la1[38] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
       }
-      break;
-    case COMMA:
-      jj_consume_token(COMMA);
-      exp2 = First_Expression();
-                                          type = 3;
-      break;
-    default:
-      jj_la1[38] = jj_gen;
-      jj_consume_token(-1);
-      throw new ParseException();
     }
-    jj_consume_token(CLOSING_B);
-                                                                                    if (type == 1) {
-                                                                                        Node address = new Node("matrix_address", 0, 0, "both");
-                                                                                        address.addChildren(exp1);
-                                                                                        address.addChildren(exp2);
-                                                                                        {if (true) return address;}
-                                                                                    }
-                                                                                    else if (type == 2) {
-                                                                                        Node address = new Node("matrix_address", 0, 0, "left");
-                                                                                        address.addChildren(exp1);
-                                                                                        {if (true) return address;}
-                                                                                    }
-                                                                                    else if (type == 3) {
-                                                                                        Node address = new Node("matrix_address", 0, 0, "right");
-                                                                                        address.addChildren(exp2);
-                                                                                        {if (true) return address;}
-                                                                                    }
     throw new Error("Missing return statement in function");
   }
 
@@ -1234,160 +1271,175 @@ public class Grammar implements GrammarConstants {
     finally { jj_save(8, xla); }
   }
 
-  private boolean jj_3R_22() {
-    if (jj_3R_23()) return true;
+  private boolean jj_2_10(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_10(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(9, xla); }
+  }
+
+  private boolean jj_2_11(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_11(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(10, xla); }
+  }
+
+  private boolean jj_2_12(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_12(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(11, xla); }
+  }
+
+  private boolean jj_2_13(int xla) {
+    jj_la = xla; jj_lastpos = jj_scanpos = token;
+    try { return !jj_3_13(); }
+    catch(LookaheadSuccess ls) { return true; }
+    finally { jj_save(12, xla); }
+  }
+
+  private boolean jj_3R_24() {
+    if (jj_3R_18()) return true;
+    if (jj_scan_token(COMMA)) return true;
     return false;
   }
 
-  private boolean jj_3R_10() {
+  private boolean jj_3R_62() {
+    if (jj_3R_67()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_19() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3_4()) {
+    if (jj_3_13()) {
     jj_scanpos = xsp;
-    if (jj_3_5()) return true;
+    if (jj_3R_24()) {
+    jj_scanpos = xsp;
+    if (jj_3R_25()) return true;
+    }
     }
     return false;
   }
 
-  private boolean jj_3_4() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(VALUE_ASIGNMENT)) return true;
+  private boolean jj_3_13() {
+    if (jj_3R_18()) return true;
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_18()) return true;
     return false;
   }
 
-  private boolean jj_3R_17() {
-    if (jj_3R_19()) return true;
+  private boolean jj_3R_28() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_33()) {
+    jj_scanpos = xsp;
+    if (jj_3R_34()) return true;
+    }
     return false;
   }
 
-  private boolean jj_3R_16() {
-    if (jj_scan_token(IF_KEYWORD)) return true;
+  private boolean jj_3R_33() {
+    if (jj_scan_token(TERNARY)) return true;
+    if (jj_3R_27()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_61() {
+    if (jj_scan_token(NOT)) return true;
+    if (jj_3R_55()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_55() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_60()) {
+    jj_scanpos = xsp;
+    if (jj_3R_61()) {
+    jj_scanpos = xsp;
+    if (jj_3R_62()) return true;
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_60() {
+    if (jj_scan_token(MINUS)) return true;
+    if (jj_3R_55()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_22() {
+    if (jj_3R_27()) return true;
+    if (jj_3R_28()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_30() {
+    return false;
+  }
+
+  private boolean jj_3R_66() {
     return false;
   }
 
   private boolean jj_3R_12() {
     if (jj_scan_token(IDENTIFIER)) return true;
-    Token xsp;
-    if (jj_3R_17()) return true;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_17()) { jj_scanpos = xsp; break; }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_39() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_38() {
-    if (jj_scan_token(OPENING_P)) return true;
-    return false;
-  }
-
-  private boolean jj_3_3() {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_25() {
-    if (jj_3R_26()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_37() {
-    if (jj_scan_token(STRING_VALUE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_36() {
-    if (jj_scan_token(INTEGER_VALUE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_21() {
-    if (jj_3R_22()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_35() {
-    if (jj_scan_token(NUMERIC_VALUE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_15() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_18()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_34() {
-    if (jj_scan_token(TRUE_VALUE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_33() {
-    if (jj_scan_token(FALSE_VALUE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_31() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_32()) {
-    jj_scanpos = xsp;
-    if (jj_3R_33()) {
-    jj_scanpos = xsp;
-    if (jj_3R_34()) {
-    jj_scanpos = xsp;
-    if (jj_3R_35()) {
-    jj_scanpos = xsp;
-    if (jj_3R_36()) {
-    jj_scanpos = xsp;
-    if (jj_3R_37()) {
-    jj_scanpos = xsp;
-    if (jj_3_3()) {
-    jj_scanpos = xsp;
-    if (jj_3R_38()) {
-    jj_scanpos = xsp;
-    if (jj_3R_39()) return true;
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_32() {
-    if (jj_scan_token(NULL_VALUE)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_30() {
-    if (jj_3R_31()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_11() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(OPENING_P)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_20() {
-    if (jj_3R_21()) return true;
+    if (jj_scan_token(OPENING_B)) return true;
+    if (jj_3R_19()) return true;
     return false;
   }
 
   private boolean jj_3R_29() {
-    if (jj_scan_token(NOT)) return true;
+    if (jj_scan_token(VALUE_ASIGNMENT)) return true;
+    if (jj_3R_22()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_23() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_29()) {
+    jj_scanpos = xsp;
+    if (jj_3R_30()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3_12() {
+    if (jj_scan_token(ELSE_KEYWORD)) return true;
+    if (jj_3R_17()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_65() {
+    if (jj_scan_token(MOD)) return true;
+    if (jj_3R_55()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_78() {
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_18() {
+    if (jj_3R_22()) return true;
+    if (jj_3R_23()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_64() {
+    if (jj_scan_token(DIV)) return true;
+    if (jj_3R_55()) return true;
+    return false;
+  }
+
+  private boolean jj_3_11() {
+    if (jj_scan_token(ELSE_KEYWORD)) return true;
+    if (jj_3R_15()) return true;
     return false;
   }
 
@@ -1396,26 +1448,67 @@ public class Grammar implements GrammarConstants {
     return false;
   }
 
-  private boolean jj_3R_27() {
+  private boolean jj_3R_56() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_28()) {
+    if (jj_3R_63()) {
     jj_scanpos = xsp;
-    if (jj_3R_29()) {
+    if (jj_3R_64()) {
     jj_scanpos = xsp;
-    if (jj_3R_30()) return true;
+    if (jj_3R_65()) {
+    jj_scanpos = xsp;
+    if (jj_3R_66()) return true;
+    }
     }
     }
     return false;
   }
 
-  private boolean jj_3R_28() {
-    if (jj_scan_token(MINUS)) return true;
+  private boolean jj_3R_63() {
+    if (jj_scan_token(TIMES)) return true;
+    if (jj_3R_55()) return true;
     return false;
   }
 
-  private boolean jj_3R_24() {
-    if (jj_3R_25()) return true;
+  private boolean jj_3R_79() {
+    if (jj_scan_token(OPENING_B)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_26() {
+    if (jj_scan_token(OPENING_B)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_78()) {
+    jj_scanpos = xsp;
+    if (jj_3R_79()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_21() {
+    if (jj_scan_token(VALUE_ASIGNMENT)) return true;
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_48() {
+    if (jj_3R_55()) return true;
+    if (jj_3R_56()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_59() {
+    return false;
+  }
+
+  private boolean jj_3R_20() {
+    if (jj_3R_26()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_17() {
+    if (jj_scan_token(IF_KEYWORD)) return true;
     return false;
   }
 
@@ -1425,68 +1518,388 @@ public class Grammar implements GrammarConstants {
   }
 
   private boolean jj_3R_13() {
-    if (jj_3R_15()) return true;
+    if (jj_scan_token(IDENTIFIER)) return true;
+    Token xsp;
+    if (jj_3R_20()) return true;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_20()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
-  private boolean jj_3_7() {
-    if (jj_scan_token(OPENING_P)) return true;
-    if (jj_3R_15()) return true;
-    if (jj_scan_token(COMMA)) return true;
+  private boolean jj_3R_81() {
+    if (jj_3R_18()) return true;
     return false;
   }
 
-  private boolean jj_3R_14() {
+  private boolean jj_3R_58() {
+    if (jj_scan_token(MINUS)) return true;
+    if (jj_3R_48()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_80() {
+    if (jj_scan_token(DEFAULT_KEYWORD)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_77() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_80()) {
+    jj_scanpos = xsp;
+    if (jj_3R_81()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_49() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_57()) {
+    jj_scanpos = xsp;
+    if (jj_3R_58()) {
+    jj_scanpos = xsp;
+    if (jj_3R_59()) return true;
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_57() {
+    if (jj_scan_token(PLUS)) return true;
+    if (jj_3R_48()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_15() {
     if (jj_scan_token(OPENING_C)) return true;
     return false;
   }
 
-  private boolean jj_3_9() {
-    if (jj_scan_token(ELSE_KEYWORD)) return true;
+  private boolean jj_3R_16() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_21()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_43() {
+    if (jj_3R_48()) return true;
+    if (jj_3R_49()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_76() {
+    if (jj_3R_77()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_54() {
+    return false;
+  }
+
+  private boolean jj_3R_11() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(OPENING_P)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_76()) jj_scanpos = xsp;
+    if (jj_scan_token(CLOSING_P)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_53() {
+    if (jj_scan_token(GREATER_EQUALS)) return true;
+    if (jj_3R_43()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_52() {
+    if (jj_scan_token(LESSER_EQUALS)) return true;
+    if (jj_3R_43()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_51() {
+    if (jj_scan_token(GREATER)) return true;
+    if (jj_3R_43()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_44() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_50()) {
+    jj_scanpos = xsp;
+    if (jj_3R_51()) {
+    jj_scanpos = xsp;
+    if (jj_3R_52()) {
+    jj_scanpos = xsp;
+    if (jj_3R_53()) {
+    jj_scanpos = xsp;
+    if (jj_3R_54()) return true;
+    }
+    }
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_50() {
+    if (jj_scan_token(LESSER)) return true;
+    if (jj_3R_43()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_14() {
     if (jj_3R_16()) return true;
     return false;
   }
 
-  private boolean jj_3R_23() {
-    if (jj_3R_24()) return true;
+  private boolean jj_3_10() {
+    if (jj_scan_token(OPENING_P)) return true;
+    if (jj_3R_16()) return true;
+    if (jj_scan_token(COMMA)) return true;
     return false;
   }
 
-  private boolean jj_3_6() {
+  private boolean jj_3R_39() {
+    if (jj_3R_43()) return true;
+    if (jj_3R_44()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_47() {
+    return false;
+  }
+
+  private boolean jj_3R_46() {
+    if (jj_scan_token(NOT_EQUALS)) return true;
+    if (jj_3R_39()) return true;
+    return false;
+  }
+
+  private boolean jj_3_9() {
     if (jj_scan_token(OPENING_P)) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_13()) jj_scanpos = xsp;
+    if (jj_3R_14()) jj_scanpos = xsp;
     if (jj_scan_token(CLOSING_P)) return true;
     if (jj_scan_token(ARROW)) return true;
-    if (jj_3R_14()) return true;
+    if (jj_3R_15()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_40() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_45()) {
+    jj_scanpos = xsp;
+    if (jj_3R_46()) {
+    jj_scanpos = xsp;
+    if (jj_3R_47()) return true;
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_45() {
+    if (jj_scan_token(EQUALS)) return true;
+    if (jj_3R_39()) return true;
     return false;
   }
 
   private boolean jj_3_8() {
-    if (jj_scan_token(ELSE_KEYWORD)) return true;
-    if (jj_3R_14()) return true;
+    if (jj_3R_13()) return true;
     return false;
   }
 
-  private boolean jj_3R_26() {
-    if (jj_3R_27()) return true;
+  private boolean jj_3R_35() {
+    if (jj_3R_39()) return true;
+    if (jj_3R_40()) return true;
     return false;
   }
 
-  private boolean jj_3_5() {
+  private boolean jj_3R_42() {
+    return false;
+  }
+
+  private boolean jj_3_7() {
     if (jj_3R_12()) return true;
     return false;
   }
 
-  private boolean jj_3R_19() {
-    if (jj_scan_token(OPENING_B)) return true;
+  private boolean jj_3R_36() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_41()) {
+    jj_scanpos = xsp;
+    if (jj_3R_42()) return true;
+    }
     return false;
   }
 
-  private boolean jj_3R_18() {
+  private boolean jj_3R_41() {
+    if (jj_scan_token(AND)) return true;
+    if (jj_3R_35()) return true;
+    return false;
+  }
+
+  private boolean jj_3_6() {
+    if (jj_scan_token(IDENTIFIER)) return true;
     if (jj_scan_token(VALUE_ASIGNMENT)) return true;
-    if (jj_3R_20()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_10() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_6()) {
+    jj_scanpos = xsp;
+    if (jj_3_7()) {
+    jj_scanpos = xsp;
+    if (jj_3_8()) return true;
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_31() {
+    if (jj_3R_35()) return true;
+    if (jj_3R_36()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_38() {
+    return false;
+  }
+
+  private boolean jj_3R_75() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_74() {
+    if (jj_scan_token(OPENING_P)) return true;
+    if (jj_3R_18()) return true;
+    if (jj_scan_token(CLOSING_P)) return true;
+    return false;
+  }
+
+  private boolean jj_3_5() {
+    if (jj_3R_11()) return true;
+    return false;
+  }
+
+  private boolean jj_3_4() {
+    if (jj_3R_13()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_32() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_37()) {
+    jj_scanpos = xsp;
+    if (jj_3R_38()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_37() {
+    if (jj_scan_token(OR)) return true;
+    if (jj_3R_31()) return true;
+    return false;
+  }
+
+  private boolean jj_3_3() {
+    if (jj_3R_12()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_73() {
+    if (jj_scan_token(STRING_VALUE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_72() {
+    if (jj_scan_token(INTEGER_VALUE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_27() {
+    if (jj_3R_31()) return true;
+    if (jj_3R_32()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_71() {
+    if (jj_scan_token(NUMERIC_VALUE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_70() {
+    if (jj_scan_token(TRUE_VALUE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_34() {
+    return false;
+  }
+
+  private boolean jj_3R_25() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_69() {
+    if (jj_scan_token(FALSE_VALUE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_68() {
+    if (jj_scan_token(NULL_VALUE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_67() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_68()) {
+    jj_scanpos = xsp;
+    if (jj_3R_69()) {
+    jj_scanpos = xsp;
+    if (jj_3R_70()) {
+    jj_scanpos = xsp;
+    if (jj_3R_71()) {
+    jj_scanpos = xsp;
+    if (jj_3R_72()) {
+    jj_scanpos = xsp;
+    if (jj_3R_73()) {
+    jj_scanpos = xsp;
+    if (jj_3_3()) {
+    jj_scanpos = xsp;
+    if (jj_3_4()) {
+    jj_scanpos = xsp;
+    if (jj_3_5()) {
+    jj_scanpos = xsp;
+    if (jj_3R_74()) {
+    jj_scanpos = xsp;
+    if (jj_3R_75()) return true;
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
+    }
     return false;
   }
 
@@ -1512,12 +1925,12 @@ public class Grammar implements GrammarConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0x1000000,0x1000000,0x1000000,0x1000000,0x1000000,0x1000000,0x0,0x10000,0x0,0x0,0x1800,0xc0006000,0x6000000,0x18000400,0x4020000,0x0,0x20000,0x0,0x0,0x4020000,0x800000,0x10000,0x0,0x0,0x0,0x0,0x0,0x4020000,0x20000,0x800000,0x4020000,0x4020000,0x80000,0x40a0000,0x80000,0x4020000,0x4820000,};
+      jj_la1_0 = new int[] {0x0,0x0,0x1000000,0x1000000,0x1000000,0x1000000,0x1000000,0x1000000,0x0,0x10000,0x0,0x0,0x0,0x1800,0xc0006000,0x6000000,0x18000400,0x4020000,0x0,0x20000,0x0,0x0,0x4020000,0x800000,0x10000,0x0,0x0,0x0,0x0,0x0,0x4020000,0x20000,0x800000,0x4020000,0x4020000,0x80000,0x40a0000,0x80000,0x4820000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x800dea0,0x800dea0,0x0,0x0,0x0,0x0,0x0,0x0,0xdea0,0x0,0x4,0x2,0x0,0x0,0x0,0x0,0xb9c0001,0x39c0000,0x8000000,0x8000000,0x8000000,0xb9d0001,0x0,0x0,0x40,0x20000,0x100,0x800dea0,0x800dea0,0xb9c0001,0x0,0x0,0xb9e0001,0xb9e0001,0x0,0xb9c0001,0x0,0xb9c0001,0xb9c0001,};
+      jj_la1_1 = new int[] {0x800dea0,0x800dea0,0x0,0x0,0x0,0x0,0x0,0x0,0xdea0,0x0,0x8,0x4,0x2,0x0,0x0,0x0,0x0,0xb9c0001,0x39c0000,0x8000000,0x8000000,0x8000000,0xb9d0001,0x0,0x0,0x40,0x20000,0x100,0x800dea0,0x800dea0,0xb9c0001,0x0,0x0,0xb9e0001,0xb9e0001,0x0,0xb9c0001,0x0,0xb9c0001,};
    }
-  final private JJCalls[] jj_2_rtns = new JJCalls[9];
+  final private JJCalls[] jj_2_rtns = new JJCalls[13];
   private boolean jj_rescan = false;
   private int jj_gc = 0;
 
@@ -1748,7 +2161,7 @@ public class Grammar implements GrammarConstants {
 
   private void jj_rescan_token() {
     jj_rescan = true;
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 13; i++) {
     try {
       JJCalls p = jj_2_rtns[i];
       do {
@@ -1764,6 +2177,10 @@ public class Grammar implements GrammarConstants {
             case 6: jj_3_7(); break;
             case 7: jj_3_8(); break;
             case 8: jj_3_9(); break;
+            case 9: jj_3_10(); break;
+            case 10: jj_3_11(); break;
+            case 11: jj_3_12(); break;
+            case 12: jj_3_13(); break;
           }
         }
         p = p.next;

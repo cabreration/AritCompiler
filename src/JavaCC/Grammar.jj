@@ -143,14 +143,14 @@ Node Sentence() :
 Node First_Expression() : 
 { Node exp1; Node exp; }
 {
-    exp1 = Third_Expression() exp = PFirst_Expression(exp1)
+    exp1 = Second_Expression() exp = PFirst_Expression(exp1)
     { return exp; }
 }
 
 Node PFirst_Expression(Node inherited) : 
 { Node exp1; Node op; Token v; Node res; Node bin; }
 {
-    v = <VALUE_ASIGNMENT> exp1 = Third_Expression() { 
+    v = <VALUE_ASIGNMENT> exp1 = Second_Expression() { 
                                                         bin = new Node("binary expression");
                                                         op = new Node("=", v.beginLine, v.beginColumn, null);
                                                         op.addChildren(inherited);
@@ -158,6 +158,36 @@ Node PFirst_Expression(Node inherited) :
     |
         { return inherited; }
 }
+
+Node Second_Expression() : 
+{ Node exp1; Node exp2; }
+{
+    exp1 = Third_Expression() exp2 = PSecond_Expression(exp1)  { return exp2; }
+}
+
+Node PSecond_Expression(Node inherited) : 
+{ Node exp1; Node exp2; Node op1; Node op2; Token v1; Token v2; Node res1; Node res2; Node ter; }
+{
+        v1 = <TERNARY> exp1 = Third_Expression()        {   
+                                                            ter = new Node("ternary expression");
+                                                            op1 = new Node("?", v1.beginLine, v1.beginColumn, null);
+                                                            op1.addChildren(inherited);
+                                                        } 
+        res1 = PSecond_Expression(exp1) v2 = <COLON>
+        exp2 = Third_Expression()                       {
+                                                            op2 = new Node(":", v2.beginLine, v2.beginColumn, null);
+                                                            op2.addChildren(res1);
+                                                        }
+        res2 = PSecond_Expression(exp2)                 {
+                                                            op2.addChildren(res2);
+                                                            ter.addChildren(op1);
+                                                            ter.addChildren(op2);
+                                                            return ter;
+                                                        }
+    |
+        { return inherited; }
+}
+
 
 Node Third_Expression() : 
 { Node exp1; Node exp; }
@@ -354,6 +384,12 @@ Node Value() :
     | 
         tok = <STRING_VALUE>                                        { return new Node("string value", tok.beginLine, tok.beginColumn, tok.image); }
     |
+        LOOKAHEAD(4)
+        aux = Matrix_Access()                                       { return aux; }
+    |
+        LOOKAHEAD(2)
+        aux = Vector_Access()                                       { return aux; }
+    |
         LOOKAHEAD(2)
         aux = Function_Call()                                       { return aux; }
     |
@@ -363,7 +399,7 @@ Node Value() :
 }
 
 Node Asignment() : 
-{ Node previous; Token id; Token v; Node vec; }
+{ Node previous; Token id; Token v; Node vec; Node mat; }
 {
         LOOKAHEAD(2)
         id = <IDENTIFIER> v = <VALUE_ASIGNMENT> previous = Asignment_Options()      {   
@@ -374,6 +410,14 @@ Node Asignment() :
                                                                                         return previous; 
                                                                                     }
     |
+        LOOKAHEAD(4)
+        mat = Matrix_Access() v = <VALUE_ASIGNMENT> previous = First_Expression()   {
+                                                                                        Node as = new Node("matrix asignment", v.beginLine, v.beginColumn, null);
+                                                                                        as.addChildren(mat);
+                                                                                        as.addChildren(previous);
+                                                                                        return as;
+                                                                                    }
+    |   
         LOOKAHEAD(2)
         vec = Vector_Access() v = <VALUE_ASIGNMENT> previous = First_Expression()   {   
                                                                                         Node as = new Node("structure asignment");
@@ -681,32 +725,42 @@ Node Address() :
 Node Matrix_Access() : 
 { Token id; Node mat; boolean flag = false; Node adds = new Node("addresses"); Node aux; }
 {
-    id = <IDENTIFIER> mat = Matrix_Address()
-    ( <OPENING_B> aux = First_Expression() <CLOSING_B> { adds.addChildren(aux); flag = true; } )*
+    id = <IDENTIFIER> <OPENING_B> mat = Matrix_Address() <CLOSING_B>
+    ( <OPENING_B> aux = First_Expression() <CLOSING_B> { adds.addChildren(aux); flag = true; } )* 
+                                                                            
+                                                                                { 
+                                                                                    Node access = new Node("matrix access");
+                                                                                    Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                                                    access.addChildren(identifier);
+                                                                                    access.addChildren(mat);
+                                                                                    if (flag)
+                                                                                        access.addChildren(adds);
+                                                                                    return access;
+                                                                                }
 }
 
 Node Matrix_Address() : 
 { Node exp1 = null; Node exp2 = null; int type = 0; }
 {
-    <OPENING_B> ( exp1 = First_Expression() <COMMA> { type = 2; }
-    ( exp2 = First_Expression() { type = 1; } )? 
-    | <COMMA> exp2 = First_Expression() { type = 3; } ) <CLOSING_B>             {
-                                                                                    if (type == 1) {
-                                                                                        Node address = new Node("matrix_address", 0, 0, "both");
-                                                                                        address.addChildren(exp1);
-                                                                                        address.addChildren(exp2);
-                                                                                        return address;
-                                                                                    }
-                                                                                    else if (type == 2) {
-                                                                                        Node address = new Node("matrix_address", 0, 0, "left");
-                                                                                        address.addChildren(exp1);
-                                                                                        return address;
-                                                                                    }
-                                                                                    else if (type == 3) {
-                                                                                        Node address = new Node("matrix_address", 0, 0, "right");
-                                                                                        address.addChildren(exp2);
-                                                                                        return address;
-                                                                                    }
+        LOOKAHEAD(3)
+        exp1 = First_Expression() <COMMA> exp2 = First_Expression()             {
+                                                                                    Node address = new Node("matrix_address", 0, 0, "both");
+                                                                                    address.addChildren(exp1);
+                                                                                    address.addChildren(exp2);
+                                                                                    return address;
+                                                                                }
+
+    |
+        exp1 = First_Expression() <COMMA>                                       {
+                                                                                    Node address = new Node("matrix_address", 0, 0, "left");
+                                                                                    address.addChildren(exp1);
+                                                                                    return address;
+                                                                                }
+    |
+        <COMMA> exp2 = First_Expression()                                       {
+                                                                                    Node address2 = new Node("matrix_address", 0, 0, "right");
+                                                                                    address2.addChildren(exp2);
+                                                                                    return address2;
                                                                                 }
 }
 
