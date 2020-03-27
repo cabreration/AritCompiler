@@ -604,6 +604,10 @@ public class Vector implements Symbol, Value {
         }
         
         if (op instanceof Atomic) {
+            /*if (((Atomic)op).getValue() == null) {
+                if (operator.equals("==")) {}
+                else if (operator.equals("!=")) {}
+            }*/
             if (this.type == 1 || this.type == 2) {
                 if (((Atomic)op).getType() == Atomic.Type.INTEGER || ((Atomic)op).getType() == Atomic.Type.NUMERIC) {
                     String str = String.valueOf(((Atomic)op).getValue());
@@ -628,8 +632,8 @@ public class Vector implements Symbol, Value {
             
             if (this.type == 4) {
                 if (((Atomic)op).getType() == Atomic.Type.STRING) {
-                    if (((Atomic)op).getValue() == null)
-                        return new CompileError("Semantico", "No es posible operar valores nulos", 0, 0);
+                    //if (((Atomic)op).getValue() == null)
+                        //return new CompileError("Semantico", "No es posible operar valores nulos", 0, 0);
                     
                     String str;
                     if (((Atomic)op).getValue() == null)
@@ -837,6 +841,19 @@ public class Vector implements Symbol, Value {
                     else 
                         return null;
                 }
+            }
+            if (str == null)
+            {
+                if (operator.equals("==")) {
+                    res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(false)));
+                    continue;
+                }
+                else if (operator.equals("!=")) {
+                    res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(true)));
+                    continue;
+                }
+                else 
+                    return null;
             }
 
             String one = String.valueOf(ob.getValue());

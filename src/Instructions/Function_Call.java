@@ -459,6 +459,9 @@ public class Function_Call implements Instruction, Expression {
                     
                     return returnment;
                 } 
+                else if (ret != null && ret instanceof CompileError) {
+                    Singleton.insertError((CompileError)ret);
+                }
             }
             
             for (Parameter param : f.getParameters()) {

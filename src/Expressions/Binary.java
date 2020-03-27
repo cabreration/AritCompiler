@@ -99,8 +99,6 @@ public class Binary implements Expression {
     }
     
     private Object operations(SymbolsTable env, Value op1, Value op2) {
-        Value aux = op1;
-        Value aux2 = op2;
         if (op1 instanceof Vector) {
             if (((Vector)op1).getSize() == 1) {
                 op1 = ((ArrayList<Atomic>)((Vector)op1).getValue()).get(0);

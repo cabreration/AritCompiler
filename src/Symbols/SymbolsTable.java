@@ -58,7 +58,11 @@ public class SymbolsTable {
             return;
         
         boolean exists = symbols.containsKey(name);
-        if (exists)
+        if (exists) {
+            Symbol aux = symbols.get(name);
+            if (aux instanceof Vector && symbol instanceof Vector) {}
+            else if (aux instanceof Matrix && symbol instanceof Matrix) {}
+        }
             symbols.remove(name);
         
         symbols.put(name, symbol);

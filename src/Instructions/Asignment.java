@@ -9,6 +9,8 @@ import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
 import Expressions.Value;
+import Symbols.List;
+import Symbols.Matrix;
 import Symbols.Symbol;
 import Symbols.SymbolRef;
 import Symbols.SymbolsTable;
@@ -69,11 +71,18 @@ public class Asignment implements Instruction {
                     Singleton.insertError(error);
                 }
                 
-                env.updateSymbol(this.identifier, (Symbol)exp);
+                Symbol last = null;
+                if (exp instanceof Vector)
+                    last = ((Vector)exp).clonation();
+                else if (exp instanceof List)
+                    last = ((List)exp).clonation();
+                else
+                    last = ((Matrix)exp).clonation();
+                env.updateSymbol(this.identifier, last);
                 return null;
             }
             
-            Vector vector = new Vector((Atomic)exp);
+            Vector vector = new Vector(((Atomic)exp).clonation());
             String type = String.valueOf(((Value)vector).typeof(env).getValue());
             SymbolRef ref = new SymbolRef(this.identifier, type, this.line, this.column);
             Singleton.insertRef(ref);
@@ -85,7 +94,15 @@ public class Asignment implements Instruction {
         String type = String.valueOf(((Value)exp).typeof(env).getValue());
         SymbolRef ref = new SymbolRef(this.identifier, type, this.line, this.column);
         Singleton.insertRef(ref);
-        env.updateSymbol(this.identifier, (Symbol)exp);
+        
+        Symbol last = null;
+        if (exp instanceof Vector)
+            last = ((Vector)exp).clonation();
+        else if (exp instanceof List)
+            last = ((List)exp).clonation();
+        else
+            last = ((Matrix)exp).clonation();
+        env.updateSymbol(this.identifier, last);
         return null;
     }
     

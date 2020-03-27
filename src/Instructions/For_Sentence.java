@@ -126,7 +126,9 @@ public class For_Sentence implements Instruction{
     }
     
     private Object forVector(Vector val, SymbolsTable env) {
-        for (Atomic atom : (ArrayList<Atomic>)val.getValue()) {
+        int size = ((ArrayList<Atomic>)val.getValue()).size();
+        for (int j = 0; j < size; j++) {
+            Atomic atom = ((ArrayList<Atomic>)val.getValue()).get(j);
             String name = "loop";
             if (env.getType().contains("function"))
                 name += "-function";
@@ -156,7 +158,9 @@ public class For_Sentence implements Instruction{
     }
     
     private Object forList(List val, SymbolsTable env) {
-        for (Object vecList : (ArrayList<Object>)val.getValue()) {
+        int size = ((ArrayList<Object>)val.getValue()).size();
+        for (int j = 0; j < size; j++) {
+            Object vecList = ((ArrayList<Object>)val.getValue()).get(j);
             String name = "loop";
             if (env.getType().contains("function"))
                 name += "-function";

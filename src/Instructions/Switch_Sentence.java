@@ -80,7 +80,7 @@ public class Switch_Sentence implements Instruction {
             if (env.getType().contains("loop"))
                 name += "-loop";
             SymbolsTable local = new SymbolsTable(name, env);
-            Object r = kase.process(env);
+            Object r = kase.process(local);
             
             if (r instanceof CompileError) {
                 Singleton.insertError((CompileError)r);

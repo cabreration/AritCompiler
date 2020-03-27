@@ -1029,8 +1029,8 @@ public class Matrix implements Symbol, Value{
             
             if (this.type == 4) {
                 if (((Atomic)op).getType() == Atomic.Type.STRING) {
-                    if (((Atomic)op).getValue() == null)
-                        return new CompileError("Semantico", "No es posible operar valores nulos", 0, 0);
+                    //if (((Atomic)op).getValue() == null)
+                        //return new CompileError("Semantico", "No es posible operar valores nulos", 0, 0);
                     
                     String str;
                     if (((Atomic)op).getValue() == null)
@@ -1247,6 +1247,18 @@ public class Matrix implements Symbol, Value{
                         else 
                             return null;
                     }
+                }
+                else if (str == null) {
+                    if (operator.equals("==")) {
+                            values[i][j] = new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(false));
+                            continue;
+                        }
+                        else if (operator.equals("!=")) {
+                            values[i][j] = new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(true));
+                            continue;
+                        }
+                        else 
+                            return null;
                 }
                     
                 String one = String.valueOf(atom.getValue());

@@ -135,6 +135,7 @@ public class StructureAsignment implements Instruction {
             i--;
             ((Vector)sym).expand(i);  
             ((Vector)sym).insertValue(res, i);
+            return;
         }
             
         Singleton.insertError(new CompileError("Semantico", "El tipo de acceso [[]] no esta definido para vectores", this.line, this.column));
