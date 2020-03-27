@@ -878,7 +878,7 @@ public class Scanner implements java_cup.runtime.Scanner {
             // fall through
           case 84: break;
           case 29: 
-            { string.append('\\');
+            { string.append("\\");
             } 
             // fall through
           case 85: break;

@@ -5,12 +5,16 @@
  */
 package aritcompiler;
 
+import APIServices.CompileError;
 import APIServices.Node;
 import APIServices.TreePrinter;
 import APIServices.TreeProcesor;
 import Instructions.Instruction;
 import JFlexNCup.Parser;
 import JFlexNCup.Scanner;
+import JavaCC.Grammar;
+import JavaCC.ParseException;
+import JavaCC.TokenMgrError;
 import Symbols.SymbolsTable;
 import java.awt.Desktop;
 import java.io.BufferedReader;
@@ -371,6 +375,8 @@ public class TextEditor extends javax.swing.JFrame {
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
         // Ejecucion jflex & cup
+        if (tabs.getTabCount() == 0)
+            return;
         Singleton.newCompilation();
         int currentIndex = tabs.getSelectedIndex();
         JScrollPane scroll = (JScrollPane)tabs.getComponentAt(currentIndex);
@@ -414,8 +420,44 @@ public class TextEditor extends javax.swing.JFrame {
     
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed
         // Ejecucion javacc
+        if (tabs.getTabCount() == 0)
+            return;
         Singleton.newCompilation();
-        System.out.println("La ejecucion con javacc no es soportada todavia");
+        int currentIndex = tabs.getSelectedIndex();
+        JScrollPane scroll = (JScrollPane)tabs.getComponentAt(currentIndex);
+        JTextArea area = (JTextArea)(scroll.getViewport().getView());
+        String code = area.getText();
+        
+        try {
+            Reader reader = new StringReader(code);
+            Grammar parser = new Grammar(reader);
+            Node root = parser.Root();
+            if (root == null) {
+                System.err.println("Raiz nula");
+                return;
+            }
+            TreePrinter.printTree(root, "javaccTree");
+            execute(root);
+        }
+        catch (Exception e) {
+            if (e instanceof ParseException) {
+                int line = (((ParseException) e).currentToken).next.beginLine - 1;
+                int column = (((ParseException) e).currentToken).next.beginColumn -1;
+                String type = "Sintactico";
+                String tok = (((ParseException) e).currentToken).next.image;
+                String message= "No se esperaba el caracter '" + tok + "'";
+                Singleton.insertError(new CompileError(type, message, line, column));
+                Singleton.reportErrors();
+            }
+            System.err.println(e.getMessage());
+        }    
+        catch (Error r) {
+            if (r instanceof TokenMgrError) {
+                String one = ((TokenMgrError)r).getMessage();
+                Singleton.insertError(new CompileError("Lexico", one, 0, 0));
+                Singleton.reportErrors();
+            }
+        }
     }//GEN-LAST:event_jMenuItem7ActionPerformed
 
     private void openTree(String type) throws IOException {

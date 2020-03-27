@@ -31,9 +31,9 @@ public class AritCompiler {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        //TextEditor txtE = new TextEditor();
-        //txtE.setVisible(true);
-        javaccTry();
+        TextEditor txtE = new TextEditor();
+        txtE.setVisible(true);
+        //javaccTry();
     }
     
     public static void javaccTry() {

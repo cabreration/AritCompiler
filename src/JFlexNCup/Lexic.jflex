@@ -106,7 +106,7 @@ multiLineComment   = "#*" [^*] ~"*#" | "#*" "*"+ "#"
 <STRING> \\n                          { string.append('\n'); }
 <STRING> \\r                          { string.append('\r'); }
 <STRING> "\\\""                       { string.append('\"'); }
-<STRING> \\                           { string.append('\\'); }
+<STRING> "\\\\"                       { string.append("\\"); }
 
 <YYINITIAL> {WhiteSpace}              {}
 <YYINITIAL> {simpleComment}           { }

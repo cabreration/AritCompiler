@@ -3,6 +3,19 @@ package JavaCC;
 import APIServices.Node;
 
 public class Grammar implements GrammarConstants {
+    private String scape(String cadena) {
+        StringBuilder builder = new StringBuilder(cadena);
+        builder.deleteCharAt(0);
+        builder.deleteCharAt(builder.length() - 1);
+
+        String next = builder.toString();
+        next = next.replace("\\t", "\t");
+        next = next.replace("\\n", "\n");
+        next = next.replace("\\r", "\r");
+        next = next.replace("\\\"", "\"");
+        next = next.replace("\\\\", "\\");
+        return next;
+    }
 
 /* Scanner End */
   final public Node Root() throws ParseException {
@@ -515,7 +528,7 @@ public class Grammar implements GrammarConstants {
       break;
     case STRING_VALUE:
       tok = jj_consume_token(STRING_VALUE);
-                                                                      {if (true) return new Node("string value", tok.beginLine, tok.beginColumn, tok.image);}
+                                                                      {if (true) return new Node("string value", tok.beginLine, tok.beginColumn, scape(tok.image));}
       break;
     default:
       jj_la1[18] = jj_gen;
@@ -1299,59 +1312,6 @@ public class Grammar implements GrammarConstants {
     finally { jj_save(12, xla); }
   }
 
-  private boolean jj_3R_24() {
-    if (jj_3R_18()) return true;
-    if (jj_scan_token(COMMA)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_62() {
-    if (jj_3R_67()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_19() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3_13()) {
-    jj_scanpos = xsp;
-    if (jj_3R_24()) {
-    jj_scanpos = xsp;
-    if (jj_3R_25()) return true;
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3_13() {
-    if (jj_3R_18()) return true;
-    if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_18()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_28() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_33()) {
-    jj_scanpos = xsp;
-    if (jj_3R_34()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_33() {
-    if (jj_scan_token(TERNARY)) return true;
-    if (jj_3R_27()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_61() {
-    if (jj_scan_token(NOT)) return true;
-    if (jj_3R_55()) return true;
-    return false;
-  }
-
   private boolean jj_3R_55() {
     Token xsp;
     xsp = jj_scanpos;
@@ -1903,6 +1863,59 @@ public class Grammar implements GrammarConstants {
     return false;
   }
 
+  private boolean jj_3R_24() {
+    if (jj_3R_18()) return true;
+    if (jj_scan_token(COMMA)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_62() {
+    if (jj_3R_67()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_19() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3_13()) {
+    jj_scanpos = xsp;
+    if (jj_3R_24()) {
+    jj_scanpos = xsp;
+    if (jj_3R_25()) return true;
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3_13() {
+    if (jj_3R_18()) return true;
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_28() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_33()) {
+    jj_scanpos = xsp;
+    if (jj_3R_34()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_33() {
+    if (jj_scan_token(TERNARY)) return true;
+    if (jj_3R_27()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_61() {
+    if (jj_scan_token(NOT)) return true;
+    if (jj_3R_55()) return true;
+    return false;
+  }
+
   /** Generated Token Manager. */
   public GrammarTokenManager token_source;
   SimpleCharStream jj_input_stream;
@@ -2206,4 +2219,4 @@ public class Grammar implements GrammarConstants {
     JJCalls next;
   }
 
-                      }
+}

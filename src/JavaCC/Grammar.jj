@@ -7,7 +7,21 @@ PARSER_BEGIN(Grammar)
 package JavaCC; 
 import APIServices.Node;
 
-public class Grammar {}
+public class Grammar {
+    private String scape(String cadena) {
+        StringBuilder builder = new StringBuilder(cadena);
+        builder.deleteCharAt(0);
+        builder.deleteCharAt(builder.length() - 1);
+
+        String next = builder.toString();
+        next = next.replace("\\t", "\t");
+        next = next.replace("\\n", "\n");
+        next = next.replace("\\r", "\r");
+        next = next.replace("\\\"", "\"");
+        next = next.replace("\\\\", "\\");
+        return next;
+    }
+}
 
 PARSER_END(Grammar)
 
@@ -93,7 +107,7 @@ TOKEN: {
     |   <FRACTIONAL_DIGITS: "." ( <DIGIT> )+ >
     |   <NUMERIC_VALUE: ( <DIGIT> )+ <FRACTIONAL_DIGITS> >
     |   <INTEGER_VALUE: ( <DIGIT> )+ >
-    |   <STRING_VALUE: "\"" (~["\""])* "\"" >
+    |   <STRING_VALUE: "\"" ("\\" ~[] | ~["\"", "\\" ])* "\"" >
     |   <#LETTER: ["a" - "z", "A" - "Z", "ñ", "Ñ"] >
     |   <IDENTIFIER: <LETTER> ( <LETTER> | <DIGIT> | "." | "_")* | "." (( <LETTER> | "." | "_" ) ( <LETTER> | "." | "_" | <DIGIT> )*)? >
 }
@@ -382,7 +396,7 @@ Node Value() :
     |
         tok = <INTEGER_VALUE>                                       { return new Node("integer value", tok.beginLine, tok.beginColumn, Integer.parseInt(tok.image)); }
     | 
-        tok = <STRING_VALUE>                                        { return new Node("string value", tok.beginLine, tok.beginColumn, tok.image); }
+        tok = <STRING_VALUE>                                        { return new Node("string value", tok.beginLine, tok.beginColumn, scape(tok.image)); }
     |
         LOOKAHEAD(4)
         aux = Matrix_Access()                                       { return aux; }

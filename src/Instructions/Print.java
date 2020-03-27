@@ -8,7 +8,6 @@ package Instructions;
 import APIServices.CompileError;
 import Expressions.Atomic;
 import Expressions.Expression;
-import Expressions.StructureAccess;
 import Symbols.List;
 import Symbols.Matrix;
 import Symbols.SymbolsTable;
