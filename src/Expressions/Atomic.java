@@ -595,11 +595,23 @@ public class Atomic implements Expression, Value {
             return new Atomic(Type.BOOLEAN, Boolean.valueOf(r));
         }
         else {
-            if (one.getValue() == null)
-                return null;
+            if (one.getValue() == null) {
+                if (operator.equals("=="))
+                    return new Atomic(Type.BOOLEAN, Boolean.valueOf(two.getValue() == null));
+                else if (operator.equals("!="))
+                    return new Atomic(Type.BOOLEAN, Boolean.valueOf(two.getValue() != null));
+                else
+                    return null;
+            }
             String first = String.valueOf(one.getValue());
-            if (two.getValue() == null)
-                return null;
+            if (two.getValue() == null) {
+                if (operator.equals("=="))
+                    return new Atomic(Type.BOOLEAN, Boolean.valueOf(false));
+                else if (operator.equals("!="))
+                    return new Atomic(Type.BOOLEAN, Boolean.valueOf(true));
+                else
+                    return null;
+            }
             String second = String.valueOf(two.getValue());
             
             

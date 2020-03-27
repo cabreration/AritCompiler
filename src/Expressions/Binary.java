@@ -197,7 +197,7 @@ public class Binary implements Expression {
         
         Symbol sym;
         if (op2 instanceof Atomic) {
-            if (((Atomic)op1).getType() == Atomic.Type.IDENTIFIER) {
+            if (((Atomic)op2).getType() == Atomic.Type.IDENTIFIER) {
                 String name = String.valueOf(((Atomic)op2).getValue());
                 int line = ((Atomic)op2).getLine();
                 int col = ((Atomic)op2).getColumn();

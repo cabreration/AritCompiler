@@ -52,7 +52,7 @@ public class Print implements Instruction {
         }
         
         if (val instanceof Atomic) {
-            String ret = String.valueOf(((Atomic)val).getValue());
+            String ret = "[ " + String.valueOf(((Atomic)val).getValue()) + " ]";
             //if (((Atomic)val).getType() == Atomic.Type.STRING && !ret.equals("\n"))
                 //ret = "\"" + String.valueOf(((Atomic)val).getValue()) + "\"";
            

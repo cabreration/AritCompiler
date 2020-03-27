@@ -35,7 +35,7 @@ SKIP : {
     |   "\r"
     |   "\f"
     |   "\n"
-    |   < "#" (~["\n","\r"])* ("\n"|"\r"|"\r\n")>
+    |   < "#" (~["\n","\r"])* ("\n"|"\r"|"\r\n")?>
     |   <"#*" (~["*"])* "*" (~["*", "#"] (~["*"])* "*" | "*")* "#">
     //|   "#*": MULTILINE_COMMENT
 }
@@ -409,7 +409,7 @@ Node Value() :
     |
         <OPENING_P> aux = First_Expression() <CLOSING_P>            { return aux; }
     |
-        tok = <IDENTIFIER>                                          { return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image); }
+        tok = <IDENTIFIER>                                          { return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image.toLowerCase()); }
 }
 
 Node Asignment() : 

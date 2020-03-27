@@ -122,6 +122,7 @@ public class StructureAsignment implements Instruction {
                 res = ((ArrayList<Atomic>)(((Vector)res).getValue())).get(0);
             }
             if (res instanceof List) {
+                /* TODO This needs to cast vector into list */
                 Singleton.insertError(new CompileError("Semantico", "Un vector no puede contener listas", this.line, this.column));
                 return;
             }

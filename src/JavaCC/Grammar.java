@@ -551,7 +551,7 @@ public class Grammar implements GrammarConstants {
           break;
         case IDENTIFIER:
           tok = jj_consume_token(IDENTIFIER);
-                                                                      {if (true) return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image);}
+                                                                      {if (true) return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image.toLowerCase());}
           break;
         default:
           jj_la1[19] = jj_gen;

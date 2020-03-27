@@ -508,15 +508,15 @@ public class Matrix implements Symbol, Value{
     
     @Override
     public Atomic typeof(SymbolsTable env) {
-        String type = "matrix";
+        String type = "";
         if (this.type == 1) 
-            type += "-integer";
+            type = "integer";
         else if (this.type == 2) 
-            type += "-numeric";
+            type = "numeric";
         else if (this.type == 3) 
-            type += "-boolean";
+            type = "boolean";
         else 
-            type += "-string";
+            type = "string";
         
         return new Atomic(Atomic.Type.STRING, type);
     }
@@ -1032,7 +1032,11 @@ public class Matrix implements Symbol, Value{
                     if (((Atomic)op).getValue() == null)
                         return new CompileError("Semantico", "No es posible operar valores nulos", 0, 0);
                     
-                    String str = String.valueOf(((Atomic)op).getValue());
+                    String str;
+                    if (((Atomic)op).getValue() == null)
+                        str = null;
+                    else
+                        str = String.valueOf(((Atomic)op).getValue());
                     Matrix thor = relationalMatrix(this.elements, str, order, operator);
                     if (thor == null)
                         return new CompileError("Semantico", "No es posible operar valores nulos", 0, 0);
@@ -1042,7 +1046,7 @@ public class Matrix implements Symbol, Value{
             }
         }
         
-        //operand is an array, list or matrix
+        //operand is an array, list
         return new CompileError("Semantico", "Tipo de operando invalido para el operador '" + operator + "'", 0, 0);
     }
     
@@ -1092,8 +1096,32 @@ public class Matrix implements Symbol, Value{
                     values[i][j] = new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(flag));
                 }
                 else {
-                    if (m1[i][j].getValue() == null || m2[i][j].getValue() == null)
-                        return null;
+                    if (m1[i][j].getValue() == null && m2[i][j].getValue() == null) {
+                        if (operator.equals("==")) {
+                            values[i][j] = new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(true));
+                            continue;
+                        }
+                        else if (operator.equals("!=")) {
+                            values[i][j] = new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(false));
+                            continue;
+                        }
+                        else
+                            return null;
+                    }
+                    else if ((m1[i][j].getValue() == null && m2[i][j].getValue() != null)
+                            || (m1[i][j].getValue() != null && m2[i][j].getValue() == null)) {
+                        if (operator.equals("==")) {
+                            values[i][j] = new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(false));
+                            continue;
+                        }
+                        else if (operator.equals("!=")) {
+                            values[i][j] = new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(true));
+                            continue;
+                        }
+                        else
+                            return null;
+                    }
+                    
                     String one = String.valueOf(m1[i][j].getValue());
                     String two = String.valueOf(m2[i][j].getValue());
                 
@@ -1194,8 +1222,33 @@ public class Matrix implements Symbol, Value{
         for (int i = 0; i < this.nRows; i++) {
             for (int j = 0; j < this.nCols; j++) {
                 Atomic atom = m1[i][j];
-                if (atom.getValue() == null)
-                    return null;
+                if (atom.getValue() == null) {
+                    if (str == null) {
+                        if (operator.equals("==")) {
+                            values[i][j] = new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(true));
+                            continue;
+                        }
+                        else if (operator.equals("!=")) {
+                            values[i][j] = new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(false));
+                            continue;
+                        }
+                        else
+                            return null;
+                    }
+                    else {
+                        if (operator.equals("==")) {
+                            values[i][j] = new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(false));
+                            continue;
+                        }
+                        else if (operator.equals("!=")) {
+                            values[i][j] = new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(true));
+                            continue;
+                        }
+                        else 
+                            return null;
+                    }
+                }
+                    
                 String one = String.valueOf(atom.getValue());
             
                 boolean flag  = false;

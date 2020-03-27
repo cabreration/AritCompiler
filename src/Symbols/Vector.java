@@ -122,15 +122,15 @@ public class Vector implements Symbol, Value {
     
     @Override
     public Atomic typeof(SymbolsTable env) {
-        String type = "vector";
+        String type = "";
         if (this.type == 1) 
-            type += "-integer";
+            type = "integer";
         else if (this.type == 2) 
-            type += "-numeric";
+            type = "numeric";
         else if (this.type == 3) 
-            type += "-boolean";
+            type = "boolean";
         else 
-            type += "-string";
+            type = "string";
         
         return new Atomic(Atomic.Type.STRING, type);
     }
@@ -631,7 +631,11 @@ public class Vector implements Symbol, Value {
                     if (((Atomic)op).getValue() == null)
                         return new CompileError("Semantico", "No es posible operar valores nulos", 0, 0);
                     
-                    String str = String.valueOf(((Atomic)op).getValue());
+                    String str;
+                    if (((Atomic)op).getValue() == null)
+                        str = null;
+                    else
+                        str = String.valueOf(((Atomic)op).getValue());
                     Vector thor = relationalVector(this.content, str, order, operator);
                     if (thor == null)
                         return new CompileError("Semantico", "No es posible operar valores nulos", 0, 0);
@@ -692,8 +696,32 @@ public class Vector implements Symbol, Value {
                 res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(flag)));
             }
             else {
-                if (v1.get(i).getValue() == null || v2.get(i).getValue() == null)
-                    return null;
+                if (v1.get(i).getValue() == null && v2.get(i).getValue() == null) {
+                    if (operator.equals("==")) {
+                        res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(true)));
+                        continue;
+                    }
+                    else if (operator.equals("!="))  {
+                        res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(false)));
+                        continue;
+                    }
+                    else 
+                        return null;
+                }
+                if ( ( v1.get(i).getValue() == null && v2.get(i).getValue() != null ) ||
+                        ( v1.get(i).getValue() != null && v2.get(i).getValue() == null ) ) {
+                    if (operator.equals("!=")) {
+                        res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(true)));
+                        continue;
+                    }
+                    else if (operator.equals("==")) {
+                        res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(false)));
+                        continue;
+                    }
+                    else
+                        return null;
+                }
+                
                 String one = String.valueOf(v1.get(i).getValue());
                 String two = String.valueOf(v2.get(i).getValue());
                 
@@ -784,8 +812,33 @@ public class Vector implements Symbol, Value {
         ArrayList<Atomic> res = new ArrayList<Atomic>();
         
         for (Atomic ob: v1) {
-            if (ob.getValue() == null)
-                return null;
+            if (ob.getValue() == null) {
+                if (str == null) {
+                    if (operator.equals("==")) {
+                        res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(true)));
+                        continue;
+                    }
+                    else if (operator.equals("!=")) {
+                        res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(false)));
+                        continue;
+                    }
+                    else 
+                        return null;
+                }
+                else if (str != null) {
+                    if (operator.equals("!=")) {
+                        res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(true)));
+                        continue;
+                    }
+                    else if (operator.equals("==")) {
+                        res.add(new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(false)));
+                        continue;
+                    }
+                    else 
+                        return null;
+                }
+            }
+
             String one = String.valueOf(ob.getValue());
             
             boolean flag  = false;
@@ -990,6 +1043,7 @@ public class Vector implements Symbol, Value {
                 values.remove(i);
                 values.add(i, atom);
                 this.content = values;
+                this.type = 4;
             }
             else {
                 this.content.remove(i);
@@ -1005,6 +1059,7 @@ public class Vector implements Symbol, Value {
                 values.remove(i);
                 values.add(i, atom);
                 this.content = values;
+                this.type = 2;
             }
             else if (this.type == 3) {
                 for (Atomic mic : this.content) {
@@ -1014,6 +1069,7 @@ public class Vector implements Symbol, Value {
                 values.remove(i);
                 values.add(i, atom);
                 this.content = values;
+                this.type = 2;
             }
             else if (this.type == 4) {
                 Atomic mic = new Atomic(Atomic.Type.STRING, String.valueOf(atom.getValue()));
@@ -1039,6 +1095,7 @@ public class Vector implements Symbol, Value {
                 values.remove(i);
                 values.add(i, atom);
                 this.content = values;
+                this.type = 1;
             }
             else if (this.type == 4) {
                 Atomic mic = new Atomic(Atomic.Type.STRING, String.valueOf(atom.getValue()));
