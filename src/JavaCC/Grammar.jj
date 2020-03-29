@@ -417,7 +417,7 @@ Node Asignment() :
 {
         LOOKAHEAD(2)
         id = <IDENTIFIER> v = <VALUE_ASIGNMENT> previous = Asignment_Options()      {   
-                                                                                        Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                                                        Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image.toLowerCase());
                                                                                         previous.addChildrenAt(0, identifier);
                                                                                         previous.setRow(v.beginLine);
                                                                                         previous.setColumn(v.beginColumn);
@@ -503,11 +503,11 @@ Node Parameter() :
         tok = <IDENTIFIER> ( <VALUE_ASIGNMENT> exp = First_Expression() { flag = true; } )? 
         { 
             if (!flag) {
-                return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image); 
+                return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image.toLowerCase()); 
             }
             else {
                 res = new Node("asignment");
-                id = new Node("identifier", tok.beginLine, tok.beginColumn, tok.image);
+                id = new Node("identifier", tok.beginLine, tok.beginColumn, tok.image.toLowerCase());
                 res.addChildren(id);
                 res.addChildren(exp);
                 return res;
@@ -644,7 +644,7 @@ Node For() :
     exp = First_Expression() <CLOSING_P>
     actions = Sentences_Block()                         {
                                                             Node forNode = new Node("for sentence", f.beginLine, f.beginColumn, null);
-                                                            Node idNode = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                            Node idNode = new Node("identifier", id.beginLine, id.beginColumn, id.image.toLowerCase());
                                                             forNode.addChildren(idNode);
                                                             Node condition = new Node("condition");
                                                             condition.addChildren(exp);
@@ -688,7 +688,7 @@ Node Function_Call() :
     <CLOSING_P>
                                                                         {
                                                                             Node call = new Node("call");
-                                                                            Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                                            Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image.toLowerCase());
                                                                             call.addChildren(identifier);
                                                                             if (flag)
                                                                                 call.addChildren(params);
@@ -710,7 +710,7 @@ Node Vector_Access() :
     id = <IDENTIFIER> 
     ( address = Address() { addresses.addChildren(address); } )+                {
                                                                                     Node res = new Node("structure access");
-                                                                                    Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                                                    Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image.toLowerCase());
                                                                                     res.addChildren(identifier);
                                                                                     res.addChildren(addresses);
                                                                                     return res;
@@ -744,7 +744,7 @@ Node Matrix_Access() :
                                                                             
                                                                                 { 
                                                                                     Node access = new Node("matrix access");
-                                                                                    Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                                                    Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image.toLowerCase());
                                                                                     access.addChildren(identifier);
                                                                                     access.addChildren(mat);
                                                                                     if (flag)

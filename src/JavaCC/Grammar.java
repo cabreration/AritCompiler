@@ -569,7 +569,7 @@ public class Grammar implements GrammarConstants {
       id = jj_consume_token(IDENTIFIER);
       v = jj_consume_token(VALUE_ASIGNMENT);
       previous = Asignment_Options();
-                                                                                        Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                                                        Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image.toLowerCase());
                                                                                         previous.addChildrenAt(0, identifier);
                                                                                         previous.setRow(v.beginLine);
                                                                                         previous.setColumn(v.beginColumn);
@@ -719,11 +719,11 @@ public class Grammar implements GrammarConstants {
       ;
     }
             if (!flag) {
-                {if (true) return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image);}
+                {if (true) return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image.toLowerCase());}
             }
             else {
                 res = new Node("asignment");
-                id = new Node("identifier", tok.beginLine, tok.beginColumn, tok.image);
+                id = new Node("identifier", tok.beginLine, tok.beginColumn, tok.image.toLowerCase());
                 res.addChildren(id);
                 res.addChildren(exp);
                 {if (true) return res;}
@@ -944,7 +944,7 @@ public class Grammar implements GrammarConstants {
     jj_consume_token(CLOSING_P);
     actions = Sentences_Block();
                                                             Node forNode = new Node("for sentence", f.beginLine, f.beginColumn, null);
-                                                            Node idNode = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                            Node idNode = new Node("identifier", id.beginLine, id.beginColumn, id.image.toLowerCase());
                                                             forNode.addChildren(idNode);
                                                             Node condition = new Node("condition");
                                                             condition.addChildren(exp);
@@ -1045,7 +1045,7 @@ public class Grammar implements GrammarConstants {
     }
     jj_consume_token(CLOSING_P);
                                                                             Node call = new Node("call");
-                                                                            Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                                            Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image.toLowerCase());
                                                                             call.addChildren(identifier);
                                                                             if (flag)
                                                                                 call.addChildren(params);
@@ -1098,7 +1098,7 @@ public class Grammar implements GrammarConstants {
       }
     }
                                                                                     Node res = new Node("structure access");
-                                                                                    Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                                                    Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image.toLowerCase());
                                                                                     res.addChildren(identifier);
                                                                                     res.addChildren(addresses);
                                                                                     {if (true) return res;}
@@ -1168,7 +1168,7 @@ public class Grammar implements GrammarConstants {
                                                          adds.addChildren(aux); flag = true;
     }
                                                                                     Node access = new Node("matrix access");
-                                                                                    Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image);
+                                                                                    Node identifier = new Node("identifier", id.beginLine, id.beginColumn, id.image.toLowerCase());
                                                                                     access.addChildren(identifier);
                                                                                     access.addChildren(mat);
                                                                                     if (flag)

@@ -140,6 +140,7 @@ public class For_Sentence implements Instruction{
                 if (r != null) {
                     if (r instanceof Break_Sentence) {
                         env.update(local);
+                        // actualizar el valor del vector
                         return null;
                     }
                     else if (r instanceof Continue_Sentence) {
@@ -148,10 +149,12 @@ public class For_Sentence implements Instruction{
                     }
                     else if (r instanceof Return_Sentence) {
                         env.update(local);
+                        // actualizar el valor del vector
                         return r;
                     }
                 }
             }
+            // Aqui hay que actualizar el valor del vector
             env.update(local);
         }
         return null;
