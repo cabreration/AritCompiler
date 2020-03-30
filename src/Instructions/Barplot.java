@@ -204,12 +204,12 @@ public class Barplot implements Instruction {
         CategoryChart chart = new CategoryChartBuilder().width(1300).height(600).title(titler).xAxisTitle(x).yAxisTitle(y).theme(Styler.ChartTheme.GGPlot2).build();
 
         // Customize Chart
-        chart.getStyler().setLegendVisible(true);
-        chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideN);
+        chart.getStyler().setLegendVisible(false);
+        chart.getStyler().setXAxisLabelRotation(90);
         chart.getStyler().setAxisTitlesVisible(true);
         chart.getStyler().setYAxisTitleVisible(true);
         chart.getStyler().setAxisTitlePadding(20);
-        chart.getStyler().setHasAnnotations(true);
+        chart.getStyler().setHasAnnotations(true);chart.getStyler().setXAxisLabelRotation(90);
         
         Double[] ceros = new Double[numbers.length];
         for (int i = 0; i < ceros.length; i++) {
@@ -217,8 +217,7 @@ public class Barplot implements Instruction {
         }
         chart.addSeries(".", Arrays.asList(names), Arrays.asList(numbers), Arrays.asList(ceros));
         
-        JFrame pie = new SwingWrapper(chart).displayChart();
-        pie.setVisible(false);
+        SwingWrapper pie = new SwingWrapper(chart);
         Singleton.insertFigure(pie);
         //JFrame frame = pie.displayChart();
         //frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);

@@ -417,11 +417,11 @@ Node Value() :
     | 
         tok = <STRING_VALUE>                                        { return new Node("string value", tok.beginLine, tok.beginColumn, scape(tok.image)); }
     |
-        LOOKAHEAD(4)
-        aux = Matrix_Access()                                       { return aux; }
-    |
-        LOOKAHEAD(2)
+        LOOKAHEAD(100)
         aux = Vector_Access()                                       { return aux; }
+    |
+        LOOKAHEAD(100)
+        aux = Matrix_Access()                                       { return aux; }
     |
         LOOKAHEAD(2)
         aux = Function_Call()                                       { return aux; }
@@ -443,7 +443,7 @@ Node Asignment() :
                                                                                         return previous; 
                                                                                     }
     |
-        LOOKAHEAD(4)
+        LOOKAHEAD(100)
         mat = Matrix_Access() v = <VALUE_ASIGNMENT> previous = First_Expression()   {
                                                                                         Node as = new Node("matrix asignment", v.beginLine, v.beginColumn, null);
                                                                                         as.addChildren(mat);
@@ -451,7 +451,7 @@ Node Asignment() :
                                                                                         return as;
                                                                                     }
     |   
-        LOOKAHEAD(2)
+        LOOKAHEAD(100)
         vec = Vector_Access() v = <VALUE_ASIGNMENT> previous = First_Expression()   {   
                                                                                         Node as = new Node("structure asignment");
                                                                                         as.addChildren(vec);
@@ -739,8 +739,11 @@ Node Vector_Access() :
 Node Address() : 
 { Node exp; boolean one = false; }
 {
-    <OPENING_B> ( exp = First_Expression() { one = true; }
-    | <OPENING_B> exp = First_Expression() <CLOSING_B> )
+    <OPENING_B> 
+    (       exp = First_Expression() { one = true; }
+        | 
+            <OPENING_B> exp = First_Expression() <CLOSING_B> 
+    )
     <CLOSING_B>                                                                 {
                                                                                     if (one) {
                                                                                         Node address = new Node("address", 0, 0, "singleB");

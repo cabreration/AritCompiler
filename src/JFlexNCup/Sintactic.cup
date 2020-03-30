@@ -627,14 +627,12 @@ ADDRESSES ::= ADDRESSES:addresses ADDRESS:single                {: Node adds = n
                                                                 :}
 ;
 
-ADDRESS ::= openingBracket LONE_EXPRESSION:exp closingBracket                                   {: Node address = new Node("address", 0, 0, "singleB");
-                                                                                                   
+ADDRESS ::= openingBracket LONE_EXPRESSION:exp closingBracket                                   {: Node address = new Node("address", 0, 0, "singleB");                                                                         
                                                                                                    address.addChildren(exp);
                                                                                                    RESULT = address;
                                                                                                 :}
 
-    | openingBracket openingBracket LONE_EXPRESSION:exp closingBracket closingBracket           {: Node address = new Node("address", 0, 0, "doubleB");
-                                                                                                   
+    | openingBracket openingBracket LONE_EXPRESSION:exp closingBracket closingBracket           {: Node address = new Node("address", 0, 0, "doubleB");                                                                        
                                                                                                    address.addChildren(exp);
                                                                                                    RESULT = address;
                                                                                                 :}

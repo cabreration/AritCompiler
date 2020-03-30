@@ -173,8 +173,7 @@ public class Histogram implements Instruction {
         CategoryChart chart = new CategoryChartBuilder().width(1300).height(600).title(naame).xAxisTitle(xl).theme(Styler.ChartTheme.GGPlot2).build();
 
         // Customize Chart
-        chart.getStyler().setLegendVisible(true);
-        chart.getStyler().setLegendPosition(Styler.LegendPosition.OutsideE);
+        chart.getStyler().setLegendVisible(false);
         chart.getStyler().setAxisTitlesVisible(true);
         chart.getStyler().setYAxisTitleVisible(true);
         chart.getStyler().setAxisTitlePadding(20);
@@ -210,8 +209,7 @@ public class Histogram implements Instruction {
         }
         chart.addSeries(".", Arrays.asList(labels), Arrays.asList(count), Arrays.asList(ceros));
         
-        JFrame hist = new SwingWrapper(chart).displayChart();
-        hist.setVisible(false);
+        SwingWrapper hist = new SwingWrapper(chart);
         Singleton.insertFigure(hist);
         //pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         

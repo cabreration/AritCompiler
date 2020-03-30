@@ -338,6 +338,7 @@ public class Function_Call implements Instruction, Expression {
                     return ((Return_Sentence)ret).getProcessedValue();
                 } 
             }
+            env.update(local);
         }
         else {
             // Una funcion con parametros

@@ -164,8 +164,8 @@ public class Plot implements Instruction {
 
         // Customize Chart
         chart.getStyler().setPlotBackgroundColor(ChartColor.getAWTColor(ChartColor.WHITE));
-        chart.getStyler().setLegendVisible(true);
-        chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideN);
+        chart.getStyler().setLegendVisible(false);
+        chart.getStyler().setXAxisLabelRotation(90);
         chart.getStyler().setAxisTitlesVisible(true);
         chart.getStyler().setYAxisTitleVisible(true);
         chart.getStyler().setAxisTitlePadding(20);
@@ -192,8 +192,7 @@ public class Plot implements Instruction {
         }
         
         
-        JFrame plot = new SwingWrapper(chart).displayChart();
-        plot.setVisible(false);
+        SwingWrapper plot = new SwingWrapper(chart);
         Singleton.insertFigure(plot);
         //pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         

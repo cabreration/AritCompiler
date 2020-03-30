@@ -164,8 +164,8 @@ public class Dispersion implements Instruction {
 
         // Customize Chart
         chart.getStyler().setPlotBackgroundColor(ChartColor.getAWTColor(ChartColor.WHITE));
-        chart.getStyler().setLegendVisible(true);
-        chart.getStyler().setLegendPosition(Styler.LegendPosition.InsideN);
+        chart.getStyler().setLegendVisible(false);
+        chart.getStyler().setXAxisLabelRotation(90);
         chart.getStyler().setAxisTitlesVisible(true);
         chart.getStyler().setYAxisTitleVisible(true);
         chart.getStyler().setAxisTitlePadding(20);
@@ -180,8 +180,7 @@ public class Dispersion implements Instruction {
         series.setLineColor(Color.white);
         series.setLineStyle(SeriesLines.NONE);
         
-        JFrame disp = new SwingWrapper(chart).displayChart();
-        disp.setVisible(false);
+        SwingWrapper disp = new SwingWrapper(chart);
         Singleton.insertFigure(disp);
         //pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         
