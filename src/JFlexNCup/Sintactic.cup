@@ -80,8 +80,8 @@ non terminal Node FUNCTION_CALL, EXPRESSIONS_LIST, MATRIX_ACCESS, MATRIX_ADDRESS
 
 non terminal OPERATOR, RELATIONAL_OPERATOR;
 
-precedence right valAsignment;
-precedence right ternary, colon;
+//precedence right valAsignment;
+//precedence right ternary, colon;
 precedence left or;
 precedence left and;
 precedence left equals, notEquals;
@@ -89,7 +89,7 @@ precedence nonassoc lesser, lesserEquals, greater, greaterEquals;
 precedence left plus, minus;
 precedence left times, div, mod;
 precedence left power;
-precedence right minus, not;
+//precedence right minus, not;
 precedence left openingBracket, closingBracket;
 precedence nonassoc openingPar, closingPar;
 
@@ -165,96 +165,129 @@ SENTENCE ::= ASIGNMENT:sent                                 {: RESULT = sent; :}
     | error SENTENCE:s                                      {: RESULT = s; :}
 ; 
 
-LONE_EXPRESSION ::= LONE_EXPRESSION:exp1 ternary:ter LONE_EXPRESSION:exp2 colon:col LONE_EXPRESSION:exp3   {: Node res = new Node("ternary expression");
-                                                                                                              Node tern = new Node("?", terright, terleft, null);
-                                                                                                              tern.addChildren(exp1);
-                                                                                                              Node colon = new Node(":", colright, colleft, null);
-                                                                                                              colon.addChildren(exp2);
-                                                                                                              colon.addChildren(exp3);
-                                                                                                              res.addChildren(tern);
-                                                                                                              res.addChildren(colon);
-                                                                                                              RESULT = res;
+LONE_EXPRESSION ::= LONE_EXPRESSION:exp1 ternart:op LONE_EXPRESSION:exp2 colon:op2 LONE_EXPRESSION:exp3     {:  Node res = new Node("binary expression");
+                                                                                                                Node operator = new Node("+", opright, opleft, null);
+                                                                                                                operator.addChildren(exp1);
+                                                                                                                operator.addChildren(exp2);
+                                                                                                                res.addChildren(operator);
+                                                                                                                RESULT = res;
                                                                                                             :}
-
-    | LONE_EXPRESSION:exp1 valAsignment:v LONE_EXPRESSION:exp2                                              {: Node res = new Node("binary expression");
-                                                                                                               Node operator = new Node("=", vright, vleft, null);
-                                                                                                               operator.addChildren(exp1);
-                                                                                                               operator.addChildren(exp2);
-                                                                                                               res.addChildren(operator);
-                                                                                                               RESULT = res;
-                                                                                                            :}
-
-    | LTWO_EXPRESSION:exp                                                                                   {: RESULT = exp; :}
-;
-
-LTWO_EXPRESSION ::= LTWO_EXPRESSION:exp1 and:a LTWO_EXPRESSION:exp2                                         {: Node res = new Node("binary expression");
-                                                                                                               Node operator = new Node("&", aright, aleft, null);
-                                                                                                               operator.addChildren(exp1);
-                                                                                                               operator.addChildren(exp2);
-                                                                                                               res.addChildren(operator);
-                                                                                                               RESULT = res;
-                                                                                                            :}
-
-    | LTWO_EXPRESSION:exp1 or:o LTWO_EXPRESSION:exp2                                                        {: Node res = new Node("binary expression");
-                                                                                                               Node operator = new Node("|", oright, oleft, null);
-                                                                                                               operator.addChildren(exp1);
-                                                                                                               operator.addChildren(exp2);
-                                                                                                               res.addChildren(operator);
-                                                                                                               RESULT = res;
-                                                                                                            :}
-
-    | LTHREE_EXPRESSION:exp                                                                                 {: RESULT = exp; :}
-;
-
-LTHREE_EXPRESSION ::= LFOUR_EXPRESSION:exp1 RELATIONAL_OPERATOR:op LFOUR_EXPRESSION:exp2                  {: Node res = new Node("binary expression");
-                                                                                                               Node operator = new Node(String.valueOf(op), opright, opleft, null);
-                                                                                                               operator.addChildren(exp1);
-                                                                                                               operator.addChildren(exp2);
-                                                                                                               res.addChildren(operator);
-                                                                                                               RESULT = res;
-                                                                                                            :}
-
-    | LFOUR_EXPRESSION:exp                                                                                  {: RESULT = exp; :}
-;
-
-RELATIONAL_OPERATOR ::= equals  {: RESULT = "=="; :}
-
-    | notEquals                 {: RESULT = "!="; :}
-
-    | greaterEquals             {: RESULT = ">="; :}
-
-    | lesserEquals              {: RESULT = "<="; :}
-
-    | greater                   {: RESULT = ">"; :}
-
-    | lesser                    {: RESULT = "<"; :}
-;
-
-LFOUR_EXPRESSION ::= LFOUR_EXPRESSION:exp1 OPERATOR:op LFOUR_EXPRESSION:exp2        {: Node res = new Node("binary expression");
-                                                                                       Node operator = new Node(String.valueOf(op), opright, opleft, null);                                                                                      
+    | LONE_EXPRESSION:exp1 or:op LONE_EXPRESSION:exp2                 {: Node res = new Node("binary expression");
+                                                                                       Node operator = new Node("|", opright, opleft, null);
                                                                                        operator.addChildren(exp1);
                                                                                        operator.addChildren(exp2);
-                                                                                       res.addChildren(operator);                                                                                  
+                                                                                       res.addChildren(operator);
                                                                                        RESULT = res;
                                                                                     :}
 
-    | minus:op LFOUR_EXPRESSION:exp                                                  {: Node res = new Node("unary expression");
+    | LONE_EXPRESSION:exp1 and:op LONE_EXPRESSION:exp2                              {: Node res = new Node("binary expression");
+                                                                                       Node operator = new Node("&", opright, opleft, null);
+                                                                                       operator.addChildren(exp1);
+                                                                                       operator.addChildren(exp2);
+                                                                                       res.addChildren(operator);
+                                                                                       RESULT = res;
+                                                                                    :}
+
+    | LONE_EXPRESSION:exp1 notEquals:op LONE_EXPRESSION:exp2                        {: Node res = new Node("binary expression");
+                                                                                       Node operator = new Node("!=", opright, opleft, null);
+                                                                                       operator.addChildren(exp1);
+                                                                                       operator.addChildren(exp2);
+                                                                                       res.addChildren(operator);
+                                                                                       RESULT = res;
+                                                                                    :}
+    
+    | LONE_EXPRESSION:exp1 equals:op LONE_EXPRESSION:exp2                           {: Node res = new Node("binary expression");
+                                                                                       Node operator = new Node("==", opright, opleft, null);
+                                                                                       operator.addChildren(exp1);
+                                                                                       operator.addChildren(exp2);
+                                                                                       res.addChildren(operator);
+                                                                                       RESULT = res;
+                                                                                    :}
+
+    | LONE_EXPRESSION:exp1 greater:op LONE_EXPRESSION:exp2                          {: Node res = new Node("binary expression");
+                                                                                       Node operator = new Node(">", opright, opleft, null);
+                                                                                       operator.addChildren(exp1);
+                                                                                       operator.addChildren(exp2);
+                                                                                       res.addChildren(operator);
+                                                                                       RESULT = res;
+                                                                                    :}
+
+    | LONE_EXPRESSION:exp1 lesser:op LONE_EXPRESSION:exp2                          {: Node res = new Node("binary expression");
+                                                                                       Node operator = new Node("<", opright, opleft, null);
+                                                                                       operator.addChildren(exp1);
+                                                                                       operator.addChildren(exp2);
+                                                                                       res.addChildren(operator);
+                                                                                       RESULT = res;
+                                                                                    :} 
+    
+    | LONE_EXPRESSION:exp1 greaterEquals:op LONE_EXPRESSION:exp2                    {: Node res = new Node("binary expression");
+                                                                                       Node operator = new Node(">=", opright, opleft, null);
+                                                                                       operator.addChildren(exp1);
+                                                                                       operator.addChildren(exp2);
+                                                                                       res.addChildren(operator);
+                                                                                       RESULT = res;
+                                                                                    :}
+    
+    | LONE_EXPRESSION:exp1 lesserEquals:op LONE_EXPRESSION:exp2                     {: Node res = new Node("binary expression");
+                                                                                       Node operator = new Node("<=", opright, opleft, null);
+                                                                                       operator.addChildren(exp1);
+                                                                                       operator.addChildren(exp2);
+                                                                                       res.addChildren(operator);
+                                                                                       RESULT = res;
+                                                                                    :}
+    
+    | LONE_EXPRESSION:exp1 plus:op LONE_EXPRESSION:exp2                             {: Node res = new Node("binary expression");
+                                                                                       Node operator = new Node("+", opright, opleft, null);
+                                                                                       operator.addChildren(exp1);
+                                                                                       operator.addChildren(exp2);
+                                                                                       res.addChildren(operator);
+                                                                                       RESULT = res;
+                                                                                    :}
+
+    | LONE_EXPRESSION:exp1 minus:op LONE_EXPRESSION:exp2                            {: Node res = new Node("binary expression");
                                                                                        Node operator = new Node("-", opright, opleft, null);
-                                                                                       operator.addChildren(exp);
+                                                                                       operator.addChildren(exp1);
+                                                                                       operator.addChildren(exp2);
                                                                                        res.addChildren(operator);
                                                                                        RESULT = res;
                                                                                     :}
 
-    | not:op LFOUR_EXPRESSION:exp                                                    {: Node res = new Node("unary expression");
-                                                                                       Node operator = new Node("!", opright, opleft, null);
-                                                                                       operator.addChildren(exp);
+    | LONE_EXPRESSION:exp1 times:op LONE_EXPRESSION:exp2                            {: Node res = new Node("binary expression");
+                                                                                       Node operator = new Node("*", opright, opleft, null);
+                                                                                       operator.addChildren(exp1);
+                                                                                       operator.addChildren(exp2);
                                                                                        res.addChildren(operator);
                                                                                        RESULT = res;
                                                                                     :}
 
-    | openingPar LONE_EXPRESSION:exp closingPar                                     {: RESULT = exp; :}
+    | LONE_EXPRESSION:exp1 div:op LONE_EXPRESSION:exp2                              {: Node res = new Node("binary expression");
+                                                                                       Node operator = new Node("/", opright, opleft, null);
+                                                                                       operator.addChildren(exp1);
+                                                                                       operator.addChildren(exp2);
+                                                                                       res.addChildren(operator);
+                                                                                       RESULT = res;
+                                                                                    :}
 
-    | FUNCTION_CALL:f                                                               {: RESULT = f; :}
+    | LONE_EXPRESSION:exp1 mod:op LONE_EXPRESSION:exp2                              {: Node res = new Node("binary expression");
+                                                                                       Node operator = new Node("%%", opright, opleft, null);
+                                                                                       operator.addChildren(exp1);
+                                                                                       operator.addChildren(exp2);
+                                                                                       res.addChildren(operator);
+                                                                                       RESULT = res;
+                                                                                    :}
+    
+    | LONE_EXPRESSION:exp1 power:op LONE_EXPRESSION:exp2                            {: Node res = new Node("binary expression");
+                                                                                       Node operator = new Node("^", opright, opleft, null);
+                                                                                       operator.addChildren(exp1);
+                                                                                       operator.addChildren(exp2);
+                                                                                       res.addChildren(operator);
+                                                                                       RESULT = res;
+                                                                                    :}
+
+    | EXPRESSION:exp                                                                {: RESULT = exp; :}
+;
+    
+EXPRESSION ::= FUNCTION_CALL:f                                                      {: RESULT = f; :}
 
     | VECTOR_ACCESS:st                                                              {: RESULT = st; :}
 
@@ -308,30 +341,7 @@ LFOUR_EXPRESSION ::= LFOUR_EXPRESSION:exp1 OPERATOR:op LFOUR_EXPRESSION:exp2    
                                                                                     :}
 ;
 
-EXPRESSION ::= EXPRESSION:exp1 OPERATOR:op EXPRESSION:exp2                            {: Node res = new Node("binary expression");
-                                                                                       Node operator = new Node(String.valueOf(op), opright, opleft, null);                                                                                      
-                                                                                       operator.addChildren(exp1);
-                                                                                       operator.addChildren(exp2);
-                                                                                       res.addChildren(operator);                                                                                  
-                                                                                       RESULT = res;
-                                                                                    :}
-    | integerValue:v                                                                {: RESULT = new Node("integer value", vright, vleft, Integer.parseInt(String.valueOf(v))); :}
-;
-
-OPERATOR ::= plus       {: RESULT = "+"; :}
-
-    | minus             {: RESULT = "-"; :}
-
-    | times             {: RESULT = "*"; :}
-
-    | div               {: RESULT = "/"; :}
-
-    | power             {: RESULT = "^"; :}
-
-    | mod               {: RESULT = "%%"; :}
-;
-
-ASIGNMENT ::= id:id valAsignment:v EXPRESSION:exp              {: Node as = new Node("asignment", vright, vleft, null);
+ASIGNMENT ::= id:id valAsignment:v LONE_EXPRESSION:exp              {: Node as = new Node("asignment", vright, vleft, null);
                                                                        Node ident = new Node("identifier", idright, idleft, String.valueOf(id));
                                                                        as.addChildren(ident);                                                                     
                                                                        as.addChildren(exp);
