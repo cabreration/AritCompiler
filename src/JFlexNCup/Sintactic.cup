@@ -50,6 +50,20 @@ action code
             gaining.addChildren(losing.getChildAt(i));
         }
     }
+
+    public Node rearrangeExpression(Node expression) {
+        if (expression.getChildAt(0).getChildAt(1).getNodeType().equals("binary expression") 
+            && !expression.getChildAt(0).getChildAt(0).getNodeType().equals("binary expression")
+            && !expression.getChildAt(0).getChildAt(0).getNodeType().equals("unary expression")) {
+            Node ret = expression.getChildAt(0).getChildAt(1);
+            expression.getChildAt(0).addChildrenAt(1, ret.getChildAt(0).getChildAt(0));
+            expression.getChildAt(0).deleteChildAt(2);
+            ret.getChildAt(0).deleteChildAt(0);
+            ret.getChildAt(0).addChildrenAt(0, expression);
+            return rearrangeExpression(ret);
+        }
+        return expression;
+    }
 :}
 
 terminal mod, equals, notEquals, greaterEquals, lesserEquals, arrowFunction, valAsignment, openingPar, closingPar;
@@ -62,7 +76,7 @@ non terminal Node ROOT, ASIGNMENT, LONE_EXPRESSION, LTWO_EXPRESSION, LTHREE_EXPR
 non terminal Node SENTENCES_BLOCK, SENTENCES_LIST, SENTENCE, IF_SENTENCE, ELSE_SENTENCE, SWITCH_SENTENCE, SWITCH_BODY;
 non terminal Node CASES_LIST, DEFAULT_CASE, SINGLE_CASE, WHILE_SENTENCE, DOWHILE_SENTENCE, FOR_SENTENCE, BREAK_SENTENCE;
 non terminal Node CONTINUE_SENTENCE, RETURN_SENTENCE, VECTOR_ACCESS, ADDRESSES, ADDRESS, PARAMETERS_DECL, PARAMETER;
-non terminal Node FUNCTION_CALL, EXPRESSIONS_LIST, MATRIX_ACCESS, MATRIX_ADDRESS, PARAMS, ARROW_FUNCTION, VECTORS;
+non terminal Node FUNCTION_CALL, EXPRESSIONS_LIST, MATRIX_ACCESS, MATRIX_ADDRESS, PARAMS, ARROW_FUNCTION, VECTORS, EXPRESSION;
 
 non terminal OPERATOR, RELATIONAL_OPERATOR;
 
@@ -149,7 +163,7 @@ SENTENCE ::= ASIGNMENT:sent                                 {: RESULT = sent; :}
     | CONTINUE_SENTENCE:c semicolon                         {: RESULT = c; :}
 
     | error SENTENCE:s                                      {: RESULT = s; :}
-;
+; 
 
 LONE_EXPRESSION ::= LONE_EXPRESSION:exp1 ternary:ter LONE_EXPRESSION:exp2 colon:col LONE_EXPRESSION:exp3   {: Node res = new Node("ternary expression");
                                                                                                               Node tern = new Node("?", terright, terleft, null);
@@ -192,7 +206,7 @@ LTWO_EXPRESSION ::= LTWO_EXPRESSION:exp1 and:a LTWO_EXPRESSION:exp2             
     | LTHREE_EXPRESSION:exp                                                                                 {: RESULT = exp; :}
 ;
 
-LTHREE_EXPRESSION ::= LTHREE_EXPRESSION:exp1 RELATIONAL_OPERATOR:op LTHREE_EXPRESSION:exp2                  {: Node res = new Node("binary expression");
+LTHREE_EXPRESSION ::= LFOUR_EXPRESSION:exp1 RELATIONAL_OPERATOR:op LFOUR_EXPRESSION:exp2                  {: Node res = new Node("binary expression");
                                                                                                                Node operator = new Node(String.valueOf(op), opright, opleft, null);
                                                                                                                operator.addChildren(exp1);
                                                                                                                operator.addChildren(exp2);
@@ -217,10 +231,10 @@ RELATIONAL_OPERATOR ::= equals  {: RESULT = "=="; :}
 ;
 
 LFOUR_EXPRESSION ::= LFOUR_EXPRESSION:exp1 OPERATOR:op LFOUR_EXPRESSION:exp2        {: Node res = new Node("binary expression");
-                                                                                       Node operator = new Node(String.valueOf(op), opright, opleft, null);
+                                                                                       Node operator = new Node(String.valueOf(op), opright, opleft, null);                                                                                      
                                                                                        operator.addChildren(exp1);
                                                                                        operator.addChildren(exp2);
-                                                                                       res.addChildren(operator);
+                                                                                       res.addChildren(operator);                                                                                  
                                                                                        RESULT = res;
                                                                                     :}
 
@@ -294,6 +308,16 @@ LFOUR_EXPRESSION ::= LFOUR_EXPRESSION:exp1 OPERATOR:op LFOUR_EXPRESSION:exp2    
                                                                                     :}
 ;
 
+EXPRESSION ::= EXPRESSION:exp1 OPERATOR:op EXPRESSION:exp2                            {: Node res = new Node("binary expression");
+                                                                                       Node operator = new Node(String.valueOf(op), opright, opleft, null);                                                                                      
+                                                                                       operator.addChildren(exp1);
+                                                                                       operator.addChildren(exp2);
+                                                                                       res.addChildren(operator);                                                                                  
+                                                                                       RESULT = res;
+                                                                                    :}
+    | integerValue:v                                                                {: RESULT = new Node("integer value", vright, vleft, Integer.parseInt(String.valueOf(v))); :}
+;
+
 OPERATOR ::= plus       {: RESULT = "+"; :}
 
     | minus             {: RESULT = "-"; :}
@@ -307,21 +331,23 @@ OPERATOR ::= plus       {: RESULT = "+"; :}
     | mod               {: RESULT = "%%"; :}
 ;
 
-ASIGNMENT ::= id:id valAsignment:v LONE_EXPRESSION:exp              {: Node as = new Node("asignment", vright, vleft, null);
+ASIGNMENT ::= id:id valAsignment:v EXPRESSION:exp              {: Node as = new Node("asignment", vright, vleft, null);
                                                                        Node ident = new Node("identifier", idright, idleft, String.valueOf(id));
-                                                                       as.addChildren(ident);
+                                                                       as.addChildren(ident);                                                                     
                                                                        as.addChildren(exp);
                                                                        RESULT = as;
                                                                     :}
 
     | MATRIX_ACCESS:mat valAsignment:v LONE_EXPRESSION:exp          {: Node as = new Node("matrix asignment", vright, vleft, null);
                                                                        as.addChildren(mat);
+                                                                       
                                                                        as.addChildren(exp);
                                                                        RESULT = as;
                                                                     :}
 
     | VECTOR_ACCESS:vec valAsignment LONE_EXPRESSION:exp            {: Node as = new Node("structure asignment");
                                                                        as.addChildren(vec);
+                                                                       
                                                                        as.addChildren(exp);
                                                                        RESULT = as;
                                                                     :}
@@ -367,6 +393,7 @@ ARROW_FUNCTION ::= openingPar closingPar arrowFunction SENTENCES_BLOCK:list     
                                                                                                                                       Node ident = new Node("identifier", idright, idleft, String.valueOf(id));
                                                                                                                                       param.addChildren(ident);
                                                                                                                                       param.addChildren(exp);
+                                                                                                                                      
                                                                                                                                       params.addChildrenAt(0, param);
                                                                                                                                       res.addChildren(params);
                                                                                                                                       res.addChildren(list);
@@ -390,6 +417,7 @@ PARAMETER ::= id:id                                         {: RESULT = new Node
     | id:id valAsignment:v LONE_EXPRESSION:exp              {: Node param = new Node("asignment", vright, vleft, null);
                                                                Node ident = new Node("identifier", idright, idleft, String.valueOf(id));
                                                                param.addChildren(ident);
+                                                               
                                                                param.addChildren(exp);
                                                                RESULT = param;
                                                             :}
@@ -428,6 +456,7 @@ PARAMS ::= defaultKeyword:def               {: RESULT = new Node("default", defr
 
 IF_SENTENCE ::= ifKeyword:i openingPar LONE_EXPRESSION:cond closingPar SENTENCES_BLOCK:sentences                {:  Node ifNode = new Node("if sentence", iright, ileft, null);
                                                                                                                     Node condition = new Node("condition");
+                                                                                                                    
                                                                                                                     condition.addChildren(cond);
                                                                                                                     ifNode.addChildren(condition);
                                                                                                                     ifNode.addChildren(sentences);
@@ -436,6 +465,7 @@ IF_SENTENCE ::= ifKeyword:i openingPar LONE_EXPRESSION:cond closingPar SENTENCES
 
     | ifKeyword:i openingPar LONE_EXPRESSION:cond closingPar SENTENCES_BLOCK:sentences ELSE_SENTENCE:elseNode        {:  Node ifNode = new Node("if sentence", iright, ileft, null);
                                                                                                                         Node condition = new Node("condition");
+                                                                                                                        
                                                                                                                         condition.addChildren(cond);
                                                                                                                         ifNode.addChildren(condition);
                                                                                                                         ifNode.addChildren(sentences);
@@ -457,6 +487,7 @@ ELSE_SENTENCE ::= elseKeyword:e SENTENCES_BLOCK:sentences                  {: No
 
 SWITCH_SENTENCE ::= switchKeyword:s openingPar LONE_EXPRESSION:val closingPar openingCurly SWITCH_BODY:body closingCurly      {:  Node switchNode = new Node("switch sentence", sright, sleft, null);
                                                                                                                                 Node condition = new Node("condition");
+                                                                                                                                
                                                                                                                                 condition.addChildren(val);
                                                                                                                                 switchNode.addChildren(condition);
                                                                                                                                 switchNode.addChildren(body);
@@ -485,6 +516,7 @@ CASES_LIST ::= CASES_LIST:cases SINGLE_CASE:single              {: Node casesNod
 
 SINGLE_CASE ::= caseKeyword:c LONE_EXPRESSION:exp colon SENTENCES_LIST:actions      {: Node single = new Node("case", cright, cleft, null);
                                                                                        Node condition = new Node("value");
+                                                                                       
                                                                                        condition.addChildren(exp);
                                                                                        single.addChildren(condition);
                                                                                        single.addChildren(actions);
@@ -500,6 +532,7 @@ DEFAULT_CASE ::= defaultKeyword:d colon SENTENCES_LIST:actions                  
 
 WHILE_SENTENCE ::= whileKeyword:w openingPar LONE_EXPRESSION:exp closingPar SENTENCES_BLOCK:actions     {:  Node whileNode = new Node("while sentence", wright, wleft, null);
                                                                                                             Node condition = new Node("condition");
+                                                                                                            
                                                                                                             condition.addChildren(exp);
                                                                                                             whileNode.addChildren(condition);
                                                                                                             whileNode.addChildren(actions);
@@ -509,6 +542,7 @@ WHILE_SENTENCE ::= whileKeyword:w openingPar LONE_EXPRESSION:exp closingPar SENT
 
 DOWHILE_SENTENCE ::= doKeyword:d SENTENCES_BLOCK:actions whileKeyword openingPar LONE_EXPRESSION:exp closingPar     {:  Node doNode = new Node("do while sentence", dright, dleft, null);
                                                                                                                         Node condition = new Node("condition");
+                                                                                                                        
                                                                                                                         condition.addChildren(exp);
                                                                                                                         doNode.addChildren(actions);
                                                                                                                         doNode.addChildren(condition);
@@ -520,6 +554,7 @@ FOR_SENTENCE ::= forKeyword:f openingPar id:id inKeyword LONE_EXPRESSION:exp clo
                                                                                                                         Node idNode = new Node("identifier", idright, idleft, String.valueOf(id));
                                                                                                                         forNode.addChildren(idNode);
                                                                                                                         Node condition = new Node("condition");
+                                                                                                                        
                                                                                                                         condition.addChildren(exp);
                                                                                                                         forNode.addChildren(condition);
                                                                                                                         forNode.addChildren(actions);
@@ -532,6 +567,7 @@ RETURN_SENTENCE ::= returnKeyword:r                                             
     | returnKeyword:r openingPar closingPar                                       {: RESULT = new Node("return sentence", rright, rleft, null); :}
 
     | returnKeyword:r openingPar LONE_EXPRESSION:exp closingPar                   {: Node retNode = new Node("return sentence", rright, rleft, null);
+                                                                                     
                                                                                      retNode.addChildren(exp);
                                                                                      RESULT = retNode;
                                                                                   :}
@@ -564,11 +600,13 @@ ADDRESSES ::= ADDRESSES:addresses ADDRESS:single                {: Node adds = n
 ;
 
 ADDRESS ::= openingBracket LONE_EXPRESSION:exp closingBracket                                   {: Node address = new Node("address", 0, 0, "singleB");
+                                                                                                   
                                                                                                    address.addChildren(exp);
                                                                                                    RESULT = address;
                                                                                                 :}
 
-    | openingBracket openingBracket LONE_EXPRESSION:exp closingBracket closingBracket        {: Node address = new Node("address", 0, 0, "doubleB");
+    | openingBracket openingBracket LONE_EXPRESSION:exp closingBracket closingBracket           {: Node address = new Node("address", 0, 0, "doubleB");
+                                                                                                   
                                                                                                    address.addChildren(exp);
                                                                                                    RESULT = address;
                                                                                                 :}
@@ -591,17 +629,20 @@ MATRIX_ACCESS ::= id:id MATRIX_ADDRESS:mat                      {: Node access =
 ;
 
 MATRIX_ADDRESS ::= openingBracket LONE_EXPRESSION:exp1 comma:c LONE_EXPRESSION:exp2 closingBracket              {: Node address = new Node("matrix_address", 0, 0, "both");
+                                                                                                                   
                                                                                                                    address.addChildren(exp1);
                                                                                                                    address.addChildren(exp2);
                                                                                                                    RESULT = address;
                                                                                                                 :}
 
     | openingBracket LONE_EXPRESSION:exp comma:c closingBracket                                                 {: Node address = new Node("matrix_address", 0, 0, "left");
+                                                                                                                   
                                                                                                                    address.addChildren(exp);
                                                                                                                    RESULT = address;
                                                                                                                 :}
 
     | openingBracket comma:c LONE_EXPRESSION:exp closingBracket                                                 {: Node address = new Node("matrix_address", 0, 0, "right");
+                                                                                                                   
                                                                                                                    address.addChildren(exp);
                                                                                                                    RESULT = address;
                                                                                                                 :}
@@ -609,11 +650,13 @@ MATRIX_ADDRESS ::= openingBracket LONE_EXPRESSION:exp1 comma:c LONE_EXPRESSION:e
 
 VECTORS ::= VECTORS:addresses openingBracket LONE_EXPRESSION:exp closingBracket                 {: Node adds = new Node("addresses");
                                                                                                    transferChildren(addresses, adds);
+                                                                                                   
                                                                                                    adds.addChildren(exp);
                                                                                                    RESULT = adds;
                                                                                                 :}
 
     | openingBracket LONE_EXPRESSION:exp closingBracket                                         {: Node addresses = new Node("addresses");
+                                                                                                   
                                                                                                    addresses.addChildren(exp);
                                                                                                    RESULT = addresses;
                                                                                                 :}
