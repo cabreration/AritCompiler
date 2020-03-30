@@ -72,16 +72,14 @@ terminal greater, lesser, not, and, or, ternary, colon, ifKeyword, elseKeyword, 
 terminal whileKeyword, doKeyword, forKeyword, inKeyword, continueKeyword, returnKeyword, functionKeyword, defaultKeyword;
 terminal nullValue, stringValue, numericValue, falseValue, trueValue, id, integerValue;
 
-non terminal Node ROOT, ASIGNMENT, LONE_EXPRESSION, LTWO_EXPRESSION, LTHREE_EXPRESSION, LFOUR_EXPRESSION;
+non terminal Node ROOT, ASIGNMENT, LONE_EXPRESSION;
 non terminal Node SENTENCES_BLOCK, SENTENCES_LIST, SENTENCE, IF_SENTENCE, ELSE_SENTENCE, SWITCH_SENTENCE, SWITCH_BODY;
 non terminal Node CASES_LIST, DEFAULT_CASE, SINGLE_CASE, WHILE_SENTENCE, DOWHILE_SENTENCE, FOR_SENTENCE, BREAK_SENTENCE;
 non terminal Node CONTINUE_SENTENCE, RETURN_SENTENCE, VECTOR_ACCESS, ADDRESSES, ADDRESS, PARAMETERS_DECL, PARAMETER;
 non terminal Node FUNCTION_CALL, EXPRESSIONS_LIST, MATRIX_ACCESS, MATRIX_ADDRESS, PARAMS, ARROW_FUNCTION, VECTORS, EXPRESSION;
 
-non terminal OPERATOR, RELATIONAL_OPERATOR;
-
-//precedence right valAsignment;
-//precedence right ternary, colon;
+precedence right valAsignment;
+precedence right ternary, colon;
 precedence left or;
 precedence left and;
 precedence left equals, notEquals;
@@ -165,14 +163,25 @@ SENTENCE ::= ASIGNMENT:sent                                 {: RESULT = sent; :}
     | error SENTENCE:s                                      {: RESULT = s; :}
 ; 
 
-LONE_EXPRESSION ::= LONE_EXPRESSION:exp1 ternart:op LONE_EXPRESSION:exp2 colon:op2 LONE_EXPRESSION:exp3     {:  Node res = new Node("binary expression");
-                                                                                                                Node operator = new Node("+", opright, opleft, null);
-                                                                                                                operator.addChildren(exp1);
-                                                                                                                operator.addChildren(exp2);
-                                                                                                                res.addChildren(operator);
-                                                                                                                RESULT = res;
+LONE_EXPRESSION ::= LONE_EXPRESSION:exp1 ternary:ter LONE_EXPRESSION:exp2 colon:col LONE_EXPRESSION:exp3     {: Node res = new Node("ternary expression");
+                                                                                                              Node tern = new Node("?", terright, terleft, null);
+                                                                                                              tern.addChildren(exp1);
+                                                                                                              Node colon = new Node(":", colright, colleft, null);
+                                                                                                              colon.addChildren(exp2);
+                                                                                                              colon.addChildren(exp3);
+                                                                                                              res.addChildren(tern);
+                                                                                                              res.addChildren(colon);
+                                                                                                              RESULT = res;
                                                                                                             :}
-    | LONE_EXPRESSION:exp1 or:op LONE_EXPRESSION:exp2                 {: Node res = new Node("binary expression");
+
+    | not:op LONE_EXPRESSION:exp                                                    {: Node res = new Node("unary expression");
+                                                                                       Node operator = new Node("!", opright, opleft, null);
+                                                                                       operator.addChildren(exp);
+                                                                                       res.addChildren(operator);
+                                                                                       RESULT = res;
+                                                                                    :} %prec not                                                                                                   
+
+    | LONE_EXPRESSION:exp1 or:op LONE_EXPRESSION:exp2                               {: Node res = new Node("binary expression");
                                                                                        Node operator = new Node("|", opright, opleft, null);
                                                                                        operator.addChildren(exp1);
                                                                                        operator.addChildren(exp2);
@@ -283,6 +292,13 @@ LONE_EXPRESSION ::= LONE_EXPRESSION:exp1 ternart:op LONE_EXPRESSION:exp2 colon:o
                                                                                        res.addChildren(operator);
                                                                                        RESULT = res;
                                                                                     :}
+
+    | minus:op  LONE_EXPRESSION:exp                                                 {: Node res = new Node("unary expression");
+                                                                                       Node operator = new Node("-", opright, opleft, null);
+                                                                                       operator.addChildren(exp);
+                                                                                       res.addChildren(operator);
+                                                                                       RESULT = res;
+                                                                                    :} %prec minus
 
     | EXPRESSION:exp                                                                {: RESULT = exp; :}
 ;
