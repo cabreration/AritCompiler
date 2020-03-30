@@ -223,7 +223,10 @@ public class Barplot implements Instruction {
         //frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         
         try {
-            BitmapEncoder.saveBitmap(chart, "./images/barplot/" + titler, BitmapEncoder.BitmapFormat.PNG);
+            int v = Singleton.graphCount();
+            BitmapEncoder.saveBitmap(chart, "./images/barplot/" + titler + String.valueOf(v), BitmapEncoder.BitmapFormat.PNG);
+            String address = "./images/barplot/" + titler + String.valueOf(v) + ".png";
+            Singleton.insertGraph(address);
         } catch (IOException ex) {
             Logger.getLogger(Pie.class.getName()).log(Level.SEVERE, null, ex);
         }

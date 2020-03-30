@@ -371,7 +371,13 @@ public class TextEditor extends javax.swing.JFrame {
 
     private void jMenuItem9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem9ActionPerformed
         // Mostrar todas las graficas
-        Singleton.showFigures();
+        //Singleton.showFigures();
+        try {
+            Singleton.showGraphs();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_jMenuItem9ActionPerformed
 
     private void jMenuItem8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem8ActionPerformed
@@ -419,9 +425,24 @@ public class TextEditor extends javax.swing.JFrame {
             }
             String output = Singleton.print();
             this.console.setText(output);
+            
+            try {
+                openConsole();
+            }
+            catch(Exception e) {
+                e.printStackTrace();
+            }
+            
             Singleton.reportErrors();
             Singleton.reportSymbols();
         }
+    }
+    
+    private void openConsole() throws IOException {
+        String path = "./reports/console/console.txt";
+        File file = new File(path);
+        Desktop dt = Desktop.getDesktop();
+        dt.open(file);
     }
     
     private void jMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem7ActionPerformed

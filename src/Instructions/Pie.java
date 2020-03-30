@@ -192,7 +192,10 @@ public class Pie implements Instruction {
         //pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         
         try {
-            BitmapEncoder.saveBitmap(chart, "./images/pie/" + titler, BitmapFormat.PNG);
+            int v = Singleton.graphCount();
+            BitmapEncoder.saveBitmap(chart, "./images/pie/" + titler + String.valueOf(v), BitmapEncoder.BitmapFormat.PNG);
+            String address = "./images/pie/" + titler + String.valueOf(v) + ".png";
+            Singleton.insertGraph(address);
         } catch (IOException ex) {
             Logger.getLogger(Pie.class.getName()).log(Level.SEVERE, null, ex);
         }

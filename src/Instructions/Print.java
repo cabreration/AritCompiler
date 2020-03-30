@@ -116,21 +116,18 @@ public class Print implements Instruction {
             builder.append("| ");
             for (int j = 0; j < matrix.getColumns(); j++) {
                 int maxLength = 0;
-                for (int k = 0; k < matrix.getRows(); k++) {
+                for (int k = 0; k < matrix.getRows(); k++) { 
                     String aux = String.valueOf(((Atomic[][])matrix.getValue())[k][j].getValue());
                     if (aux.length() > maxLength)
                         maxLength = aux.length();
                 }
                 Atomic atom = ((Atomic[][])matrix.getValue())[i][j];
                 String cur = String.valueOf(atom.getValue());
-                //if (atom.getType() == Atomic.Type.STRING) {
-                   // cur = "\"" + cur + "\"";
-                    //maxLength += 2;
-                //}
                 builder.append(cur);
-                int spaces = (maxLength - cur.length()) + 1;
+                int spaces = (maxLength - cur.length()) + 2;
                 for (int k = 0; k < spaces; k++) 
                     builder.append(" ");
+                //builder.append("          ");
             }
             builder.append("|\n");
         }

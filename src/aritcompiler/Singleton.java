@@ -8,8 +8,10 @@ package aritcompiler;
 import APIServices.CompileError;
 import Symbols.Function;
 import Symbols.SymbolRef;
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Set;
@@ -28,6 +30,7 @@ public class Singleton {
     private static ArrayList<String> console = new ArrayList<String>();
     private static ArrayList<SwingWrapper> figures = new ArrayList<SwingWrapper>();
     private static Hashtable<String, SymbolRef> symbolsRefs = new Hashtable<String, SymbolRef>();
+    private static ArrayList<String> graphs = new ArrayList<String>();
     
     private Singleton() {}
     
@@ -95,6 +98,7 @@ public class Singleton {
         functions = new Hashtable<String, Function>();
         symbolsRefs = new Hashtable<String, SymbolRef>();
         errors = new ArrayList<CompileError>();
+        graphs = new ArrayList<String>();
     }
     
     public static void insertPrint(String str) {
@@ -110,6 +114,7 @@ public class Singleton {
         for (String str : console) {
             builder.append(str + "\n");
         }
+        writeFile("./reports/console/console.txt", builder.toString());
         return builder.toString();
         //System.out.println(builder.toString());
     }
@@ -118,6 +123,24 @@ public class Singleton {
         if (figure == null)
             return;
         figures.add(figure);
+    }
+    
+    public static void insertGraph(String address) {
+        if (address == null)
+            return;
+        graphs.add(address);
+    }
+    
+    public static void showGraphs() throws IOException {
+        for (String graph : graphs) {
+            File file = new File(graph);
+            Desktop dt = Desktop.getDesktop();
+            dt.open(file);
+        }
+    }
+    
+    public static int graphCount() {
+        return graphs.size();
     }
     
     public static void showFigure(int i) {

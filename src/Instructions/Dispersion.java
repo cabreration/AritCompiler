@@ -185,7 +185,10 @@ public class Dispersion implements Instruction {
         //pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         
         try {
-            BitmapEncoder.saveBitmap(chart, "./images/dispersion/" + naame, BitmapEncoder.BitmapFormat.PNG);
+            int v = Singleton.graphCount();
+            BitmapEncoder.saveBitmap(chart, "./images/dispersion/" + naame + String.valueOf(v), BitmapEncoder.BitmapFormat.PNG);
+            String address = "./images/dispersion/" + naame + String.valueOf(v) + ".png";
+            Singleton.insertGraph(address);
         } catch (IOException ex) {
             Logger.getLogger(Pie.class.getName()).log(Level.SEVERE, null, ex);
         }
