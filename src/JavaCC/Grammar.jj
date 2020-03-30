@@ -154,10 +154,10 @@ Node Sentence() :
         instruction = Function_Call() ( <SEMICOLON> )? { return instruction; }
 }
 
-Node First_Expression() : 
+Node Second_Expression() : 
 { Node exp1; Node exp; }
 {
-    exp1 = Second_Expression() exp = PFirst_Expression(exp1)
+    exp1 = First_Expression() exp = PFirst_Expression(exp1)
     { return exp; }
 }
 
@@ -173,11 +173,11 @@ Node PFirst_Expression(Node inherited) :
         { return inherited; }
 }
 
-Node Second_Expression() : 
+Node First_Expression() : 
 { Node exp1; Node exp2; Node exp3; Token t; Token t2; }
 {
     exp1 = Third_Expression() 
-    ( t = <TERNARY> exp2 = Third_Expression() t2 = <COLON> exp3 =Third_Expression() 
+    ( t = <TERNARY> exp2 = First_Expression() t2 = <COLON> exp3 = First_Expression() 
         {
             Node ter = new Node("ternary expression");
             Node semi = new Node("?", t.beginLine, t.beginColumn, null);
