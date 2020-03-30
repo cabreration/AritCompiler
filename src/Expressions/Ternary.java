@@ -43,24 +43,16 @@ public class Ternary implements Expression {
     @Override
     public Object process(SymbolsTable env) {
         Object atom1 = arg1.process(env);
-        Object atom2 = arg2.process(env);
-        Object atom3 = arg3.process(env);
         
-        if (atom1 == null || atom2 == null || atom3 == null)
+        if (atom1 == null)
             return null;
         
         if (atom1 instanceof CompileError)
             return atom1;
         
-        if (atom2 instanceof CompileError)
-            return atom2;
-        
-        if (atom3 instanceof CompileError)
-            return atom3;
-        
-        if (!(atom1 instanceof Value) || !(atom2 instanceof Value) || !(atom3 instanceof Value)) {
+        /*if (!(atom1 instanceof Value) || !(atom2 instanceof Value) || !(atom3 instanceof Value)) {
             throw new Error("Esto no deberia estar pasando Binario");
-        }
+        }*/
         
         if (atom1 instanceof Atomic) {
             if (((Atomic)atom1).getType() == Atomic.Type.IDENTIFIER) {
@@ -90,10 +82,27 @@ public class Ternary implements Expression {
             return new CompileError("Semantico", "Tipo de operando invalido para el operador ?", this.line, this.column);
         
         flag = ((Boolean)(((Atomic)atom1).getValue())).booleanValue();
-        if (flag)
+        if (flag) {
+            Object atom2 = arg2.process(env);
+            
+            if (atom2 == null)
+                return null;
+            if (atom2 instanceof CompileError)
+                return atom2;
+            
             return atom2;
-        else 
+        }  
+        else {
+            Object atom3 = arg3.process(env);
+            
+            if (atom3 == null)
+                return null;
+            if (atom3 instanceof CompileError)
+                return atom3;
+            
             return atom3;
+        }
+            
     }
     
 }
