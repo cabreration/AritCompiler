@@ -337,6 +337,9 @@ public class Function_Call implements Instruction, Expression {
                     env.update(local);
                     return ((Return_Sentence)ret).getProcessedValue();
                 } 
+                else if (ret != null && ret instanceof CompileError) {
+                    Singleton.insertError((CompileError)ret);
+                }
             }
             env.update(local);
         }

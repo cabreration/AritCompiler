@@ -87,7 +87,7 @@ precedence nonassoc lesser, lesserEquals, greater, greaterEquals;
 precedence left plus, minus;
 precedence left times, div, mod;
 precedence left power;
-//precedence right minus, not;
+precedence right not;
 precedence left openingBracket, closingBracket;
 precedence nonassoc openingPar, closingPar;
 
@@ -179,7 +179,7 @@ LONE_EXPRESSION ::= LONE_EXPRESSION:exp1 ternary:ter LONE_EXPRESSION:exp2 colon:
                                                                                        operator.addChildren(exp);
                                                                                        res.addChildren(operator);
                                                                                        RESULT = res;
-                                                                                    :} %prec not                                                                                                   
+                                                                                    :}                                                                                                   
 
     | LONE_EXPRESSION:exp1 or:op LONE_EXPRESSION:exp2                               {: Node res = new Node("binary expression");
                                                                                        Node operator = new Node("|", opright, opleft, null);

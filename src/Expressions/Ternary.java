@@ -6,7 +6,11 @@
 package Expressions;
 
 import APIServices.CompileError;
+import Symbols.List;
+import Symbols.Matrix;
 import Symbols.SymbolsTable;
+import Symbols.Vector;
+import java.util.ArrayList;
 
 /**
  *
@@ -42,6 +46,9 @@ public class Ternary implements Expression {
         Object atom2 = arg2.process(env);
         Object atom3 = arg3.process(env);
         
+        if (atom1 == null || atom2 == null || atom3 == null)
+            return null;
+        
         if (atom1 instanceof CompileError)
             return atom1;
         
@@ -55,8 +62,28 @@ public class Ternary implements Expression {
             throw new Error("Esto no deberia estar pasando Binario");
         }
         
-        if (!(atom1 instanceof Atomic))
-            return new CompileError("Semantico", "Tipo de operando invalido para el operador ?", this.line, this.column);
+        if (atom1 instanceof Atomic) {
+            if (((Atomic)atom1).getType() == Atomic.Type.IDENTIFIER) {
+                String id = String.valueOf(((Atomic) atom1).getValue());
+                atom1 = env.getSymbol(id, line);
+                
+                if (atom1 == null)
+                    return new CompileError("Semantico", "La variable '" + id + "' no existe en el contexto actual", line, column);
+            }
+        }
+        
+        if (!(atom1 instanceof Atomic)) {
+            if (atom1 instanceof Vector) {
+                atom1 = ((ArrayList<Atomic>)((Vector)atom1).getValue()).get(0);
+            }
+            else if (atom1 instanceof Matrix) {
+                atom1 = ((Atomic[][])((Matrix)atom1).getValue())[0][0];
+            }
+            
+            while (atom1 instanceof List) {
+                atom1 = ((ArrayList<Object>)((List)atom1).getValue()).get(0);
+            }
+        }
         
         boolean flag = false;
         if (((Atomic)atom1).getType() != Atomic.Type.BOOLEAN)

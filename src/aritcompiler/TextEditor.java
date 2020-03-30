@@ -416,12 +416,11 @@ public class TextEditor extends javax.swing.JFrame {
             SymbolsTable env = new SymbolsTable("global");
             for (Instruction ins : sentences) {
                 if (ins != null) {
-                    if (ins instanceof Function_Call)
-                        ins.process(env);
-                    else
-                        ins.process(env);
+                    Object ret = ins.process(env);
+                    if (ret != null && ret instanceof CompileError) {
+                        Singleton.insertError((CompileError)ret);
+                    }
                 }
-                    
             }
             String output = Singleton.print();
             this.console.setText(output);

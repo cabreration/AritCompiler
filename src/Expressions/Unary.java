@@ -36,6 +36,9 @@ public class Unary implements Expression {
     public Object process(SymbolsTable env) {
         Object atom = exp.process(env);
         
+        if (atom == null)
+            return null; 
+        
         if (atom instanceof CompileError)
             return atom;
         
