@@ -204,271 +204,325 @@ public class Grammar implements GrammarConstants {
   }
 
   final public Node Second_Expression() throws ParseException {
-  Node exp1; Node exp2;
+  Node exp1; Node exp2; Node exp3; Token t; Token t2;
     exp1 = Third_Expression();
-    exp2 = PSecond_Expression(exp1);
-                                                                 {if (true) return exp2;}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public Node PSecond_Expression(Node inherited) throws ParseException {
-  Node exp1; Node exp2; Node op1; Node op2; Token v1; Token v2; Node res1; Node res2; Node ter;
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case TERNARY:
-      v1 = jj_consume_token(TERNARY);
-      exp1 = Third_Expression();
-                                                            ter = new Node("ternary expression");
-                                                            op1 = new Node("?", v1.beginLine, v1.beginColumn, null);
-                                                            op1.addChildren(inherited);
-      res1 = PSecond_Expression(exp1);
-      v2 = jj_consume_token(COLON);
+    label_3:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case TERNARY:
+        ;
+        break;
+      default:
+        jj_la1[10] = jj_gen;
+        break label_3;
+      }
+      t = jj_consume_token(TERNARY);
       exp2 = Third_Expression();
-                                                            op2 = new Node(":", v2.beginLine, v2.beginColumn, null);
-                                                            op2.addChildren(res1);
-      res2 = PSecond_Expression(exp2);
-                                                            op2.addChildren(res2);
-                                                            ter.addChildren(op1);
-                                                            ter.addChildren(op2);
-                                                            {if (true) return ter;}
-      break;
-    default:
-      jj_la1[10] = jj_gen;
-          {if (true) return inherited;}
+      t2 = jj_consume_token(COLON);
+      exp3 = Third_Expression();
+            Node ter = new Node("ternary expression");
+            Node semi = new Node("?", t.beginLine, t.beginColumn, null);
+            semi.addChildren(exp1);
+            Node col = new Node(":", t2.beginLine, t2.beginColumn, null);
+            col.addChildren(exp2);
+            col.addChildren(exp3);
+            ter.addChildren(semi);
+            ter.addChildren(col);
+            exp1 = ter;
     }
+      {if (true) return exp1;}
     throw new Error("Missing return statement in function");
   }
 
   final public Node Third_Expression() throws ParseException {
-  Node exp1; Node exp;
+  Node exp1; Node exp2; Token t;
     exp1 = Fourth_Expression();
-    exp = PThird_Expression(exp1);
-      {if (true) return exp;}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public Node PThird_Expression(Node inherited) throws ParseException {
-  Node exp1; Node op; Token v; Node res; Node bin;
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case OR:
-      v = jj_consume_token(OR);
-      exp1 = Fourth_Expression();
-                                                bin = new Node("binary expression");
-                                                op = new Node("|", v.beginLine, v.beginColumn, null);
-                                                op.addChildren(inherited);
-      res = PThird_Expression(exp1);
-                                                                                op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
-      break;
-    default:
-      jj_la1[11] = jj_gen;
-          {if (true) return inherited;}
+    label_4:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case OR:
+        ;
+        break;
+      default:
+        jj_la1[11] = jj_gen;
+        break label_4;
+      }
+      t = jj_consume_token(OR);
+      exp2 = Fourth_Expression();
+            Node bin = new Node("binary expression");
+            Node op = new Node("|", t.beginLine, t.beginColumn, null);
+            op.addChildren(exp1);
+            op.addChildren(exp2);
+            bin.addChildren(op);
+            exp1 = bin;
     }
+      {if (true) return exp1;}
     throw new Error("Missing return statement in function");
   }
 
   final public Node Fourth_Expression() throws ParseException {
-  Node exp1; Node exp;
+  Node exp1; Node exp2; Token t;
     exp1 = Fifth_Expression();
-    exp = PFourth_Expression(exp1);
-      {if (true) return exp;}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public Node PFourth_Expression(Node inherited) throws ParseException {
-  Node exp1; Node op; Token v; Node res; Node bin;
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case AND:
-      v = jj_consume_token(AND);
-      exp1 = Fifth_Expression();
-                                            bin = new Node("binary expression");
-                                            op = new Node("&", v.beginLine, v.beginColumn, null);
-                                            op.addChildren(inherited);
-      res = PFourth_Expression(exp1);
-                                                                             op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
-      break;
-    default:
-      jj_la1[12] = jj_gen;
-          {if (true) return inherited;}
+    label_5:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case AND:
+        ;
+        break;
+      default:
+        jj_la1[12] = jj_gen;
+        break label_5;
+      }
+      t = jj_consume_token(AND);
+      exp2 = Fifth_Expression();
+            Node bin = new Node("binary expression");
+            Node op = new Node("&", t.beginLine, t.beginColumn, null);
+            op.addChildren(exp1);
+            op.addChildren(exp2);
+            bin.addChildren(op);
+            exp1 = bin;
     }
+      {if (true) return exp1;}
     throw new Error("Missing return statement in function");
   }
 
   final public Node Fifth_Expression() throws ParseException {
-  Node exp1; Node exp;
+  Node exp1; Node exp2; Token t;
     exp1 = Sixth_Expression();
-    exp = PFifth_Expression(exp1);
-      {if (true) return exp;}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public Node PFifth_Expression(Node inherited) throws ParseException {
-  Node exp1; Node op; Token v; Node res; Node bin;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case EQUALS:
-      v = jj_consume_token(EQUALS);
-      exp1 = Sixth_Expression();
-                                                    bin = new Node("binary expression");
-                                                    op = new Node("==", v.beginLine, v.beginColumn, null);
-                                                    op.addChildren(inherited);
-      res = PFifth_Expression(exp1);
-                                                                                    op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
-      break;
     case NOT_EQUALS:
-      v = jj_consume_token(NOT_EQUALS);
-      exp1 = Sixth_Expression();
-                                                        bin = new Node("binary expression");
-                                                        op = new Node("!=", v.beginLine, v.beginColumn, null);
-                                                        op.addChildren(inherited);
-      res = PFifth_Expression(exp1);
-                                                                                        op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case EQUALS:
+        t = jj_consume_token(EQUALS);
+        exp2 = Sixth_Expression();
+                    Node bin = new Node("binary expression");
+                    Node op = new Node("==", t.beginLine, t.beginColumn, null);
+                    op.addChildren(exp1);
+                    op.addChildren(exp2);
+                    bin.addChildren(op);
+                    exp1 = bin;
+        break;
+      case NOT_EQUALS:
+        t = jj_consume_token(NOT_EQUALS);
+        exp2 = Sixth_Expression();
+                    Node bin2 = new Node("binary expression");
+                    Node op2 = new Node("!=", t.beginLine, t.beginColumn, null);
+                    op2.addChildren(exp1);
+                    op2.addChildren(exp2);
+                    bin2.addChildren(op2);
+                    exp1 = bin2;
+        break;
+      default:
+        jj_la1[13] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
       break;
     default:
-      jj_la1[13] = jj_gen;
-          {if (true) return inherited;}
+      jj_la1[14] = jj_gen;
+      ;
     }
+      {if (true) return exp1;}
     throw new Error("Missing return statement in function");
   }
 
   final public Node Sixth_Expression() throws ParseException {
-  Node exp1; Node exp;
+  Node exp1; Node exp2; Token t;
     exp1 = Seventh_Expression();
-    exp = PSixth_Expression(exp1);
-      {if (true) return exp;}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public Node PSixth_Expression(Node inherited) throws ParseException {
-  Node exp1; Node op; Token v; Node res; Node bin;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case LESSER:
-      v = jj_consume_token(LESSER);
-      exp1 = Seventh_Expression();
-                                                        bin = new Node("binary expression");
-                                                        op = new Node("<", v.beginLine, v.beginColumn, null);
-                                                        op.addChildren(inherited);
-      res = PSixth_Expression(exp1);
-                                                                                        op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
-      break;
-    case GREATER:
-      v = jj_consume_token(GREATER);
-      exp1 = Seventh_Expression();
-                                                        bin = new Node("binary expression");
-                                                        op = new Node(">", v.beginLine, v.beginColumn, null);
-                                                        op.addChildren(inherited);
-      res = PSixth_Expression(exp1);
-                                                                                        op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
-      break;
-    case LESSER_EQUALS:
-      v = jj_consume_token(LESSER_EQUALS);
-      exp1 = Seventh_Expression();
-                                                                bin = new Node("binary expression");
-                                                                op = new Node("<=", v.beginLine, v.beginColumn, null);
-                                                                op.addChildren(inherited);
-      res = PSixth_Expression(exp1);
-                                                                                                op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
-      break;
     case GREATER_EQUALS:
-      v = jj_consume_token(GREATER_EQUALS);
-      exp1 = Seventh_Expression();
-                                                                bin = new Node("binary expression");
-                                                                op = new Node(">=", v.beginLine, v.beginColumn, null);
-                                                                op.addChildren(inherited);
-      res = PSixth_Expression(exp1);
-                                                                                                op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
+    case LESSER_EQUALS:
+    case GREATER:
+    case LESSER:
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case GREATER:
+        t = jj_consume_token(GREATER);
+        exp2 = Seventh_Expression();
+                    Node bin = new Node("binary expression");
+                    Node op = new Node(">", t.beginLine, t.beginColumn, null);
+                    op.addChildren(exp1);
+                    op.addChildren(exp2);
+                    bin.addChildren(op);
+                    exp1 = bin;
+        break;
+      case GREATER_EQUALS:
+        t = jj_consume_token(GREATER_EQUALS);
+        exp2 = Seventh_Expression();
+                    Node bin2 = new Node("binary expression");
+                    Node op2 = new Node(">=", t.beginLine, t.beginColumn, null);
+                    op2.addChildren(exp1);
+                    op2.addChildren(exp2);
+                    bin2.addChildren(op2);
+                    exp1 = bin2;
+        break;
+      case LESSER:
+        t = jj_consume_token(LESSER);
+        exp2 = Seventh_Expression();
+                    Node bin3 = new Node("binary expression");
+                    Node op3 = new Node("<", t.beginLine, t.beginColumn, null);
+                    op3.addChildren(exp1);
+                    op3.addChildren(exp2);
+                    bin3.addChildren(op3);
+                    exp1 = bin3;
+        break;
+      case LESSER_EQUALS:
+        t = jj_consume_token(LESSER_EQUALS);
+        exp2 = Seventh_Expression();
+                    Node bin4 = new Node("binary expression");
+                    Node op4 = new Node("<=", t.beginLine, t.beginColumn, null);
+                    op4.addChildren(exp1);
+                    op4.addChildren(exp2);
+                    bin4.addChildren(op4);
+                    exp1 = bin4;
+        break;
+      default:
+        jj_la1[15] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
       break;
     default:
-      jj_la1[14] = jj_gen;
-          {if (true) return inherited;}
+      jj_la1[16] = jj_gen;
+      ;
     }
+      {if (true) return exp1;}
     throw new Error("Missing return statement in function");
   }
 
   final public Node Seventh_Expression() throws ParseException {
-  Node exp1; Node exp;
+  Node exp1; Node exp2; Token t;
     exp1 = Eigth_Expression();
-    exp = PSeventh_Expression(exp1);
-      {if (true) return exp;}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public Node PSeventh_Expression(Node inherited) throws ParseException {
-  Node exp1; Node op; Token v; Node res; Node bin;
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case PLUS:
-      v = jj_consume_token(PLUS);
-      exp1 = Eigth_Expression();
-                                                    bin = new Node("binary expression");
-                                                    op = new Node("+", v.beginLine, v.beginColumn, null);
-                                                    op.addChildren(inherited);
-      res = PSeventh_Expression(exp1);
-                                                                                      op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
-      break;
-    case MINUS:
-      v = jj_consume_token(MINUS);
-      exp1 = Eigth_Expression();
-                                                        bin = new Node("binary expression");
-                                                        op = new Node("-", v.beginLine, v.beginColumn, null);
-                                                        op.addChildren(inherited);
-      res = PSeventh_Expression(exp1);
-                                                                                          op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
-      break;
-    default:
-      jj_la1[15] = jj_gen;
-          {if (true) return inherited;}
+    label_6:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case PLUS:
+      case MINUS:
+        ;
+        break;
+      default:
+        jj_la1[17] = jj_gen;
+        break label_6;
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case PLUS:
+        t = jj_consume_token(PLUS);
+        exp2 = Eigth_Expression();
+                    Node bin = new Node("binary expression");
+                    Node op = new Node("+", t.beginLine, t.beginColumn, null);
+                    op.addChildren(exp1);
+                    op.addChildren(exp2);
+                    bin.addChildren(op);
+                    exp1 = bin;
+        break;
+      case MINUS:
+        t = jj_consume_token(MINUS);
+        exp2 = Eigth_Expression();
+                    Node bin2 = new Node("binary expression");
+                    Node op2 = new Node("-", t.beginLine, t.beginColumn, null);
+                    op2.addChildren(exp1);
+                    op2.addChildren(exp2);
+                    bin2.addChildren(op2);
+                    exp1 = bin2;
+        break;
+      default:
+        jj_la1[18] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
     }
+      {if (true) return exp1;}
     throw new Error("Missing return statement in function");
   }
 
   final public Node Eigth_Expression() throws ParseException {
-  Node exp1; Node exp;
+  Node exp1; Node exp2; Token t;
     exp1 = Nineth_Expression();
-    exp = PEigth_Expression(exp1);
-      {if (true) return exp;}
-    throw new Error("Missing return statement in function");
-  }
-
-  final public Node PEigth_Expression(Node inherited) throws ParseException {
-  Node exp1; Node op; Token v; Node res; Node bin;
-    switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
-    case TIMES:
-      v = jj_consume_token(TIMES);
-      exp1 = Nineth_Expression();
-                                                    bin = new Node("binary expression");
-                                                    op = new Node("*", v.beginLine, v.beginColumn, null);
-                                                    op.addChildren(inherited);
-      res = PEigth_Expression(exp1);
-                                                                                    op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
-      break;
-    case DIV:
-      v = jj_consume_token(DIV);
-      exp1 = Nineth_Expression();
-                                                    bin = new Node("binary expression");
-                                                    op = new Node("/", v.beginLine, v.beginColumn, null);
-                                                    op.addChildren(inherited);
-      res = PEigth_Expression(exp1);
-                                                                                    op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
-      break;
-    case MOD:
-      v = jj_consume_token(MOD);
-      exp1 = Nineth_Expression();
-                                                    bin = new Node("binary expression");
-                                                    op = new Node("%%", v.beginLine, v.beginColumn, null);
-                                                    op.addChildren(inherited);
-      res = PEigth_Expression(exp1);
-                                                                                    op.addChildren(res); bin.addChildren(op); {if (true) return bin;}
-      break;
-    default:
-      jj_la1[16] = jj_gen;
-          {if (true) return inherited;}
+    label_7:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case MOD:
+      case TIMES:
+      case DIV:
+        ;
+        break;
+      default:
+        jj_la1[19] = jj_gen;
+        break label_7;
+      }
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case TIMES:
+        t = jj_consume_token(TIMES);
+        exp2 = Nineth_Expression();
+                    Node bin = new Node("binary expression");
+                    Node op = new Node("*", t.beginLine, t.beginColumn, null);
+                    op.addChildren(exp1);
+                    op.addChildren(exp2);
+                    bin.addChildren(op);
+                    exp1 = bin;
+        break;
+      case DIV:
+        t = jj_consume_token(DIV);
+        exp2 = Nineth_Expression();
+                    Node bin2 = new Node("binary expression");
+                    Node op2 = new Node("/", t.beginLine, t.beginColumn, null);
+                    op2.addChildren(exp1);
+                    op2.addChildren(exp2);
+                    bin2.addChildren(op2);
+                    exp1 = bin2;
+        break;
+      case MOD:
+        t = jj_consume_token(MOD);
+        exp2 = Nineth_Expression();
+                    Node bin3 = new Node("binary expression");
+                    Node op3 = new Node("%%", t.beginLine, t.beginColumn, null);
+                    op3.addChildren(exp1);
+                    op3.addChildren(exp2);
+                    bin3.addChildren(op3);
+                    exp1 = bin3;
+        break;
+      default:
+        jj_la1[20] = jj_gen;
+        jj_consume_token(-1);
+        throw new ParseException();
+      }
     }
+      {if (true) return exp1;}
     throw new Error("Missing return statement in function");
   }
 
   final public Node Nineth_Expression() throws ParseException {
+  Node exp1; Node exp2; Token t;
+    exp1 = Tenth_Expression();
+    label_8:
+    while (true) {
+      switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
+      case POWER:
+        ;
+        break;
+      default:
+        jj_la1[21] = jj_gen;
+        break label_8;
+      }
+      t = jj_consume_token(POWER);
+      exp2 = Tenth_Expression();
+                    Node bin = new Node("binary expression");
+                    Node op = new Node("^", t.beginLine, t.beginColumn, null);
+                    op.addChildren(exp1);
+                    op.addChildren(exp2);
+                    bin.addChildren(op);
+                    exp1 = bin;
+    }
+      {if (true) return exp1;}
+    throw new Error("Missing return statement in function");
+  }
+
+  final public Node Tenth_Expression() throws ParseException {
   Node res; Node min; Token t; Node exp;
     switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
     case MINUS:
       t = jj_consume_token(MINUS);
-      exp = Nineth_Expression();
+      exp = Tenth_Expression();
                                                     res = new Node("unary expression");
                                                     min = new Node("-", t.beginLine, t.beginColumn, null);
                                                     min.addChildren(exp);
@@ -477,7 +531,7 @@ public class Grammar implements GrammarConstants {
       break;
     case NOT:
       t = jj_consume_token(NOT);
-      exp = Nineth_Expression();
+      exp = Tenth_Expression();
                                                     res = new Node("unary expression");
                                                     min = new Node("!", t.beginLine, t.beginColumn, null);
                                                     min.addChildren(exp);
@@ -496,7 +550,7 @@ public class Grammar implements GrammarConstants {
                         {if (true) return res;}
       break;
     default:
-      jj_la1[17] = jj_gen;
+      jj_la1[22] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -531,7 +585,7 @@ public class Grammar implements GrammarConstants {
                                                                       {if (true) return new Node("string value", tok.beginLine, tok.beginColumn, scape(tok.image));}
       break;
     default:
-      jj_la1[18] = jj_gen;
+      jj_la1[23] = jj_gen;
       if (jj_2_3(4)) {
         aux = Matrix_Access();
                                                                       {if (true) return aux;}
@@ -554,7 +608,7 @@ public class Grammar implements GrammarConstants {
                                                                       {if (true) return new Node("identifier", tok.beginLine, tok.beginColumn, tok.image.toLowerCase());}
           break;
         default:
-          jj_la1[19] = jj_gen;
+          jj_la1[24] = jj_gen;
           jj_consume_token(-1);
           throw new ParseException();
         }
@@ -607,7 +661,7 @@ public class Grammar implements GrammarConstants {
                                             flag = true;
         break;
       default:
-        jj_la1[20] = jj_gen;
+        jj_la1[25] = jj_gen;
         ;
       }
       jj_consume_token(CLOSING_P);
@@ -648,7 +702,7 @@ public class Grammar implements GrammarConstants {
           params = Parameters_List();
           break;
         default:
-          jj_la1[21] = jj_gen;
+          jj_la1[26] = jj_gen;
           ;
         }
         jj_consume_token(CLOSING_P);
@@ -675,7 +729,7 @@ public class Grammar implements GrammarConstants {
                                                                                     {if (true) return res;}
         break;
       default:
-        jj_la1[22] = jj_gen;
+        jj_la1[27] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -687,15 +741,15 @@ public class Grammar implements GrammarConstants {
   Node params = new Node("parameters"); Node aux;
     aux = Parameter();
                         params.addChildren(aux);
-    label_3:
+    label_9:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case COMMA:
         ;
         break;
       default:
-        jj_la1[23] = jj_gen;
-        break label_3;
+        jj_la1[28] = jj_gen;
+        break label_9;
       }
       jj_consume_token(COMMA);
       aux = Parameter();
@@ -715,7 +769,7 @@ public class Grammar implements GrammarConstants {
                                                                           flag = true;
       break;
     default:
-      jj_la1[24] = jj_gen;
+      jj_la1[29] = jj_gen;
       ;
     }
             if (!flag) {
@@ -744,7 +798,7 @@ public class Grammar implements GrammarConstants {
                           flag = true;
       break;
     default:
-      jj_la1[25] = jj_gen;
+      jj_la1[30] = jj_gen;
       ;
     }
                                                                         Node ifNode = new Node("if sentence", i.beginLine, i.beginColumn, null);
@@ -807,7 +861,7 @@ public class Grammar implements GrammarConstants {
                                                   flag = true;
       break;
     default:
-      jj_la1[26] = jj_gen;
+      jj_la1[31] = jj_gen;
       ;
     }
                                                                                     if (flag)
@@ -818,7 +872,7 @@ public class Grammar implements GrammarConstants {
 
   final public Node Cases_List() throws ParseException {
   Node casesNode = new Node("cases_list"); Node single;
-    label_4:
+    label_10:
     while (true) {
       single = Single_Case();
                                casesNode.addChildren(single);
@@ -827,8 +881,8 @@ public class Grammar implements GrammarConstants {
         ;
         break;
       default:
-        jj_la1[27] = jj_gen;
-        break label_4;
+        jj_la1[32] = jj_gen;
+        break label_10;
       }
     }
                                                                                   {if (true) return casesNode;}
@@ -840,7 +894,7 @@ public class Grammar implements GrammarConstants {
     c = jj_consume_token(CASE_KEYWORD);
     exp = First_Expression();
     jj_consume_token(COLON);
-    label_5:
+    label_11:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case IF_KEYWORD:
@@ -855,8 +909,8 @@ public class Grammar implements GrammarConstants {
         ;
         break;
       default:
-        jj_la1[28] = jj_gen;
-        break label_5;
+        jj_la1[33] = jj_gen;
+        break label_11;
       }
       sentence = Sentence();
                               sentences.addChildren(sentence);
@@ -874,7 +928,7 @@ public class Grammar implements GrammarConstants {
   Token d; Node sentences = new Node("sentences"); Node sentence;
     d = jj_consume_token(DEFAULT_KEYWORD);
     jj_consume_token(COLON);
-    label_6:
+    label_12:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case IF_KEYWORD:
@@ -889,8 +943,8 @@ public class Grammar implements GrammarConstants {
         ;
         break;
       default:
-        jj_la1[29] = jj_gen;
-        break label_6;
+        jj_la1[34] = jj_gen;
+        break label_12;
       }
       sentence = Sentence();
                               sentences.addChildren(sentence);
@@ -975,13 +1029,13 @@ public class Grammar implements GrammarConstants {
                                                flag = true;
         break;
       default:
-        jj_la1[30] = jj_gen;
+        jj_la1[35] = jj_gen;
         ;
       }
       jj_consume_token(CLOSING_P);
       break;
     default:
-      jj_la1[31] = jj_gen;
+      jj_la1[36] = jj_gen;
       ;
     }
                                                                                         Node ret = new Node("return sentence", r.beginLine, r.beginColumn, null);
@@ -1024,15 +1078,15 @@ public class Grammar implements GrammarConstants {
     case IDENTIFIER:
       param = Params();
                          params.addChildren(param); flag = true;
-      label_7:
+      label_13:
       while (true) {
         switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
         case COMMA:
           ;
           break;
         default:
-          jj_la1[32] = jj_gen;
-          break label_7;
+          jj_la1[37] = jj_gen;
+          break label_13;
         }
         jj_consume_token(COMMA);
         param = Params();
@@ -1040,7 +1094,7 @@ public class Grammar implements GrammarConstants {
       }
       break;
     default:
-      jj_la1[33] = jj_gen;
+      jj_la1[38] = jj_gen;
       ;
     }
     jj_consume_token(CLOSING_P);
@@ -1074,7 +1128,7 @@ public class Grammar implements GrammarConstants {
                                           {if (true) return exp;}
       break;
     default:
-      jj_la1[34] = jj_gen;
+      jj_la1[39] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1084,7 +1138,7 @@ public class Grammar implements GrammarConstants {
   final public Node Vector_Access() throws ParseException {
   Token id; Node addresses = new Node("addresses"); Node address;
     id = jj_consume_token(IDENTIFIER);
-    label_8:
+    label_14:
     while (true) {
       address = Address();
                             addresses.addChildren(address);
@@ -1093,8 +1147,8 @@ public class Grammar implements GrammarConstants {
         ;
         break;
       default:
-        jj_la1[35] = jj_gen;
-        break label_8;
+        jj_la1[40] = jj_gen;
+        break label_14;
       }
     }
                                                                                     Node res = new Node("structure access");
@@ -1128,7 +1182,7 @@ public class Grammar implements GrammarConstants {
       jj_consume_token(CLOSING_B);
       break;
     default:
-      jj_la1[36] = jj_gen;
+      jj_la1[41] = jj_gen;
       jj_consume_token(-1);
       throw new ParseException();
     }
@@ -1152,15 +1206,15 @@ public class Grammar implements GrammarConstants {
     jj_consume_token(OPENING_B);
     mat = Matrix_Address();
     jj_consume_token(CLOSING_B);
-    label_9:
+    label_15:
     while (true) {
       switch ((jj_ntk==-1)?jj_ntk():jj_ntk) {
       case OPENING_B:
         ;
         break;
       default:
-        jj_la1[37] = jj_gen;
-        break label_9;
+        jj_la1[42] = jj_gen;
+        break label_15;
       }
       jj_consume_token(OPENING_B);
       aux = First_Expression();
@@ -1213,7 +1267,7 @@ public class Grammar implements GrammarConstants {
                                                                                     {if (true) return address2;}
         break;
       default:
-        jj_la1[38] = jj_gen;
+        jj_la1[43] = jj_gen;
         jj_consume_token(-1);
         throw new ParseException();
       }
@@ -1312,131 +1366,140 @@ public class Grammar implements GrammarConstants {
     finally { jj_save(12, xla); }
   }
 
-  private boolean jj_3R_55() {
+  private boolean jj_3R_76() {
+    if (jj_3R_24()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_34() {
+    if (jj_scan_token(TERNARY)) return true;
+    if (jj_3R_33()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_28() {
+    if (jj_3R_33()) return true;
     Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_60()) {
-    jj_scanpos = xsp;
-    if (jj_3R_61()) {
-    jj_scanpos = xsp;
-    if (jj_3R_62()) return true;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_34()) { jj_scanpos = xsp; break; }
     }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_60() {
-    if (jj_scan_token(MINUS)) return true;
-    if (jj_3R_55()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_22() {
-    if (jj_3R_27()) return true;
-    if (jj_3R_28()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_30() {
-    return false;
-  }
-
-  private boolean jj_3R_66() {
-    return false;
-  }
-
-  private boolean jj_3R_12() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    if (jj_scan_token(OPENING_B)) return true;
-    if (jj_3R_19()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_29() {
-    if (jj_scan_token(VALUE_ASIGNMENT)) return true;
-    if (jj_3R_22()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_23() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_29()) {
-    jj_scanpos = xsp;
-    if (jj_3R_30()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3_12() {
-    if (jj_scan_token(ELSE_KEYWORD)) return true;
-    if (jj_3R_17()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_65() {
-    if (jj_scan_token(MOD)) return true;
-    if (jj_3R_55()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_78() {
-    if (jj_3R_18()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_18() {
-    if (jj_3R_22()) return true;
-    if (jj_3R_23()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_64() {
-    if (jj_scan_token(DIV)) return true;
-    if (jj_3R_55()) return true;
     return false;
   }
 
   private boolean jj_3_11() {
     if (jj_scan_token(ELSE_KEYWORD)) return true;
-    if (jj_3R_15()) return true;
+    if (jj_3R_21()) return true;
     return false;
   }
 
-  private boolean jj_3_2() {
-    if (jj_3R_11()) return true;
+  private boolean jj_3R_36() {
     return false;
   }
 
-  private boolean jj_3R_56() {
+  private boolean jj_3R_53() {
+    if (jj_3R_57()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_58()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_77() {
+    if (jj_scan_token(OPENING_B)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_61() {
+    if (jj_scan_token(MOD)) return true;
+    if (jj_3R_53()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_32() {
+    if (jj_scan_token(OPENING_B)) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_63()) {
+    if (jj_3R_76()) {
     jj_scanpos = xsp;
-    if (jj_3R_64()) {
-    jj_scanpos = xsp;
-    if (jj_3R_65()) {
-    jj_scanpos = xsp;
-    if (jj_3R_66()) return true;
-    }
-    }
+    if (jj_3R_77()) return true;
     }
     return false;
   }
 
-  private boolean jj_3R_63() {
-    if (jj_scan_token(TIMES)) return true;
-    if (jj_3R_55()) return true;
+  private boolean jj_3R_35() {
+    if (jj_scan_token(VALUE_ASIGNMENT)) return true;
+    if (jj_3R_28()) return true;
     return false;
   }
 
-  private boolean jj_3R_79() {
-    if (jj_scan_token(OPENING_B)) return true;
+  private boolean jj_3R_29() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_35()) {
+    jj_scanpos = xsp;
+    if (jj_3R_36()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_27() {
+    if (jj_scan_token(VALUE_ASIGNMENT)) return true;
+    if (jj_3R_24()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_24() {
+    if (jj_3R_28()) return true;
+    if (jj_3R_29()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_60() {
+    if (jj_scan_token(DIV)) return true;
+    if (jj_3R_53()) return true;
     return false;
   }
 
   private boolean jj_3R_26() {
-    if (jj_scan_token(OPENING_B)) return true;
+    if (jj_3R_32()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_23() {
+    if (jj_scan_token(IF_KEYWORD)) return true;
+    return false;
+  }
+
+  private boolean jj_3_2() {
+    if (jj_3R_17()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_19() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    Token xsp;
+    if (jj_3R_26()) return true;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_26()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_79() {
+    if (jj_3R_24()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_78() {
+    if (jj_scan_token(DEFAULT_KEYWORD)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_75() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3R_78()) {
@@ -1446,134 +1509,97 @@ public class Grammar implements GrammarConstants {
     return false;
   }
 
-  private boolean jj_3R_21() {
-    if (jj_scan_token(VALUE_ASIGNMENT)) return true;
-    if (jj_3R_18()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_48() {
-    if (jj_3R_55()) return true;
-    if (jj_3R_56()) return true;
+  private boolean jj_3R_54() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_59()) {
+    jj_scanpos = xsp;
+    if (jj_3R_60()) {
+    jj_scanpos = xsp;
+    if (jj_3R_61()) return true;
+    }
+    }
     return false;
   }
 
   private boolean jj_3R_59() {
+    if (jj_scan_token(TIMES)) return true;
+    if (jj_3R_53()) return true;
     return false;
   }
 
-  private boolean jj_3R_20() {
-    if (jj_3R_26()) return true;
+  private boolean jj_3R_22() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_27()) jj_scanpos = xsp;
     return false;
   }
 
-  private boolean jj_3R_17() {
-    if (jj_scan_token(IF_KEYWORD)) return true;
+  private boolean jj_3R_47() {
+    if (jj_3R_53()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_54()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
   private boolean jj_3_1() {
-    if (jj_3R_10()) return true;
+    if (jj_3R_16()) return true;
     return false;
   }
 
-  private boolean jj_3R_13() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    Token xsp;
-    if (jj_3R_20()) return true;
-    while (true) {
-      xsp = jj_scanpos;
-      if (jj_3R_20()) { jj_scanpos = xsp; break; }
-    }
+  private boolean jj_3R_74() {
+    if (jj_3R_75()) return true;
     return false;
   }
 
-  private boolean jj_3R_81() {
-    if (jj_3R_18()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_58() {
+  private boolean jj_3R_56() {
     if (jj_scan_token(MINUS)) return true;
-    if (jj_3R_48()) return true;
+    if (jj_3R_47()) return true;
     return false;
   }
 
-  private boolean jj_3R_80() {
-    if (jj_scan_token(DEFAULT_KEYWORD)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_77() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_80()) {
-    jj_scanpos = xsp;
-    if (jj_3R_81()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_49() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_57()) {
-    jj_scanpos = xsp;
-    if (jj_3R_58()) {
-    jj_scanpos = xsp;
-    if (jj_3R_59()) return true;
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_57() {
-    if (jj_scan_token(PLUS)) return true;
-    if (jj_3R_48()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_15() {
-    if (jj_scan_token(OPENING_C)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_16() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_21()) jj_scanpos = xsp;
-    return false;
-  }
-
-  private boolean jj_3R_43() {
-    if (jj_3R_48()) return true;
-    if (jj_3R_49()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_76() {
-    if (jj_3R_77()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_54() {
-    return false;
-  }
-
-  private boolean jj_3R_11() {
+  private boolean jj_3R_17() {
     if (jj_scan_token(IDENTIFIER)) return true;
     if (jj_scan_token(OPENING_P)) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_76()) jj_scanpos = xsp;
+    if (jj_3R_74()) jj_scanpos = xsp;
     if (jj_scan_token(CLOSING_P)) return true;
     return false;
   }
 
-  private boolean jj_3R_53() {
-    if (jj_scan_token(GREATER_EQUALS)) return true;
-    if (jj_3R_43()) return true;
+  private boolean jj_3R_21() {
+    if (jj_scan_token(OPENING_C)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_48() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_55()) {
+    jj_scanpos = xsp;
+    if (jj_3R_56()) return true;
+    }
+    return false;
+  }
+
+  private boolean jj_3R_55() {
+    if (jj_scan_token(PLUS)) return true;
+    if (jj_3R_47()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_43() {
+    if (jj_3R_47()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_48()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
@@ -1583,62 +1609,21 @@ public class Grammar implements GrammarConstants {
     return false;
   }
 
-  private boolean jj_3R_51() {
-    if (jj_scan_token(GREATER)) return true;
-    if (jj_3R_43()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_44() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_50()) {
-    jj_scanpos = xsp;
-    if (jj_3R_51()) {
-    jj_scanpos = xsp;
-    if (jj_3R_52()) {
-    jj_scanpos = xsp;
-    if (jj_3R_53()) {
-    jj_scanpos = xsp;
-    if (jj_3R_54()) return true;
-    }
-    }
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_50() {
-    if (jj_scan_token(LESSER)) return true;
-    if (jj_3R_43()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_14() {
-    if (jj_3R_16()) return true;
+  private boolean jj_3R_20() {
+    if (jj_3R_22()) return true;
     return false;
   }
 
   private boolean jj_3_10() {
     if (jj_scan_token(OPENING_P)) return true;
-    if (jj_3R_16()) return true;
+    if (jj_3R_22()) return true;
     if (jj_scan_token(COMMA)) return true;
     return false;
   }
 
-  private boolean jj_3R_39() {
+  private boolean jj_3R_51() {
+    if (jj_scan_token(LESSER)) return true;
     if (jj_3R_43()) return true;
-    if (jj_3R_44()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_47() {
-    return false;
-  }
-
-  private boolean jj_3R_46() {
-    if (jj_scan_token(NOT_EQUALS)) return true;
-    if (jj_3R_39()) return true;
     return false;
   }
 
@@ -1646,65 +1631,56 @@ public class Grammar implements GrammarConstants {
     if (jj_scan_token(OPENING_P)) return true;
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_14()) jj_scanpos = xsp;
+    if (jj_3R_20()) jj_scanpos = xsp;
     if (jj_scan_token(CLOSING_P)) return true;
     if (jj_scan_token(ARROW)) return true;
-    if (jj_3R_15()) return true;
+    if (jj_3R_21()) return true;
     return false;
   }
 
-  private boolean jj_3R_40() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_45()) {
-    jj_scanpos = xsp;
-    if (jj_3R_46()) {
-    jj_scanpos = xsp;
-    if (jj_3R_47()) return true;
-    }
-    }
-    return false;
-  }
-
-  private boolean jj_3R_45() {
-    if (jj_scan_token(EQUALS)) return true;
-    if (jj_3R_39()) return true;
+  private boolean jj_3R_50() {
+    if (jj_scan_token(GREATER_EQUALS)) return true;
+    if (jj_3R_43()) return true;
     return false;
   }
 
   private boolean jj_3_8() {
-    if (jj_3R_13()) return true;
+    if (jj_3R_19()) return true;
     return false;
   }
 
-  private boolean jj_3R_35() {
-    if (jj_3R_39()) return true;
-    if (jj_3R_40()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_42() {
-    return false;
-  }
-
-  private boolean jj_3_7() {
-    if (jj_3R_12()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_36() {
+  private boolean jj_3R_44() {
     Token xsp;
     xsp = jj_scanpos;
-    if (jj_3R_41()) {
+    if (jj_3R_49()) {
     jj_scanpos = xsp;
-    if (jj_3R_42()) return true;
+    if (jj_3R_50()) {
+    jj_scanpos = xsp;
+    if (jj_3R_51()) {
+    jj_scanpos = xsp;
+    if (jj_3R_52()) return true;
+    }
+    }
     }
     return false;
   }
 
+  private boolean jj_3R_49() {
+    if (jj_scan_token(GREATER)) return true;
+    if (jj_3R_43()) return true;
+    return false;
+  }
+
+  private boolean jj_3_7() {
+    if (jj_3R_18()) return true;
+    return false;
+  }
+
   private boolean jj_3R_41() {
-    if (jj_scan_token(AND)) return true;
-    if (jj_3R_35()) return true;
+    if (jj_3R_43()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_44()) jj_scanpos = xsp;
     return false;
   }
 
@@ -1714,7 +1690,7 @@ public class Grammar implements GrammarConstants {
     return false;
   }
 
-  private boolean jj_3R_10() {
+  private boolean jj_3R_16() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_6()) {
@@ -1727,108 +1703,113 @@ public class Grammar implements GrammarConstants {
     return false;
   }
 
-  private boolean jj_3R_31() {
-    if (jj_3R_35()) return true;
-    if (jj_3R_36()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_38() {
-    return false;
-  }
-
-  private boolean jj_3R_75() {
-    if (jj_scan_token(IDENTIFIER)) return true;
-    return false;
-  }
-
-  private boolean jj_3R_74() {
-    if (jj_scan_token(OPENING_P)) return true;
-    if (jj_3R_18()) return true;
-    if (jj_scan_token(CLOSING_P)) return true;
-    return false;
-  }
-
-  private boolean jj_3_5() {
-    if (jj_3R_11()) return true;
-    return false;
-  }
-
-  private boolean jj_3_4() {
-    if (jj_3R_13()) return true;
-    return false;
-  }
-
-  private boolean jj_3R_32() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_37()) {
-    jj_scanpos = xsp;
-    if (jj_3R_38()) return true;
-    }
-    return false;
-  }
-
-  private boolean jj_3R_37() {
-    if (jj_scan_token(OR)) return true;
-    if (jj_3R_31()) return true;
-    return false;
-  }
-
-  private boolean jj_3_3() {
-    if (jj_3R_12()) return true;
+  private boolean jj_3R_46() {
+    if (jj_scan_token(NOT_EQUALS)) return true;
+    if (jj_3R_41()) return true;
     return false;
   }
 
   private boolean jj_3R_73() {
-    if (jj_scan_token(STRING_VALUE)) return true;
+    if (jj_scan_token(IDENTIFIER)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_40() {
+    if (jj_scan_token(AND)) return true;
+    if (jj_3R_39()) return true;
     return false;
   }
 
   private boolean jj_3R_72() {
-    if (jj_scan_token(INTEGER_VALUE)) return true;
+    if (jj_scan_token(OPENING_P)) return true;
+    if (jj_3R_24()) return true;
+    if (jj_scan_token(CLOSING_P)) return true;
     return false;
   }
 
-  private boolean jj_3R_27() {
-    if (jj_3R_31()) return true;
-    if (jj_3R_32()) return true;
+  private boolean jj_3R_42() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_45()) {
+    jj_scanpos = xsp;
+    if (jj_3R_46()) return true;
+    }
     return false;
   }
 
-  private boolean jj_3R_71() {
-    if (jj_scan_token(NUMERIC_VALUE)) return true;
+  private boolean jj_3R_45() {
+    if (jj_scan_token(EQUALS)) return true;
+    if (jj_3R_41()) return true;
     return false;
   }
 
-  private boolean jj_3R_70() {
-    if (jj_scan_token(TRUE_VALUE)) return true;
+  private boolean jj_3_5() {
+    if (jj_3R_17()) return true;
     return false;
   }
 
-  private boolean jj_3R_34() {
+  private boolean jj_3_4() {
+    if (jj_3R_19()) return true;
     return false;
   }
 
-  private boolean jj_3R_25() {
-    if (jj_scan_token(COMMA)) return true;
+  private boolean jj_3_3() {
     if (jj_3R_18()) return true;
     return false;
   }
 
+  private boolean jj_3R_71() {
+    if (jj_scan_token(STRING_VALUE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_39() {
+    if (jj_3R_41()) return true;
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_42()) jj_scanpos = xsp;
+    return false;
+  }
+
+  private boolean jj_3R_70() {
+    if (jj_scan_token(INTEGER_VALUE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_38() {
+    if (jj_scan_token(OR)) return true;
+    if (jj_3R_37()) return true;
+    return false;
+  }
+
   private boolean jj_3R_69() {
-    if (jj_scan_token(FALSE_VALUE)) return true;
+    if (jj_scan_token(NUMERIC_VALUE)) return true;
     return false;
   }
 
   private boolean jj_3R_68() {
-    if (jj_scan_token(NULL_VALUE)) return true;
+    if (jj_scan_token(TRUE_VALUE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_31() {
+    if (jj_scan_token(COMMA)) return true;
+    if (jj_3R_24()) return true;
     return false;
   }
 
   private boolean jj_3R_67() {
+    if (jj_scan_token(FALSE_VALUE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_65() {
     Token xsp;
     xsp = jj_scanpos;
+    if (jj_3R_66()) {
+    jj_scanpos = xsp;
+    if (jj_3R_67()) {
+    jj_scanpos = xsp;
     if (jj_3R_68()) {
     jj_scanpos = xsp;
     if (jj_3R_69()) {
@@ -1837,19 +1818,15 @@ public class Grammar implements GrammarConstants {
     jj_scanpos = xsp;
     if (jj_3R_71()) {
     jj_scanpos = xsp;
-    if (jj_3R_72()) {
-    jj_scanpos = xsp;
-    if (jj_3R_73()) {
-    jj_scanpos = xsp;
     if (jj_3_3()) {
     jj_scanpos = xsp;
     if (jj_3_4()) {
     jj_scanpos = xsp;
     if (jj_3_5()) {
     jj_scanpos = xsp;
-    if (jj_3R_74()) {
+    if (jj_3R_72()) {
     jj_scanpos = xsp;
-    if (jj_3R_75()) return true;
+    if (jj_3R_73()) return true;
     }
     }
     }
@@ -1863,56 +1840,103 @@ public class Grammar implements GrammarConstants {
     return false;
   }
 
-  private boolean jj_3R_24() {
-    if (jj_3R_18()) return true;
+  private boolean jj_3R_66() {
+    if (jj_scan_token(NULL_VALUE)) return true;
+    return false;
+  }
+
+  private boolean jj_3R_30() {
+    if (jj_3R_24()) return true;
     if (jj_scan_token(COMMA)) return true;
     return false;
   }
 
-  private boolean jj_3R_62() {
-    if (jj_3R_67()) return true;
+  private boolean jj_3R_64() {
+    if (jj_3R_65()) return true;
     return false;
   }
 
-  private boolean jj_3R_19() {
+  private boolean jj_3R_37() {
+    if (jj_3R_39()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_40()) { jj_scanpos = xsp; break; }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_25() {
     Token xsp;
     xsp = jj_scanpos;
     if (jj_3_13()) {
     jj_scanpos = xsp;
-    if (jj_3R_24()) {
+    if (jj_3R_30()) {
     jj_scanpos = xsp;
-    if (jj_3R_25()) return true;
+    if (jj_3R_31()) return true;
     }
     }
     return false;
   }
 
   private boolean jj_3_13() {
-    if (jj_3R_18()) return true;
+    if (jj_3R_24()) return true;
     if (jj_scan_token(COMMA)) return true;
-    if (jj_3R_18()) return true;
+    if (jj_3R_24()) return true;
     return false;
   }
 
-  private boolean jj_3R_28() {
-    Token xsp;
-    xsp = jj_scanpos;
-    if (jj_3R_33()) {
-    jj_scanpos = xsp;
-    if (jj_3R_34()) return true;
-    }
+  private boolean jj_3R_63() {
+    if (jj_scan_token(NOT)) return true;
+    if (jj_3R_57()) return true;
     return false;
   }
 
   private boolean jj_3R_33() {
-    if (jj_scan_token(TERNARY)) return true;
-    if (jj_3R_27()) return true;
+    if (jj_3R_37()) return true;
+    Token xsp;
+    while (true) {
+      xsp = jj_scanpos;
+      if (jj_3R_38()) { jj_scanpos = xsp; break; }
+    }
     return false;
   }
 
-  private boolean jj_3R_61() {
-    if (jj_scan_token(NOT)) return true;
-    if (jj_3R_55()) return true;
+  private boolean jj_3R_57() {
+    Token xsp;
+    xsp = jj_scanpos;
+    if (jj_3R_62()) {
+    jj_scanpos = xsp;
+    if (jj_3R_63()) {
+    jj_scanpos = xsp;
+    if (jj_3R_64()) return true;
+    }
+    }
+    return false;
+  }
+
+  private boolean jj_3R_62() {
+    if (jj_scan_token(MINUS)) return true;
+    if (jj_3R_57()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_18() {
+    if (jj_scan_token(IDENTIFIER)) return true;
+    if (jj_scan_token(OPENING_B)) return true;
+    if (jj_3R_25()) return true;
+    return false;
+  }
+
+  private boolean jj_3R_58() {
+    if (jj_scan_token(POWER)) return true;
+    if (jj_3R_57()) return true;
+    return false;
+  }
+
+  private boolean jj_3_12() {
+    if (jj_scan_token(ELSE_KEYWORD)) return true;
+    if (jj_3R_23()) return true;
     return false;
   }
 
@@ -1930,7 +1954,7 @@ public class Grammar implements GrammarConstants {
   private boolean jj_lookingAhead = false;
   private boolean jj_semLA;
   private int jj_gen;
-  final private int[] jj_la1 = new int[39];
+  final private int[] jj_la1 = new int[44];
   static private int[] jj_la1_0;
   static private int[] jj_la1_1;
   static {
@@ -1938,10 +1962,10 @@ public class Grammar implements GrammarConstants {
       jj_la1_init_1();
    }
    private static void jj_la1_init_0() {
-      jj_la1_0 = new int[] {0x0,0x0,0x1000000,0x1000000,0x1000000,0x1000000,0x1000000,0x1000000,0x0,0x10000,0x0,0x0,0x0,0x1800,0xc0006000,0x6000000,0x18000400,0x4020000,0x0,0x20000,0x0,0x0,0x4020000,0x800000,0x10000,0x0,0x0,0x0,0x0,0x0,0x4020000,0x20000,0x800000,0x4020000,0x4020000,0x80000,0x40a0000,0x80000,0x4820000,};
+      jj_la1_0 = new int[] {0x0,0x0,0x1000000,0x1000000,0x1000000,0x1000000,0x1000000,0x1000000,0x0,0x10000,0x0,0x0,0x0,0x1800,0x1800,0xc0006000,0xc0006000,0x6000000,0x6000000,0x18000400,0x18000400,0x20000000,0x4020000,0x0,0x20000,0x0,0x0,0x4020000,0x800000,0x10000,0x0,0x0,0x0,0x0,0x0,0x4020000,0x20000,0x800000,0x4020000,0x4020000,0x80000,0x40a0000,0x80000,0x4820000,};
    }
    private static void jj_la1_init_1() {
-      jj_la1_1 = new int[] {0x800dea0,0x800dea0,0x0,0x0,0x0,0x0,0x0,0x0,0xdea0,0x0,0x8,0x4,0x2,0x0,0x0,0x0,0x0,0xb9c0001,0x39c0000,0x8000000,0x8000000,0x8000000,0xb9d0001,0x0,0x0,0x40,0x20000,0x100,0x800dea0,0x800dea0,0xb9c0001,0x0,0x0,0xb9e0001,0xb9e0001,0x0,0xb9c0001,0x0,0xb9c0001,};
+      jj_la1_1 = new int[] {0x800dea0,0x800dea0,0x0,0x0,0x0,0x0,0x0,0x0,0xdea0,0x0,0x8,0x4,0x2,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0x0,0xb9c0001,0x39c0000,0x8000000,0x8000000,0x8000000,0xb9d0001,0x0,0x0,0x40,0x20000,0x100,0x800dea0,0x800dea0,0xb9c0001,0x0,0x0,0xb9e0001,0xb9e0001,0x0,0xb9c0001,0x0,0xb9c0001,};
    }
   final private JJCalls[] jj_2_rtns = new JJCalls[13];
   private boolean jj_rescan = false;
@@ -1958,7 +1982,7 @@ public class Grammar implements GrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 39; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 44; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1973,7 +1997,7 @@ public class Grammar implements GrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 39; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 44; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1984,7 +2008,7 @@ public class Grammar implements GrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 39; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 44; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -1995,7 +2019,7 @@ public class Grammar implements GrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 39; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 44; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2005,7 +2029,7 @@ public class Grammar implements GrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 39; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 44; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2015,7 +2039,7 @@ public class Grammar implements GrammarConstants {
     token = new Token();
     jj_ntk = -1;
     jj_gen = 0;
-    for (int i = 0; i < 39; i++) jj_la1[i] = -1;
+    for (int i = 0; i < 44; i++) jj_la1[i] = -1;
     for (int i = 0; i < jj_2_rtns.length; i++) jj_2_rtns[i] = new JJCalls();
   }
 
@@ -2135,7 +2159,7 @@ public class Grammar implements GrammarConstants {
       la1tokens[jj_kind] = true;
       jj_kind = -1;
     }
-    for (int i = 0; i < 39; i++) {
+    for (int i = 0; i < 44; i++) {
       if (jj_la1[i] == jj_gen) {
         for (int j = 0; j < 32; j++) {
           if ((jj_la1_0[i] & (1<<j)) != 0) {

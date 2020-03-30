@@ -174,197 +174,216 @@ Node PFirst_Expression(Node inherited) :
 }
 
 Node Second_Expression() : 
-{ Node exp1; Node exp2; }
+{ Node exp1; Node exp2; Node exp3; Token t; Token t2; }
 {
-    exp1 = Third_Expression() exp2 = PSecond_Expression(exp1)  { return exp2; }
-}
-
-Node PSecond_Expression(Node inherited) : 
-{ Node exp1; Node exp2; Node op1; Node op2; Token v1; Token v2; Node res1; Node res2; Node ter; }
-{
-        v1 = <TERNARY> exp1 = Third_Expression()        {   
-                                                            ter = new Node("ternary expression");
-                                                            op1 = new Node("?", v1.beginLine, v1.beginColumn, null);
-                                                            op1.addChildren(inherited);
-                                                        } 
-        res1 = PSecond_Expression(exp1) v2 = <COLON>
-        exp2 = Third_Expression()                       {
-                                                            op2 = new Node(":", v2.beginLine, v2.beginColumn, null);
-                                                            op2.addChildren(res1);
-                                                        }
-        res2 = PSecond_Expression(exp2)                 {
-                                                            op2.addChildren(res2);
-                                                            ter.addChildren(op1);
-                                                            ter.addChildren(op2);
-                                                            return ter;
-                                                        }
-    |
-        { return inherited; }
+    exp1 = Third_Expression() 
+    ( t = <TERNARY> exp2 = Third_Expression() t2 = <COLON> exp3 =Third_Expression() 
+        {
+            Node ter = new Node("ternary expression");
+            Node semi = new Node("?", t.beginLine, t.beginColumn, null);
+            semi.addChildren(exp1);
+            Node col = new Node(":", t2.beginLine, t2.beginColumn, null);
+            col.addChildren(exp2);
+            col.addChildren(exp3);
+            ter.addChildren(semi);
+            ter.addChildren(col);
+            exp1 = ter;
+        })*
+    { return exp1; }
 }
 
 
 Node Third_Expression() : 
-{ Node exp1; Node exp; }
+{ Node exp1; Node exp2; Token t;}
 {
-    exp1 = Fourth_Expression() exp = PThird_Expression(exp1)
-    { return exp; }
-}
-
-Node PThird_Expression(Node inherited) : 
-{ Node exp1; Node op; Token v; Node res; Node bin; }
-{
-    v = <OR> exp1 = Fourth_Expression()     { 
-                                                bin = new Node("binary expression");
-                                                op = new Node("|", v.beginLine, v.beginColumn, null);
-                                                op.addChildren(inherited);
-                                            }   res = PThird_Expression(exp1) { op.addChildren(res); bin.addChildren(op); return bin; }
-    |
-        { return inherited; }
+    exp1 = Fourth_Expression() ( t = <OR> exp2 = Fourth_Expression()
+        {
+            Node bin = new Node("binary expression");
+            Node op = new Node("|", t.beginLine, t.beginColumn, null);
+            op.addChildren(exp1);
+            op.addChildren(exp2);
+            bin.addChildren(op);
+            exp1 = bin;
+        })*
+    { return exp1; }
 }
 
 Node Fourth_Expression() : 
-{ Node exp1; Node exp; }
+{ Node exp1; Node exp2; Token t;}
 {
-    exp1 = Fifth_Expression() exp = PFourth_Expression(exp1)
-    { return exp; }
+    exp1 = Fifth_Expression() ( t = <AND> exp2 = Fifth_Expression()
+        {
+            Node bin = new Node("binary expression");
+            Node op = new Node("&", t.beginLine, t.beginColumn, null);
+            op.addChildren(exp1);
+            op.addChildren(exp2);
+            bin.addChildren(op);
+            exp1 = bin;
+        })*
+    { return exp1; }
 }
 
-Node PFourth_Expression(Node inherited) : 
-{ Node exp1; Node op; Token v; Node res; Node bin; }
-{
-    v = <AND> exp1 = Fifth_Expression() { 
-                                            bin = new Node("binary expression");
-                                            op = new Node("&", v.beginLine, v.beginColumn, null);
-                                            op.addChildren(inherited);
-                                        }   res = PFourth_Expression(exp1) { op.addChildren(res); bin.addChildren(op); return bin; }
-    |
-        { return inherited; }
-}
 
 Node Fifth_Expression() : 
-{ Node exp1; Node exp; }
+{ Node exp1; Node exp2; Token t;}
 {
-    exp1 = Sixth_Expression() exp = PFifth_Expression(exp1)
-    { return exp; }
-}
-
-Node PFifth_Expression(Node inherited) : 
-{ Node exp1; Node op; Token v; Node res; Node bin; }
-{
-        v = <EQUALS> exp1 = Sixth_Expression()  { 
-                                                    bin = new Node("binary expression");
-                                                    op = new Node("==", v.beginLine, v.beginColumn, null);
-                                                    op.addChildren(inherited);
-                                                }   res = PFifth_Expression(exp1) { op.addChildren(res); bin.addChildren(op); return bin; }
-    |
-        v = <NOT_EQUALS> exp1 = Sixth_Expression()  { 
-                                                        bin = new Node("binary expression");
-                                                        op = new Node("!=", v.beginLine, v.beginColumn, null);
-                                                        op.addChildren(inherited);
-                                                    }   res = PFifth_Expression(exp1) { op.addChildren(res); bin.addChildren(op); return bin; }
-    |
-        { return inherited; }
+    exp1 = Sixth_Expression() ( 
+            t = <EQUALS> exp2 = Sixth_Expression()
+                {
+                    Node bin = new Node("binary expression");
+                    Node op = new Node("==", t.beginLine, t.beginColumn, null);
+                    op.addChildren(exp1);
+                    op.addChildren(exp2);
+                    bin.addChildren(op);
+                    exp1 = bin;
+                }
+        |
+            t = <NOT_EQUALS> exp2 = Sixth_Expression() 
+                {
+                    Node bin2 = new Node("binary expression");
+                    Node op2 = new Node("!=", t.beginLine, t.beginColumn, null);
+                    op2.addChildren(exp1);
+                    op2.addChildren(exp2);
+                    bin2.addChildren(op2);
+                    exp1 = bin2;
+                }
+    )?
+    { return exp1; }
 }
 
 Node Sixth_Expression() : 
-{ Node exp1; Node exp; }
+{ Node exp1; Node exp2; Token t;}
 {
-    exp1 = Seventh_Expression() exp = PSixth_Expression(exp1)
-    { return exp; }
-}
-
-Node PSixth_Expression(Node inherited) : 
-{ Node exp1; Node op; Token v; Node res; Node bin; }
-{
-        v = <LESSER> exp1 = Seventh_Expression()    { 
-                                                        bin = new Node("binary expression");
-                                                        op = new Node("<", v.beginLine, v.beginColumn, null);
-                                                        op.addChildren(inherited);
-                                                    }   res = PSixth_Expression(exp1) { op.addChildren(res); bin.addChildren(op); return bin; }
-    |
-        v = <GREATER> exp1 = Seventh_Expression()   { 
-                                                        bin = new Node("binary expression");
-                                                        op = new Node(">", v.beginLine, v.beginColumn, null);
-                                                        op.addChildren(inherited);
-                                                    }   res = PSixth_Expression(exp1) { op.addChildren(res); bin.addChildren(op); return bin; }
-    |
-        v = <LESSER_EQUALS> exp1 = Seventh_Expression()     { 
-                                                                bin = new Node("binary expression");
-                                                                op = new Node("<=", v.beginLine, v.beginColumn, null);
-                                                                op.addChildren(inherited);
-                                                            }   res = PSixth_Expression(exp1) { op.addChildren(res); bin.addChildren(op); return bin; }
-    |
-        v = <GREATER_EQUALS> exp1 = Seventh_Expression()    { 
-                                                                bin = new Node("binary expression");
-                                                                op = new Node(">=", v.beginLine, v.beginColumn, null);
-                                                                op.addChildren(inherited);
-                                                            }   res = PSixth_Expression(exp1) { op.addChildren(res); bin.addChildren(op); return bin; }
-    |
-        { return inherited; }
+    exp1 = Seventh_Expression() ( 
+            t = <GREATER> exp2 = Seventh_Expression()
+                {
+                    Node bin = new Node("binary expression");
+                    Node op = new Node(">", t.beginLine, t.beginColumn, null);
+                    op.addChildren(exp1);
+                    op.addChildren(exp2);
+                    bin.addChildren(op);
+                    exp1 = bin;
+                }
+        |
+            t = <GREATER_EQUALS> exp2 = Seventh_Expression() 
+                {
+                    Node bin2 = new Node("binary expression");
+                    Node op2 = new Node(">=", t.beginLine, t.beginColumn, null);
+                    op2.addChildren(exp1);
+                    op2.addChildren(exp2);
+                    bin2.addChildren(op2);
+                    exp1 = bin2;
+                }
+        |
+            t = <LESSER> exp2 = Seventh_Expression() 
+                {
+                    Node bin3 = new Node("binary expression");
+                    Node op3 = new Node("<", t.beginLine, t.beginColumn, null);
+                    op3.addChildren(exp1);
+                    op3.addChildren(exp2);
+                    bin3.addChildren(op3);
+                    exp1 = bin3;
+                }
+        |
+            t = <LESSER_EQUALS> exp2 = Seventh_Expression() 
+                {
+                    Node bin4 = new Node("binary expression");
+                    Node op4 = new Node("<=", t.beginLine, t.beginColumn, null);
+                    op4.addChildren(exp1);
+                    op4.addChildren(exp2);
+                    bin4.addChildren(op4);
+                    exp1 = bin4;
+                }
+    )?
+    { return exp1; }
 }
 
 Node Seventh_Expression() : 
-{ Node exp1; Node exp; }
+{ Node exp1; Node exp2; Token t;}
 {
-    exp1 = Eigth_Expression() exp = PSeventh_Expression(exp1)
-    { return exp; }
-}
-
-Node PSeventh_Expression(Node inherited) : 
-{ Node exp1; Node op; Token v; Node res; Node bin; }
-{
-        v = <PLUS> exp1 = Eigth_Expression()    { 
-                                                    bin = new Node("binary expression");
-                                                    op = new Node("+", v.beginLine, v.beginColumn, null);
-                                                    op.addChildren(inherited);
-                                                }   res = PSeventh_Expression(exp1) { op.addChildren(res); bin.addChildren(op); return bin; }
-    |
-        v = <MINUS> exp1 = Eigth_Expression()       { 
-                                                        bin = new Node("binary expression");
-                                                        op = new Node("-", v.beginLine, v.beginColumn, null);
-                                                        op.addChildren(inherited);
-                                                    }   res = PSeventh_Expression(exp1) { op.addChildren(res); bin.addChildren(op); return bin; }
-    |
-        { return inherited; }
+    exp1 = Eigth_Expression() ( 
+            t = <PLUS> exp2 = Eigth_Expression()
+                {
+                    Node bin = new Node("binary expression");
+                    Node op = new Node("+", t.beginLine, t.beginColumn, null);
+                    op.addChildren(exp1);
+                    op.addChildren(exp2);
+                    bin.addChildren(op);
+                    exp1 = bin;
+                }
+        |
+            t = <MINUS> exp2 = Eigth_Expression() 
+                {
+                    Node bin2 = new Node("binary expression");
+                    Node op2 = new Node("-", t.beginLine, t.beginColumn, null);
+                    op2.addChildren(exp1);
+                    op2.addChildren(exp2);
+                    bin2.addChildren(op2);
+                    exp1 = bin2;
+                }
+    )*
+    { return exp1; }
 }
 
 Node Eigth_Expression() : 
-{ Node exp1; Node exp; }
+{ Node exp1; Node exp2; Token t;}
 {
-    exp1 = Nineth_Expression() exp = PEigth_Expression(exp1)
-    { return exp; }
+    exp1 = Nineth_Expression() ( 
+            t = <TIMES> exp2 = Nineth_Expression()
+                {
+                    Node bin = new Node("binary expression");
+                    Node op = new Node("*", t.beginLine, t.beginColumn, null);
+                    op.addChildren(exp1);
+                    op.addChildren(exp2);
+                    bin.addChildren(op);
+                    exp1 = bin;
+                }
+        |
+            t = <DIV> exp2 = Nineth_Expression() 
+                {
+                    Node bin2 = new Node("binary expression");
+                    Node op2 = new Node("/", t.beginLine, t.beginColumn, null);
+                    op2.addChildren(exp1);
+                    op2.addChildren(exp2);
+                    bin2.addChildren(op2);
+                    exp1 = bin2;
+                }
+        |
+            t = <MOD> exp2 = Nineth_Expression() 
+                {
+                    Node bin3 = new Node("binary expression");
+                    Node op3 = new Node("%%", t.beginLine, t.beginColumn, null);
+                    op3.addChildren(exp1);
+                    op3.addChildren(exp2);
+                    bin3.addChildren(op3);
+                    exp1 = bin3;
+                }
+    )*
+    { return exp1; }
 }
 
-Node PEigth_Expression(Node inherited) : 
-{ Node exp1; Node op; Token v; Node res; Node bin; }
+Node Nineth_Expression() : 
+{ Node exp1; Node exp2; Token t;}
 {
-        v = <TIMES> exp1 = Nineth_Expression()  { 
-                                                    bin = new Node("binary expression");
-                                                    op = new Node("*", v.beginLine, v.beginColumn, null);
-                                                    op.addChildren(inherited);
-                                                }   res = PEigth_Expression(exp1) { op.addChildren(res); bin.addChildren(op); return bin; }
-    |
-        v = <DIV> exp1 = Nineth_Expression()    { 
-                                                    bin = new Node("binary expression");
-                                                    op = new Node("/", v.beginLine, v.beginColumn, null);
-                                                    op.addChildren(inherited);
-                                                }   res = PEigth_Expression(exp1) { op.addChildren(res); bin.addChildren(op); return bin; }
-    |
-        v = <MOD> exp1 = Nineth_Expression()    { 
-                                                    bin = new Node("binary expression");
-                                                    op = new Node("%%", v.beginLine, v.beginColumn, null);
-                                                    op.addChildren(inherited);
-                                                }   res = PEigth_Expression(exp1) { op.addChildren(res); bin.addChildren(op); return bin; }
-    |
-        { return inherited; }
+    exp1 = Tenth_Expression() ( 
+            t = <POWER> exp2 = Tenth_Expression()
+                {
+                    Node bin = new Node("binary expression");
+                    Node op = new Node("^", t.beginLine, t.beginColumn, null);
+                    op.addChildren(exp1);
+                    op.addChildren(exp2);
+                    bin.addChildren(op);
+                    exp1 = bin;
+                }
+    )*
+    { return exp1; }
 }
 
 
-
-Node Nineth_Expression() :
+Node Tenth_Expression() :
 { Node res; Node min; Token t; Node exp; }
 {
-        t = <MINUS> exp = Nineth_Expression()   {   
+        t = <MINUS> exp = Tenth_Expression()   {   
                                                     res = new Node("unary expression");
                                                     min = new Node("-", t.beginLine, t.beginColumn, null); 
                                                     min.addChildren(exp);
@@ -372,7 +391,7 @@ Node Nineth_Expression() :
                                                     return res;
                                                 }
     |
-        t = <NOT> exp = Nineth_Expression()     {   
+        t = <NOT> exp = Tenth_Expression()     {   
                                                     res = new Node("unary expression");
                                                     min = new Node("!", t.beginLine, t.beginColumn, null); 
                                                     min.addChildren(exp);
