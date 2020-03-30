@@ -217,7 +217,8 @@ public class Barplot implements Instruction {
         }
         chart.addSeries(".", Arrays.asList(names), Arrays.asList(numbers), Arrays.asList(ceros));
         
-        SwingWrapper pie = new SwingWrapper(chart);
+        JFrame pie = new SwingWrapper(chart).displayChart();
+        pie.setVisible(false);
         Singleton.insertFigure(pie);
         //JFrame frame = pie.displayChart();
         //frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);

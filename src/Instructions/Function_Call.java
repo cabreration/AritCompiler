@@ -325,7 +325,7 @@ public class Function_Call implements Instruction, Expression {
     private Object executeFunction(Function f, SymbolsTable env) {
         if (f.getParameters() == null) {
             // Una funcion sin parametros
-            if (this.params != null) {
+            if (this.params != null && this.params.size() > 0) {
                 return new CompileError("Semantico", "La funcion '" + this.name + "' no acepta parametros", this.line, this.column);
             }
             

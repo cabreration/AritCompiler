@@ -187,7 +187,8 @@ public class Pie implements Instruction {
             chart.addSeries(names[i], numbers[i]);
         }
         
-        SwingWrapper pie = new SwingWrapper(chart);
+        JFrame pie = new SwingWrapper(chart).displayChart();
+        pie.setVisible(false);
         Singleton.insertFigure(pie);
         //pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         

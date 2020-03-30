@@ -9,6 +9,7 @@ import APIServices.CompileError;
 import APIServices.Node;
 import APIServices.TreePrinter;
 import APIServices.TreeProcesor;
+import Instructions.Function_Call;
 import Instructions.Instruction;
 import JFlexNCup.Parser;
 import JFlexNCup.Scanner;
@@ -408,8 +409,13 @@ public class TextEditor extends javax.swing.JFrame {
             ArrayList<Instruction> sentences = TreeProcesor.processTree(root);
             SymbolsTable env = new SymbolsTable("global");
             for (Instruction ins : sentences) {
-                if (ins != null)
-                    ins.process(env);
+                if (ins != null) {
+                    if (ins instanceof Function_Call)
+                        ins.process(env);
+                    else
+                        ins.process(env);
+                }
+                    
             }
             String output = Singleton.print();
             this.console.setText(output);

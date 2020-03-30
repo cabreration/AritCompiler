@@ -26,7 +26,7 @@ public class Singleton {
     private static Hashtable<String, Function> functions = new Hashtable<String, Function>();
     private static ArrayList<CompileError> errors = new ArrayList<CompileError>();
     private static ArrayList<String> console = new ArrayList<String>();
-    private static ArrayList<SwingWrapper> figures = new ArrayList<SwingWrapper>();
+    private static ArrayList<JFrame> figures = new ArrayList<JFrame>();
     private static Hashtable<String, SymbolRef> symbolsRefs = new Hashtable<String, SymbolRef>();
     
     private Singleton() {}
@@ -91,7 +91,7 @@ public class Singleton {
     
     public static void newCompilation() {
         console = new ArrayList<String>();
-        figures = new ArrayList<SwingWrapper>();
+        figures = new ArrayList<JFrame>();
         functions = new Hashtable<String, Function>();
         symbolsRefs = new Hashtable<String, SymbolRef>();
         errors = new ArrayList<CompileError>();
@@ -114,20 +114,21 @@ public class Singleton {
         //System.out.println(builder.toString());
     }
     
-    public static void insertFigure(SwingWrapper figure) {
+    public static void insertFigure(JFrame figure) {
         if (figure == null)
             return;
         figures.add(figure);
     }
     
     public static void showFigure(int i) {
-        JFrame frame = figures.get(i).displayChart();
+        JFrame frame = figures.get(i);
+        frame.setVisible(true);
         frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
     }
     
     public static void showFigures() {
-        for (SwingWrapper wrapper : figures) {
-            JFrame frame = wrapper.displayChart();
+        for (JFrame frame : figures) {
+            frame.setVisible(true);
             frame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         }
     }

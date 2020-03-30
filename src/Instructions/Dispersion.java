@@ -180,7 +180,8 @@ public class Dispersion implements Instruction {
         series.setLineColor(Color.white);
         series.setLineStyle(SeriesLines.NONE);
         
-        SwingWrapper disp = new SwingWrapper(chart);
+        JFrame disp = new SwingWrapper(chart).displayChart();
+        disp.setVisible(false);
         Singleton.insertFigure(disp);
         //pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         

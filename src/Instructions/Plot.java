@@ -192,7 +192,8 @@ public class Plot implements Instruction {
         }
         
         
-        SwingWrapper plot = new SwingWrapper(chart);
+        JFrame plot = new SwingWrapper(chart).displayChart();
+        plot.setVisible(false);
         Singleton.insertFigure(plot);
         //pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         

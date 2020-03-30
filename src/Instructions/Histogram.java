@@ -210,7 +210,8 @@ public class Histogram implements Instruction {
         }
         chart.addSeries(".", Arrays.asList(labels), Arrays.asList(count), Arrays.asList(ceros));
         
-        SwingWrapper hist = new SwingWrapper(chart);
+        JFrame hist = new SwingWrapper(chart).displayChart();
+        hist.setVisible(false);
         Singleton.insertFigure(hist);
         //pie.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
         

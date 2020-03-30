@@ -300,6 +300,8 @@ LONE_EXPRESSION ::= LONE_EXPRESSION:exp1 ternary:ter LONE_EXPRESSION:exp2 colon:
                                                                                        RESULT = res;
                                                                                     :} %prec minus
 
+    | openingPar LONE_EXPRESSION:exp closingPar                                     {: RESULT = exp; :}
+
     | EXPRESSION:exp                                                                {: RESULT = exp; :}
 ;
     
