@@ -43,6 +43,7 @@ public class Matrix_Function implements Instruction{
         
         if (rows == null)
             return null;
+        
         int filas = getDimension(rows);
         if (filas == -1)
             return null;
@@ -113,9 +114,10 @@ public class Matrix_Function implements Instruction{
             if (((Vector)obj).type() == 1 || ((Vector)obj).type() == 2) {
                 obj = ((ArrayList<Atomic>)((Vector)obj).getValue()).get(0);
             }
-            
-            Singleton.insertError(new CompileError("Semantico", "Unicamente tipos de datos numericos pueden usarse como dimensiones", this.line, this.column));
-            return -1;
+            else {
+                Singleton.insertError(new CompileError("Semantico", "Unicamente tipos de datos numericos pueden usarse como dimensiones", this.line, this.column));
+                return -1;
+            }
         }
         
         if (obj instanceof Atomic) {

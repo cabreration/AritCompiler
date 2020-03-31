@@ -119,6 +119,9 @@ public class For_Sentence implements Instruction{
                     env.update(local);
                     return r;
                 }
+                if (r instanceof CompileError) {
+                    Singleton.insertError((CompileError)r);
+                }
             }
         }
         env.update(local);
@@ -152,6 +155,9 @@ public class For_Sentence implements Instruction{
                         // actualizar el valor del vector
                         return r;
                     }
+                    else if (r instanceof CompileError) {
+                        Singleton.insertError((CompileError)r);
+                    }
                 }
             }
             // Aqui hay que actualizar el valor del vector
@@ -184,6 +190,9 @@ public class For_Sentence implements Instruction{
                         env.update(local);
                         return r;
                     }
+                    else if (r instanceof CompileError) {
+                        Singleton.insertError((CompileError)r);
+                    }
                 }
             }
             env.update(local);
@@ -214,6 +223,9 @@ public class For_Sentence implements Instruction{
                         else if (r instanceof Return_Sentence) {
                             env.update(local);
                             return r;
+                        }
+                        else if (r instanceof CompileError) {
+                            Singleton.insertError((CompileError)r);
                         }
                     }
                 }

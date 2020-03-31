@@ -188,7 +188,7 @@ Node First_Expression() :
             ter.addChildren(semi);
             ter.addChildren(col);
             exp1 = ter;
-        })*
+        })?
     { return exp1; }
 }
 
@@ -463,7 +463,7 @@ Node Asignment() :
 Node Asignment_Options() :
 { Node exp; Node param = null; Node params = null; Node sent; boolean flag = false; }
 {
-        LOOKAHEAD(4) 
+        LOOKAHEAD(200) 
         <OPENING_P> ( param = Parameter() { flag = true; })? 
         <CLOSING_P> <ARROW> sent = Sentences_Block()                            { 
                                                                                     Node res = new Node("asignment");
@@ -478,7 +478,7 @@ Node Asignment_Options() :
                                                                                     return res;
                                                                                 }
     |
-        LOOKAHEAD(3)
+        LOOKAHEAD(200)
         <OPENING_P> param = Parameter() <COMMA>
         params = Parameters_List() <CLOSING_P> 
         <ARROW> sent = Sentences_Block()                                        {

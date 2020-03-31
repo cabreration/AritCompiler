@@ -82,7 +82,7 @@ public class Switch_Sentence implements Instruction {
             SymbolsTable local = new SymbolsTable(name, env);
             Object r = kase.process(local);
             
-            if (r instanceof CompileError) {
+            if (r != null && r instanceof CompileError) {
                 Singleton.insertError((CompileError)r);
                 continue;
             }

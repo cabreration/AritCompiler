@@ -63,6 +63,9 @@ public class Atomic implements Expression, Value {
             return new Atomic(Atomic.Type.BOOLEAN, Boolean.valueOf(three));
         }
         else {
+            if (this.getValue() == null)
+                return new Atomic(Atomic.Type.STRING, null);
+            
             String four = ((String)this.getValue());
             return new Atomic(Atomic.Type.STRING, new String(four));
         }

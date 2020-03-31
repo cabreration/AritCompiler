@@ -35,7 +35,7 @@ public class Matrix implements Symbol, Value{
         int pos = 0;
         for (int i = 0; i < size; i++) {
             Atomic atom = ((ArrayList<Atomic>)vector.getValue()).get(pos);
-            this.elements[line][col] = atom;
+            this.elements[line][col] = atom.clonation();
             line++;
             pos++;
             if (pos == vector.getSize())
@@ -322,14 +322,14 @@ public class Matrix implements Symbol, Value{
                 for (int j = 0; j < this.nCols; j++) {
                     Atomic atom = ((ArrayList<Atomic>)(((Vector)obj).getValue())).get(j);
                     atom = cast(atom);
-                    this.elements[i][j] = atom;
+                    this.elements[i][j] = atom.clonation();
                 }
             }
             else if (((Vector)obj).getSize() == 1) {
                 Atomic atom = ((ArrayList<Atomic>)(((Vector)obj).getValue())).get(0);
                 atom = cast(atom);
                 for (int j = 0; j < this.nCols; j++) {
-                    this.elements[i][j] = atom;
+                    this.elements[i][j] = atom.clonation();
                 }
             }
             else {
@@ -340,7 +340,7 @@ public class Matrix implements Symbol, Value{
         else {
             obj = cast(obj);
             for (int j = 0; j < this.nCols; j++) {
-                this.elements[i][j] = (Atomic)obj;
+                this.elements[i][j] = ((Atomic)obj).clonation();
             }
         }
     }
@@ -396,14 +396,14 @@ public class Matrix implements Symbol, Value{
                 for (int i = 0; i < this.nRows; i++) {
                     Atomic atom = ((ArrayList<Atomic>)(((Vector)obj).getValue())).get(i);
                     atom = cast(atom);
-                    this.elements[i][j] = atom;
+                    this.elements[i][j] = atom.clonation();
                 }
             }
             else if (((Vector)obj).getSize() == 1) {
                 Atomic atom = ((ArrayList<Atomic>)(((Vector)obj).getValue())).get(0);
                 atom = cast(atom);
                 for (int i = 0; i < this.nRows; i++) {
-                    this.elements[i][j] = atom;
+                    this.elements[i][j] = atom.clonation();
                 }
             }
             else {
@@ -413,8 +413,8 @@ public class Matrix implements Symbol, Value{
         }
         else {
             obj = cast(obj);
-            for (int i = 0; i < this.nCols; i++) {
-                this.elements[i][j] = (Atomic)obj;
+            for (int i = 0; i < this.nRows; i++) {
+                this.elements[i][j] = ((Atomic)obj).clonation();
             }
         }
     }

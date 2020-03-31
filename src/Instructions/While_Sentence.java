@@ -45,8 +45,7 @@ public class While_Sentence implements Instruction {
         while (cond) {
             condit = determine(env);
             if (condit instanceof CompileError) {
-                Singleton.insertError((CompileError)condit);
-                return null;
+                return condit;
             }
             cond = ((Boolean)condit).booleanValue();
             if (!cond)
@@ -69,9 +68,12 @@ public class While_Sentence implements Instruction {
                         env.update(local);
                         break;
                     }           
-                    else if (r instanceof Return_Sentence){
+                    else if (r instanceof Return_Sentence) {
                         env.update(local);
                         return r;
+                    }
+                    else if (r instanceof CompileError) {
+                        Singleton.insertError((CompileError)r);
                     }
                 }
             }

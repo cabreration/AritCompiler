@@ -71,6 +71,9 @@ public class If_Sentence implements Instruction {
                         env.update(local);
                         return r;
                     }
+                    else if (r instanceof CompileError) {
+                        Singleton.insertError((CompileError)r);
+                    }
                 }
             }
             env.update(local);
@@ -141,6 +144,9 @@ public class If_Sentence implements Instruction {
                     if (r instanceof Break_Sentence || r instanceof Continue_Sentence || r instanceof Return_Sentence) {
                         env.update(local);
                         return r;
+                    }
+                    else if (r instanceof CompileError) {
+                        Singleton.insertError((CompileError)r);
                     }
                 }
             }

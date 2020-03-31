@@ -59,6 +59,9 @@ public class DoWhile_Sentence implements Instruction{
                         env.update(local);
                         return r;
                     }
+                    else if (r instanceof CompileError) {
+                        Singleton.insertError((CompileError)r);
+                    }
                 }
             }
             env.update(local);

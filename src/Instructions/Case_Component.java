@@ -54,6 +54,9 @@ public class Case_Component implements Instruction {
                 if (r != null && (r instanceof Continue_Sentence || r instanceof Return_Sentence || r instanceof Break_Sentence)) {
                     return r;     
                 }  
+                else if (r != null && r instanceof CompileError) {
+                    Singleton.insertError((CompileError)r);
+                }
             }
             return null;
         }
