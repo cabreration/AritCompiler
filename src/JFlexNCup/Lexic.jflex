@@ -33,7 +33,7 @@ Inter          = {Digit}+
 Letter         = [a-zA-ZñÑ]
 Id             = {Letter}("."|"_"|{Digit}|{Letter})*|"."(({Letter}|"_"|".")({Letter}|"."|"_"|{Digit})*)?
 simpleComment  = "#" {InputCharacter}* {LineTerminator}?
-multiLineComment   = "#*" [^*] ~"*#" | "#*" "*"+ "#"
+multiLineComment   = "#*" ~"*#" | "#*" "*"+ "#"
 
 %state STRING
 

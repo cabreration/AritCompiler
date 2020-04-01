@@ -89,6 +89,7 @@ public class TextEditor extends javax.swing.JFrame {
         jMenuItem11 = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
 
         console.setEditable(false);
         console.setColumns(20);
@@ -364,6 +365,9 @@ public class TextEditor extends javax.swing.JFrame {
 
     private void jMenuItem11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem11ActionPerformed
         // Cerrar Pesta;a actual
+        if (tabs.getTabCount() ==0)
+            return;
+        
         int currentIndex = tabs.getSelectedIndex();
         paths.remove(currentIndex);
         tabs.remove(currentIndex);
