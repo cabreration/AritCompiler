@@ -181,6 +181,7 @@ public class List implements Value, Symbol {
         else {
             // atom is a list
             return new CompileError("Semantico", "El elemento en la posicion " + i + " es una lista, no es posible acceder a ella con [[]]", 0, 0);
+            //return atom;
         }
     }
 
